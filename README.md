@@ -71,3 +71,10 @@ The importer now includes 18 original repository recipes in addition to the 402 
 ## Login and signup forms
 
 Open `/login.html` or `/signup.html` on the current app origin. Welcome and Settings link to the forms. Signup confirms the password and enforces 12 characters; password visibility is optional. Account-service availability is checked before credentials can be entered. Forms submit only to the same-origin MongoDB backend; they do not save passwords in browser storage. Static preview publication displays the forms but cannot create accounts until the online Node/MongoDB backend is hosted. Existing sessions show a Continue to Mealday link. Sign-out remains in Settings.
+
+
+## Mealday visual refresh
+
+The current phone UI uses forest-green headers, warm ivory/beige surfaces, Barlow Semi Condensed headings (self-hosted Google Fonts), readable system sans-serif body text, and five tabs: Plans, Discover, Cookbook, Grocery list and Profile. Discover has cuisine collections and direct bookmarks. Cookbook retains search/cuisine/diet filtering. Grocery extras are saved in the kitchen snapshot. Existing plan, recipe, nutrition, notes, ratings, history and account flows are retained.
+
+The welcome/grocery hero is an AI-generated illustrative food photo in `phone-preview/dist/mealday-grocery-hero.png`; it does not represent a delivery offering. Existing recipe-specific images remain illustrative. Font source: https://fonts.google.com/specimen/Barlow+Semi+Condensed (SIL Open Font License).
