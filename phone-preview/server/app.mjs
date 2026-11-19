@@ -1,10 +1,11 @@
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,staticRoot=resolve('dist')}){
+export function createApp({store,origin,production=false,allowRegistration=!production,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy;
   const cookieName=production?'__Host-mealday_session':'mealday_session';
   const cookie=(value,maxAge)=>`${cookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -28,14 +29,14 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(ip,rate);}
           if(++rate.count>15)return send(429,{error:'Too many attempts. Try again in 15 minutes.'});
           if(path.endsWith('register')&&!allowRegistration)return send(403,{error:'Account registration is disabled on this server.'});
-          const {email,password}=validateAccount(await body());let user=await store.userByEmail(email);
+          const {email,password}=validateAccount(await body(),{registration:path.endsWith('register')});let user=await store.userByEmail(email);
           if(path.endsWith('register')){
             if(user)return send(409,{error:'Cannot create this account. Try signing in.'});
             user={_id:randomUUID(),email,password:await passwordHash(password),createdAt:new Date().toISOString()};
             if(!await store.createUser(user))return send(409,{error:'Cannot create this account. Try signing in.'});
           }else{
             dummy??=await passwordHash(token());
-            const matches=await passwordMatches(password,user?.password||dummy);
+            const matches=await passwordMatches(password,user?.password||user||dummy);
             if(!user||!matches)return send(401,{error:'Email or password is incorrect.'});
           }
           if(rawCookie)await store.deleteSession(digest(rawCookie));

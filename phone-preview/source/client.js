@@ -820,3 +820,6 @@ cloudBackup.init();
 window.addEventListener("online",()=>cloudBackup.refresh());
 window.addEventListener("focus",()=>{if(!dialog.open&&!['recipe','setup'].includes(view))cloudBackup.refresh();});
 setInterval(()=>{if(!document.hidden&&!dialog.open&&!detail&&view!=="setup")cloudBackup.refresh();},30000);
+
+// A missing or failed photo must not leave a broken image in a meal card.
+document.addEventListener('error',event=>{const img=event.target;if(img instanceof HTMLImageElement&&img.getAttribute('src')!=='/recipe-image-unavailable.svg'){img.src='/recipe-image-unavailable.svg';img.alt='Recipe photo unavailable';}},true);

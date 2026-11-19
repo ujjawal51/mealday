@@ -3,9 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "start": "node scripts/serve.cjs",
+    "start": "node --env-file-if-exists=.env phone-preview/server/index.mjs",
     "build": "node scripts/build.cjs",
-    "recipes:import": "node --env-file-if-exists=.env phone-preview/server/import-recipes.mjs"
+    "recipes:import": "node --env-file-if-exists=.env phone-preview/server/import-recipes.mjs",
+    "start:legacy": "node scripts/serve.cjs",
+    "test:phone": "node --test phone-preview/server/*.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",

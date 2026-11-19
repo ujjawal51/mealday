@@ -9,6 +9,6 @@ try{
  const store=await connectStore(process.env.MONGODB_URI,process.env.MONGODB_DB||'mealday');
  const server=createServer(createApp({store,origin,production,allowRegistration:production?process.env.ALLOW_REGISTRATION==='true':true}));
  server.requestTimeout=30000;server.headersTimeout=15000;
- server.listen(Number(process.env.PORT||3000),process.env.HOST||'127.0.0.1',()=>console.log('Mealday ready at '+origin+' · MongoDB connected'));
+ server.listen(Number(process.env.PORT||3000),process.env.HOST||'127.0.0.1',()=>console.log('Mealday ready at '+origin+' · Latest phone UI · MongoDB connected'));
  for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>server.close(async()=>{await store.close();process.exit(0);}));
 }catch{console.error('Could not connect to MongoDB. Check that MongoDB Server is running and MONGODB_URI is correct.');process.exitCode=1;}

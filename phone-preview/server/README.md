@@ -52,3 +52,9 @@ To validate without a database: `node server/import-recipes.mjs --dry-run` from 
 ### Legacy recipe import
 
 The extra 18 recipes retain their original IDs, quantities and instructions. Their original records omitted cuisine/meal types; the import assigns UAE mix and lunch/dinner defaults (breakfast for the two breakfast entries), with a classification note. No cultural origin or cooking verification is claimed. They have no matching dish photos yet, so photo.status=missing and a clearly marked placeholder path is stored. Nutrition is calculated only where mappings are complete. An existing 402-recipe database receives 18 inserts and finishes with 420 catalogue IDs; running again inserts zero. Existing records are preserved. These imported legacy recipes are available as database records; the offline phone catalogue remains the original 402 until a separate frontend catalogue update.
+
+## Default UI and image serving
+
+Root `npm start` now starts this server; it resolves dist relative to server/app.mjs, not the shell working directory. This prevents accidentally serving the original root dist and broken image paths. All 402 catalogue photos are served from phone-preview/dist/recipes. Browser image failures use the explicit unavailable-photo SVG. The 18 original imported recipes still have no matching photos.
+
+The root app's original scrypt password hashes can be verified without changing their records. New passwords use the stronger current scrypt settings. Session records also include a hashed token field to remain compatible with the original unique token index. Raw session secrets are never stored. Original account snapshots are retained without silently converting their schema.

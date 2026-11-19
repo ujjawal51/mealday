@@ -10,7 +10,8 @@ export async function connectStore(uri,dbName){
     close:()=>client.close(),
     userByEmail:email=>users.findOne({email}),
     async createUser(user){try{await users.insertOne(user);return true;}catch(e){if(e.code===11000)return false;throw e;}},
-    saveSession:session=>sessions.insertOne(session),
+    // A hashed token also satisfies the earlier root app's unique token index.
+    saveSession:session=>sessions.insertOne({...session,token:session._id}),
     session:id=>sessions.findOne({_id:id,expiresAt:{$gt:new Date()}}),
     deleteSession:id=>sessions.deleteOne({_id:id}),
     kitchen:userId=>kitchens.findOne({_id:userId}),

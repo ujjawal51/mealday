@@ -1,5 +1,11 @@
 # Mealday
 
+## Run the latest UI
+
+From the repository root, `npm start` now runs the current phone UI and MongoDB backend from `phone-preview`. It serves that UI and all 402 bundled recipe photos from the correct module-relative folder, regardless of the working directory. Stop the running server with Ctrl+C, run `git pull`, then `npm start`, and reload http://localhost:3000 with Ctrl+Shift+R. Keep your root .env. The old React app can still be started explicitly with `npm run start:legacy`; it is not the default.
+
+Existing original-app users can sign in with their previous password. Existing original `accounts` snapshots and browser storage are preserved; they are not automatically converted to the phone UI kitchen format. The 18 imported original recipes have explicit missing-photo placeholders; they do not yet have matching dish photos.
+
 A responsive meal-planning web app with one active route at a time. Approved white-green visual design.
 
 ## Working flows
@@ -35,7 +41,7 @@ Prices are local catalogue estimates, not live retailer prices. Recipe images ar
 
 ## Latest phone app and MongoDB accounts
 
-The standalone [`phone-preview/`](phone-preview/) app contains the latest phone layout, full bundled recipe catalogue and photos, ratings and recommendations, saved meals and filters, cooking history, timer, and MongoDB email/password account and backup server. The original application remains at the repository root.
+The standalone [`phone-preview/`](phone-preview/) app contains the latest phone layout, full bundled recipe catalogue and photos, ratings and recommendations, saved meals and filters, cooking history, timer, and MongoDB email/password account and backup server. The original application remains in the repository and can be run with `npm run start:legacy`.
 
 To run the standalone version:
 
@@ -50,7 +56,7 @@ npm start
 
 Requires Node.js 22+ and a running MongoDB server. Stop any other app using port 3000 first. Open http://localhost:3000 and see [account setup and current limits](phone-preview/server/README.md).
 
-Use a separate MongoDB database (`mealday_phone_preview`) when running this version alongside the original root app: their user and session schemas differ. Root-app `users`, `accounts` and `plan_history` records are not automatically migrated. Existing browser data is not deleted; import guest kitchen only after signing in. Google login, email verification/password reset, and online backend hosting remain pending. Publishing the static preview does not activate MongoDB sync.
+A separate MongoDB database (`mealday_phone_preview`) remains an option for an isolated standalone setup. The default root start uses the root .env and supports original user password hashes and the original sessions token index without deleting old data. Root-app `users`, `accounts` and `plan_history` records are not automatically migrated. Existing browser data is not deleted; import guest kitchen only after signing in. Google login, email verification/password reset, and online backend hosting remain pending. Publishing the static preview does not activate MongoDB sync.
 
 The bundled JavaScript in `phone-preview/dist/` is ready to serve. `phone-preview/source/` retains the available source and tests; `source/api.ts` is a reference snapshot whose original domain-module inputs are not all present in this folder, so it is not a separate supported catalogue rebuild entrypoint. No .env, node_modules, credentials, or database exports are included.
 

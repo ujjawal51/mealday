@@ -8,13 +8,20 @@ export async function passwordHash(password,salt=randomBytes(16).toString('hex')
   return {salt,hash:hash.toString('hex')};
 }
 export async function passwordMatches(password,stored){
+  if(stored&&typeof stored.passwordHash==='string'&&typeof stored.salt==='string'){
+    // Read the original root app's salted scrypt hashes without rewriting accounts.
+    if(!/^[a-f0-9]{128}$/i.test(stored.passwordHash)||!/^[a-f0-9]{32}$/i.test(stored.salt))return false;
+    const supplied=await derive(password,stored.salt,64,{N:16384,r:8,p:1,maxmem:64*1024*1024});
+    return timingSafeEqual(supplied,Buffer.from(stored.passwordHash,'hex'));
+  }
+  if(!stored||typeof stored.salt!=='string'||typeof stored.hash!=='string'||!/^[a-f0-9]{128}$/i.test(stored.hash))return false;
   const supplied=await passwordHash(password,stored.salt);
   return timingSafeEqual(Buffer.from(supplied.hash,'hex'),Buffer.from(stored.hash,'hex'));
 }
-export function validateAccount(body){
+export function validateAccount(body,{registration=true}={}){
   const email=typeof body.email==='string'?body.email.trim().toLowerCase():'';
   const password=body.password;
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof password!=='string'||password.length<12||password.length>128)throw Object.assign(Error('Use a valid email and a password of 12–128 characters.'),{status:400});
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||typeof password!=='string'||password.length<(registration?12:1)||password.length>128)throw Object.assign(Error(registration?'Use a valid email and a password of 12–128 characters.':'Use a valid email and password.'),{status:400});
   return {email,password};
 }
 export function validateSnapshot(value){

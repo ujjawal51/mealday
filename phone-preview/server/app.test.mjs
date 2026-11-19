@@ -118,3 +118,14 @@ test('Production cookies are secure and registration requires explicit enablemen
  assert.match(created.headers['Set-Cookie'],/; Secure$/);
  assert.equal('password' in created.data.user,false);
 });
+
+test('Accounts created in the original root app can log into the latest UI without password or backup migration',async t=>{
+ const {scryptSync}=await import('node:crypto');const {store,client}=await fixture(t),a=await client();
+ const salt='1234567890abcdef1234567890abcdef',password='old-pass';
+ await store.createUser({_id:'original-user',email:'original@example.com',salt,passwordHash:scryptSync(password,salt,64).toString('hex')});
+ const before=structuredClone(store.users.get('original@example.com'));
+ assert.equal((await a.call('/api/auth/login','POST',{email:'original@example.com',password:'wrong'})).status,401);
+ const login=await a.call('/api/auth/login','POST',{email:'original@example.com',password});assert.equal(login.status,200);assert.equal(login.data.user.id,'original-user');
+ assert.deepEqual(store.users.get('original@example.com'),before);
+ assert.equal((await a.call('/api/auth/logout','POST',{})).status,200);
+});
