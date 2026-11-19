@@ -151,3 +151,7 @@ export async function api(request:Request,url:URL) {
     return json({error:'The recipe service could not respond.'},500);
   }
 }
+
+// Server catalogue import uses the same filtered recipes and ingredient stock.
+export const recipeCatalogue = catalog;
+export const recipeIngredients = stock;

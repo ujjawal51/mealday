@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "node scripts/serve.cjs",
-    "build": "node scripts/build.cjs"
+    "build": "node scripts/build.cjs",
+    "recipes:import": "node --env-file-if-exists=.env phone-preview/server/import-recipes.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",

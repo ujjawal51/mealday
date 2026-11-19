@@ -1,7 +1,9 @@
+import {seedRecipes} from './recipe-catalogue.mjs';
 export async function connectStore(uri,dbName){
   const {MongoClient}=await import('mongodb');
   const client=new MongoClient(uri,{maxPoolSize:10,serverSelectionTimeoutMS:5000});
   await client.connect();const db=client.db(dbName);await db.command({ping:1});
+  try{const result=await seedRecipes(db);console.log(`Recipe catalogue: ${result.present} available, ${result.inserted} imported, ${result.existing} already present.`);}catch(error){await client.close();throw error;}
   const users=db.collection('users'),sessions=db.collection('sessions'),kitchens=db.collection('kitchens');
   await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0})]);
   return {

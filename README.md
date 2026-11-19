@@ -53,3 +53,7 @@ Requires Node.js 22+ and a running MongoDB server. Stop any other app using port
 Use a separate MongoDB database (`mealday_phone_preview`) when running this version alongside the original root app: their user and session schemas differ. Root-app `users`, `accounts` and `plan_history` records are not automatically migrated. Existing browser data is not deleted; import guest kitchen only after signing in. Google login, email verification/password reset, and online backend hosting remain pending. Publishing the static preview does not activate MongoDB sync.
 
 The bundled JavaScript in `phone-preview/dist/` is ready to serve. `phone-preview/source/` retains the available source and tests; `source/api.ts` is a reference snapshot whose original domain-module inputs are not all present in this folder, so it is not a separate supported catalogue rebuild entrypoint. No .env, node_modules, credentials, or database exports are included.
+
+## Import recipes into your connected MongoDB
+
+After `git pull`, run `npm run recipes:import` from the repository root to import all 402 phone-preview recipes into the database configured in the root .env. Existing recipes with the same id are preserved; repeat runs add only missing recipes. In Compass refresh the `recipes` collection after the command reports success. `phone-preview` backend startup also imports missing recipes automatically into its configured database. Images remain bundled files; database documents include photo paths, recipe steps, ingredient quantities and nutrition completeness/source.

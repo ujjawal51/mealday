@@ -19,7 +19,7 @@ Passwords are salted and hashed with Node scrypt. Raw passwords and raw session 
 
 The verified server session selects the kitchen owner. Client-supplied user IDs cannot select another user's backup. Write requests require the configured Origin, JSON and a session CSRF token. Login and registration are rate limited per direct connection IP. If deployed behind a reverse proxy, add shared gateway rate limiting; this server deliberately does not trust arbitrary forwarded IP headers.
 
-Recipes and images remain bundled with the app. Account snapshots contain ratings, saved recipes, notes, cooking history, preferences, pantry, plans and grocery checkmarks. This change does not migrate the recipe catalogue into database collections.
+Recipes are imported automatically into the `recipes` collection on backend startup. Images remain bundled with the app; MongoDB stores their paths. Account snapshots contain ratings, saved recipes, notes, cooking history, preferences, pantry, plans and grocery checkmarks. Each recipe record includes the recipe data, per-person ingredient quantities, ingredient catalogue metadata, steps, photo path, nutrition estimate/completeness and source attribution.
 
 ## Sync and migration
 
@@ -38,3 +38,13 @@ Google sign-in is not configured in this MongoDB-only version. It requires a sep
 `npm test` exercises HTTP registration/login/logout, password hashing, session rotation/expiry, cookie security, account isolation, CSRF/Origin checks, rate limiting, revision conflicts, guest import and offline/account-switch recovery. Tests use an explicitly test-only in-memory store; production uses the official MongoDB driver with no memory fallback.
 
 The real MongoDB integration test cannot run in this editing environment because starting mongod was rejected by an environment filesystem restriction. On your PC, set MONGODB_TEST_URI and run `node server/mongo.integration.mjs`; this creates a randomly named test database and does not delete it automatically.
+
+## Import all recipes into MongoDB
+
+Run `npm run recipes:import` from either the repository root or phone-preview. It reads the .env file in your current directory. For the already connected root app use MONGODB_DB=mealday. For the standalone phone app use its separate database as described in the root README. Backend startup in phone-preview also imports missing recipes automatically.
+
+The importer reads all 402 active recipes from the same bundled catalogue used by the phone app. It inserts missing IDs with upsert/$setOnInsert and a unique id index. Running it repeatedly does not duplicate or overwrite existing recipes. A partial import can be retried. Existing users, sessions, kitchen records and custom recipes are not changed. Existing duplicate recipe IDs stop the import for manual review; no records are deleted.
+
+Photos are file paths, not image binary uploads. Nutrition remains ingredient-based estimates: incomplete recipes keep totals=null and list missing mappings. This import does not turn estimates into lab-verified nutrition, live supermarket prices or kitchen-tested recipes. The phone app continues using its bundled catalogue offline; importing does not make edits in MongoDB automatically update that offline catalogue.
+
+To validate without a database: `node server/import-recipes.mjs --dry-run` from phone-preview. In Compass open your configured database > recipes and refresh after the real import succeeds. No local database connection from the editing workspace is claimed.
