@@ -1,13 +1,273 @@
 import {t} from './i18n';
 import React,{useEffect,useRef,useState} from 'react';
 import {createClient,Session} from '@supabase/supabase-js';
-import {cloudUrl,cloudKey} from './cloud-config';
+import {cloudUrl,cloudKey,useMongoBackend} from './cloud-config';
 import {snapshotKey,preserveLocalChanges} from './cloudSnapshot';
+
+class MongoCloudClient {
+  private authListeners: ((event: string, session: any) => void)[] = [];
+
+  auth = {
+    getSession: async () => {
+      const token = localStorage.getItem('mealday.session-token');
+      if (!token) return { data: { session: null }, error: null };
+      try {
+        const res = await fetch('/api/auth/session', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const json = await res.json();
+        if (json.session) {
+          return { data: { session: json.session }, error: null };
+        }
+        localStorage.removeItem('mealday.session-token');
+        return { data: { session: null }, error: null };
+      } catch (e: any) {
+        return { data: { session: null }, error: e };
+      }
+    },
+    onAuthStateChange: (cb: (event: string, session: any) => void) => {
+      this.authListeners.push(cb);
+      return {
+        data: {
+          subscription: {
+            unsubscribe: () => {
+              this.authListeners = this.authListeners.filter(l => l !== cb);
+            }
+          }
+        }
+      };
+    },
+    signUp: async ({ email, password }: any) => {
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const json = await res.json();
+        if (!res.ok || json.error) {
+          return { data: { session: null, user: null }, error: new Error(json.error || 'Signup failed') };
+        }
+        if (json.session?.access_token) {
+          localStorage.setItem('mealday.session-token', json.session.access_token);
+          this.notifyAuth('SIGNED_IN', json.session);
+        }
+        return { data: { session: json.session, user: json.user }, error: null };
+      } catch (e: any) {
+        return { data: { session: null, user: null }, error: e };
+      }
+    },
+    signInWithPassword: async ({ email, password }: any) => {
+      try {
+        const res = await fetch('/api/auth/signin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const json = await res.json();
+        if (!res.ok || json.error) {
+          return { data: { session: null, user: null }, error: new Error(json.error || 'Login failed') };
+        }
+        if (json.session?.access_token) {
+          localStorage.setItem('mealday.session-token', json.session.access_token);
+          this.notifyAuth('SIGNED_IN', json.session);
+        }
+        return { data: { session: json.session, user: json.user }, error: null };
+      } catch (e: any) {
+        return { data: { session: null, user: null }, error: e };
+      }
+    },
+    signOut: async () => {
+      const token = localStorage.getItem('mealday.session-token');
+      try {
+        if (token) {
+          await fetch('/api/auth/signout', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+      } catch {}
+      localStorage.removeItem('mealday.session-token');
+      this.notifyAuth('SIGNED_OUT', null);
+      return { error: null };
+    },
+    resend: async () => {
+      return { error: null };
+    }
+  };
+
+  private notifyAuth(event: string, session: any) {
+    for (const listener of this.authListeners) {
+      try { listener(event, session); } catch {}
+    }
+  }
+
+  from(table: string) {
+    const token = localStorage.getItem('mealday.session-token') || '';
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    if (table === 'mealday_accounts') {
+      return {
+        select: (_cols?: string) => ({
+          eq: (_col: string, _val: any) => ({
+            maybeSingle: async () => {
+              try {
+                const res = await fetch('/api/account', { headers });
+                const json = await res.json();
+                return { data: json.data || null, error: res.ok ? null : new Error(json.error) };
+              } catch (e: any) {
+                return { data: null, error: e };
+              }
+            }
+          })
+        })
+      };
+    }
+
+    if (table === 'mealday_plan_history') {
+      return {
+        select: (_cols?: string) => ({
+          eq: (_col: string, _val: any) => ({
+            gte: (_col2: string, _val2: any) => ({
+              order: (_col3: string, _opts: any) => ({
+                limit: (_n: number) => ({
+                  then: async (resolve: any) => {
+                    try {
+                      const res = await fetch('/api/plan-history', { headers });
+                      const json = await res.json();
+                      resolve({ data: json.data || [], error: null });
+                    } catch (e: any) {
+                      resolve({ data: [], error: e });
+                    }
+                  }
+                })
+              })
+            })
+          })
+        }),
+        upsert: async (rows: any[]) => {
+          try {
+            const res = await fetch('/api/plan-history', {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ items: rows })
+            });
+            return { error: res.ok ? null : new Error('Failed to save history') };
+          } catch (e: any) {
+            return { error: e };
+          }
+        },
+        delete: () => ({
+          eq: async (_col: string, _val: any) => {
+            try {
+              const res = await fetch('/api/plan-history', {
+                method: 'DELETE',
+                headers
+              });
+              return { error: res.ok ? null : new Error('Failed to clear history') };
+            } catch (e: any) {
+              return { error: e };
+            }
+          }
+        })
+      };
+    }
+
+    if (table === 'mealday_cuisine_catalogue') {
+      return {
+        select: (_cols?: string) => ({
+          eq: (_col: string, _val: any) => ({
+            limit: async (_n: number) => {
+              try {
+                const res = await fetch('/api/catalogue');
+                const json = await res.json();
+                return { data: json.data || [], error: null };
+              } catch (e: any) {
+                return { data: [], error: e };
+              }
+            }
+          })
+        })
+      };
+    }
+
+    return {
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => ({ data: null, error: null })
+        })
+      })
+    };
+  }
+
+  async rpc(fn: string, params: any) {
+    const token = localStorage.getItem('mealday.session-token') || '';
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+
+    if (fn === 'mealday_save') {
+      try {
+        const res = await fetch('/api/account/save', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            profile: params.p_profile,
+            kitchen: params.p_kitchen,
+            revision: params.p_revision
+          })
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          return { data: null, error: new Error(json.error || 'Save failed') };
+        }
+        return { data: json.data, error: null };
+      } catch (e: any) {
+        return { data: null, error: e };
+      }
+    }
+    return { data: null, error: new Error('Unknown RPC: ' + fn) };
+  }
+
+  functions = {
+    invoke: async (fn: string, options: any) => {
+      const token = localStorage.getItem('mealday.session-token') || '';
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      if (fn === 'delete-mealday-account') {
+        try {
+          const res = await fetch('/api/account/delete', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(options?.body || {})
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            return { data: null, error: new Error(json.error || 'Delete failed') };
+          }
+          return { data: json.data || { deleted: true }, error: null };
+        } catch (e: any) {
+          return { data: null, error: e };
+        }
+      }
+
+      return { data: null, error: null };
+    }
+  };
+}
+
 const initialAuthUrl=new URL(window.location.href);
 const initialAuthHash=new URLSearchParams(initialAuthUrl.hash.slice(1));
 const confirmationReturn=initialAuthUrl.searchParams.get('auth')==='confirmed';
 const confirmationError=initialAuthUrl.searchParams.has('error_code')||initialAuthHash.has('error_code');
-export const cloud=createClient(cloudUrl,cloudKey);
+export const cloud: any = useMongoBackend ? new MongoCloudClient() : createClient(cloudUrl,cloudKey);
 export const authReturn='https://mealday-kitchen-app.ujjawal-0x.chatgpt.site/?auth=confirmed';
 export type KitchenSnapshot={profile:any;kitchen:{plan:any[];pantry:Record<string,number>;checked:string[];saved:string[];ratings:Record<string,number>;personalRecipes?:any[];recipeNotes?:Record<string,string>;mealHistory?:{recipeId:string;at:number}[];ready:boolean}};
 export function useCloud(snapshot:KitchenSnapshot,load:(s:KitchenSnapshot)=>void,clear:()=>void){
@@ -16,7 +276,7 @@ export function useCloud(snapshot:KitchenSnapshot,load:(s:KitchenSnapshot)=>void
  const generation=useRef(0);
  const loadRef=useRef(load),clearRef=useRef(clear),uid=useRef<string|null>(null);loadRef.current=load;clearRef.current=clear;
  const read=async(s:Session,explicit=false)=>{const request=++generation.current;const sameOwner=localStorage.getItem('mealday.cloud-owner')===s.user.id;uid.current=s.user.id;setBusy(true);setStatus('Loading your account…');try{const {data,error}=await cloud.from('mealday_accounts').select('*').eq('user_id',s.user.id).maybeSingle();if(request!==generation.current)return;if(error)throw error;localStorage.setItem('mealday.cloud-owner',s.user.id);if(data){const value={profile:data.profile,kitchen:data.kitchen};let lastCloud:any=null;try{lastCloud=JSON.parse(localStorage.getItem('mealday.cloud-base.'+s.user.id)||'null')}catch{}const keep=!explicit&&preserveLocalChanges(snapshotRef.current,lastCloud,sameOwner);if(!keep)loadRef.current(value);setBase(snapshotKey(value));localStorage.setItem('mealday.cloud-base.'+s.user.id,JSON.stringify(value));setRevision(Number(data.revision));setHasCloud(true);setStatus(keep?'Your unsaved changes are kept on this device. Save to sync them.':'Account data loaded.');}else{setRevision(0);setHasCloud(false);setBase('');setStatus('No cloud data yet. Choose Save to account to upload this kitchen.');}}catch(e:any){if(request===generation.current)setStatus(e.message||'Could not load account.');}finally{if(request===generation.current){setBusy(false);setLoading(false)}}};
- useEffect(()=>{let active=true;const handle=(s:Session|null)=>{if(!active)return;const prior=localStorage.getItem('mealday.cloud-owner');if((s&&prior&&prior!==s.user.id)||(!s&&prior)){clearRef.current();localStorage.removeItem('mealday.cloud-base.'+prior);localStorage.removeItem('mealday.cloud-owner');}setSession(s);if(s&&uid.current!==s.user.id){setLoading(true);void read(s)}if(!s){generation.current++;uid.current=null;setLoading(false);setBusy(false);setRevision(0);setHasCloud(false);setBase('');}};cloud.auth.getSession().then(({data})=>handle(data.session));const {data}=cloud.auth.onAuthStateChange((_event,s)=>{window.setTimeout(()=>handle(s),0)});return()=>{active=false;generation.current++;uid.current=null;data.subscription.unsubscribe()};},[]);
+ useEffect(()=>{let active=true;const handle=(s:Session|null)=>{if(!active)return;const prior=localStorage.getItem('mealday.cloud-owner');if((s&&prior&&prior!==s.user.id)||(!s&&prior)){clearRef.current();localStorage.removeItem('mealday.cloud-base.'+prior);localStorage.removeItem('mealday.cloud-owner');}setSession(s);if(s&&uid.current!==s.user.id){setLoading(true);void read(s)}if(!s){generation.current++;uid.current=null;setLoading(false);setBusy(false);setRevision(0);setHasCloud(false);setBase('');}};cloud.auth.getSession().then(({data}:any)=>handle(data?.session||null));const {data}=cloud.auth.onAuthStateChange((_event:any,s:any)=>{window.setTimeout(()=>handle(s),0)});return()=>{active=false;generation.current++;uid.current=null;data?.subscription?.unsubscribe?.()};},[]);
  const save=async()=>{if(!session||busy)return;setBusy(true);setStatus('Saving…');try{const {data,error}=await cloud.rpc('mealday_save',{p_profile:snapshot.profile,p_kitchen:snapshot.kitchen,p_revision:revision});if(error)throw error;setRevision(Number(data.revision));setBase(snapshotKey(snapshot));localStorage.setItem('mealday.cloud-base.'+session.user.id,JSON.stringify(snapshot));setHasCloud(true);setStatus('Saved to your account.');}catch(e:any){setStatus(e.message?.includes('SYNC_CONFLICT')?'Another tab or device changed this kitchen. Reload from account before saving.':e.message||'Save failed. Please retry.');}finally{setBusy(false)}};
  const logout=async()=>{setBusy(true);const {error}=await cloud.auth.signOut();if(error){setStatus(error.message);setBusy(false);setOpen(true);return;}clearRef.current();if(session)localStorage.removeItem('mealday.cloud-base.'+session.user.id);localStorage.removeItem('mealday.cloud-owner');setOpen(false);setBusy(false)};
  const remove=async()=>{if(!session)return {deleted:false,error:'Sign in required.'};if(busy)return {deleted:false,error:'Another account action is in progress.'};setBusy(true);setStatus('Deleting your account…');try{const {data,error}=await cloud.functions.invoke('delete-mealday-account',{body:{confirm:'DELETE'}});if(error)throw error;if(data?.deleted!==true)throw new Error('Account deletion was not confirmed. Please retry.');await cloud.auth.signOut({scope:'local'});clearRef.current();localStorage.removeItem('mealday.cloud-base.'+session.user.id);localStorage.removeItem('mealday.cloud-owner');setSession(null);setOpen(false);setStatus('Account deleted.');return {deleted:true};}catch(e:any){const message=e.message||'Deletion failed. Please retry.';setStatus(message);return {deleted:false,error:message};}finally{setBusy(false)}};
@@ -30,7 +290,7 @@ export function AccountPanel({account}:{account:ReturnType<typeof useCloud>}){
  useEffect(()=>{
   if(!confirmationReturn&&!confirmationError)return;
   let active=true;
-  void cloud.auth.getSession().then(({data,error})=>{
+  void cloud.auth.getSession().then(({data,error}:any)=>{
    if(!active)return;
    account.setOpen(true);
    setIsError(confirmationError||!!error);
