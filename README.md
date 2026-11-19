@@ -67,3 +67,7 @@ After `git pull`, run `npm run recipes:import` from the repository root to impor
 ### Remaining original recipes
 
 The importer now includes 18 original repository recipes in addition to the 402 phone recipes, for 420 unique IDs. Run `git pull` then `npm run recipes:import` again in your connected project. An existing 402-record catalogue should report inserted=18, existing=402, present=420. The 18 original recipes currently have explicit missing-photo placeholders; no matching images or verified nutrition values are invented.
+
+## Login and signup forms
+
+Open `/login.html` or `/signup.html` on the current app origin. Welcome and Settings link to the forms. Signup confirms the password and enforces 12 characters; password visibility is optional. Account-service availability is checked before credentials can be entered. Forms submit only to the same-origin MongoDB backend; they do not save passwords in browser storage. Static preview publication displays the forms but cannot create accounts until the online Node/MongoDB backend is hosted. Existing sessions show a Continue to Mealday link. Sign-out remains in Settings.

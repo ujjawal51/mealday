@@ -387,6 +387,8 @@ document.addEventListener('click',async event=>{
   if(b.dataset.view){setView(b.dataset.view);$('#main').focus({preventScroll:true});return;}
   const {action,id,index}=b.dataset;
   if(action==='cloud-account'){openCloudAccount();}
+  else if(action==='account-login'){location.href='/login.html';}
+  else if(action==='account-signup'){location.href='/signup.html';}
   else if(action==='cloud-connect'){await cloudBackup.init();openCloudAccount();}
   else if(action==='cloud-retry'){await cloudBackup.retry();}
   else if(action==='cloud-import'){try{await cloudBackup.importGuest();dialog.close();notify('Guest kitchen import processed. Check Settings for backup status.');}catch(e){notify(e.message);}}
@@ -577,7 +579,7 @@ function welcome(){
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome"><div class="welcome-brand"><img src="/brand.svg" alt=""><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-dots">'+dots+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'</div></div>';
+  return '<div class="phone-welcome"><div class="welcome-brand"><img src="/brand.svg" alt=""><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-dots">'+dots+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
 }
 function selectSlide(index){
   if(!Number.isInteger(index)||index<0||index>=productPreviews.length)return;
@@ -806,7 +808,7 @@ function cloudAccountCard(){
   const c=cloudBackup.info();return '<h2 class="settings-caption">Backup & sync</h2><div class="setting-list">'+settingRow(c.account?c.account.email:'Cloud backup & login','cloud-account',c.message)+'</div>';
 }
 function openCloudAccount(){
-  const c=cloudBackup.info();let content='<p class="notice">'+esc(c.message)+'</p>';
+  const c=cloudBackup.info();if(!c.account){location.href='/login.html';return;}let content='<p class="notice">'+esc(c.message)+'</p>';
   if(c.account){
     if(c.conflict)content+='<p>Keep this device’s full kitchen, or load the cloud version. This choice applies to the full backup.</p>'+button('Keep this device','cloud-local','primary')+button('Load cloud version','cloud-remote','ghost');
     else content+=button('Sync now','cloud-retry','primary')+(c.hasGuest?button('Import guest kitchen','cloud-import','ghost'):'');
