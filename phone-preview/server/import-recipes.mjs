@@ -1,7 +1,7 @@
 import {catalogueDocuments,seedRecipes} from './recipe-catalogue.mjs';
 if(process.argv.includes('--dry-run')){
  const docs=catalogueDocuments();
- console.log(JSON.stringify({dryRun:true,recipes:docs.length,nutritionComplete:docs.filter(r=>r.nutrition.complete).length,photos:docs.filter(r=>r.photo.path).length}));
+ console.log(JSON.stringify({dryRun:true,recipes:docs.length,nutritionComplete:docs.filter(r=>r.nutrition.complete).length,photos:docs.filter(r=>r.photo.status!=='missing').length,missingPhotos:docs.filter(r=>r.photo.status==='missing').length}));
 }else{
  let client;
  try{

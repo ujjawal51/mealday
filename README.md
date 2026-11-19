@@ -57,3 +57,7 @@ The bundled JavaScript in `phone-preview/dist/` is ready to serve. `phone-previe
 ## Import recipes into your connected MongoDB
 
 After `git pull`, run `npm run recipes:import` from the repository root to import all 402 phone-preview recipes into the database configured in the root .env. Existing recipes with the same id are preserved; repeat runs add only missing recipes. In Compass refresh the `recipes` collection after the command reports success. `phone-preview` backend startup also imports missing recipes automatically into its configured database. Images remain bundled files; database documents include photo paths, recipe steps, ingredient quantities and nutrition completeness/source.
+
+### Remaining original recipes
+
+The importer now includes 18 original repository recipes in addition to the 402 phone recipes, for 420 unique IDs. Run `git pull` then `npm run recipes:import` again in your connected project. An existing 402-record catalogue should report inserted=18, existing=402, present=420. The 18 original recipes currently have explicit missing-photo placeholders; no matching images or verified nutrition values are invented.
