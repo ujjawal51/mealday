@@ -1,0 +1,2645 @@
+{
+  "complete": 159,
+  "total": 402,
+  "recipes": [
+    {
+      "id": "uae-date-plate",
+      "name": "Dates, yogurt & Arabic bread plate",
+      "missing": []
+    },
+    {
+      "id": "arab-adas-complete",
+      "name": "Shorbat adas \u2014 red lentil soup + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "desi-chaat-complete",
+      "name": "Chana chaat lunchbox + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "uae-salona",
+      "name": "Vegetable salona-style stew with rice",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "arab-ful",
+      "name": "Ful medames with Arabic bread",
+      "missing": []
+    },
+    {
+      "id": "arab-hummus",
+      "name": "Hummus, cucumber & pita plate",
+      "missing": []
+    },
+    {
+      "id": "arab-mujadara",
+      "name": "Mujadara \u2014 lentils, rice & onions",
+      "missing": []
+    },
+    {
+      "id": "desi-poha",
+      "name": "Vegetable poha",
+      "missing": [
+        "Flattened rice (poha)"
+      ]
+    },
+    {
+      "id": "desi-chilla",
+      "name": "Besan chilla with cucumber",
+      "missing": []
+    },
+    {
+      "id": "desi-khichdi",
+      "name": "Moong dal vegetable khichdi",
+      "missing": []
+    },
+    {
+      "id": "desi-chana",
+      "name": "Chana masala with Arabic bread",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "desi-chicken",
+      "name": "Simple chicken curry & rice",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "draft-date-tahini-bread",
+      "name": "Date & tahini Arabic bread",
+      "missing": []
+    },
+    {
+      "id": "draft-regag-cheese",
+      "name": "Regag with cheese & tomato",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "draft-khameer-labneh",
+      "name": "Khameer with labneh & cucumber",
+      "missing": [
+        "Ready-made khameer bread",
+        "Plain labneh"
+      ]
+    },
+    {
+      "id": "draft-khabeesa",
+      "name": "Quick khabeesa-style semolina",
+      "missing": []
+    },
+    {
+      "id": "draft-fish-rice-loomi",
+      "name": "Loomi fish & rice skillet",
+      "missing": [
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-chickpea-machboos",
+      "name": "Chickpea machboos-style rice",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "draft-chicken-thareed",
+      "name": "Chicken thareed-style bowl",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-beef-bzar",
+      "name": "Bzar beef & courgette rice bowl",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-spinach-chickpea-stew",
+      "name": "Emirati-inspired spinach & chickpea stew",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-pumpkinless-madrouba",
+      "name": "Chicken & rice madrouba-style pot",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-carrot-lentil-loomi",
+      "name": "Loomi lentil & carrot rice",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "draft-labneh-pita",
+      "name": "Labneh, tomato & pita breakfast",
+      "missing": [
+        "Plain labneh"
+      ]
+    },
+    {
+      "id": "draft-zaatar-pita",
+      "name": "Zaatar pita with cucumber",
+      "missing": [
+        "Zaatar with sesame"
+      ]
+    },
+    {
+      "id": "draft-feta-spinach-eggs",
+      "name": "Spinach & cheese eggs",
+      "missing": []
+    },
+    {
+      "id": "draft-chickpea-fatteh",
+      "name": "Chickpea yogurt fatteh-style bowl",
+      "missing": []
+    },
+    {
+      "id": "draft-tabbouleh-complete",
+      "name": "Parsley & bulgur tabbouleh + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-fattoush-complete",
+      "name": "Fattoush-style crispy pita salad + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-tahini-fish",
+      "name": "Tahini lemon fish with rice",
+      "missing": []
+    },
+    {
+      "id": "draft-aubergine-chickpeas-complete",
+      "name": "Aubergine & chickpea tomato skillet + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-couscous-chicken",
+      "name": "Chicken & vegetable couscous",
+      "missing": []
+    },
+    {
+      "id": "draft-bulgur-pilaf-complete",
+      "name": "Tomato bulgur pilaf + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-lentil-chard-complete",
+      "name": "Spinach & lentil lemon soup + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-hummus-chicken-bowl-complete",
+      "name": "Warm chicken & hummus bowl + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-ful-salad-complete",
+      "name": "Fava bean, tomato & parsley salad + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-suji-upma",
+      "name": "Vegetable suji upma",
+      "missing": []
+    },
+    {
+      "id": "draft-rice-dosa",
+      "name": "Quick rice-flour dosa-style pancakes",
+      "missing": []
+    },
+    {
+      "id": "draft-aloo-roti-wrap",
+      "name": "Aloo breakfast wrap",
+      "missing": []
+    },
+    {
+      "id": "draft-paneer-breakfast",
+      "name": "Paneer bhurji breakfast wrap",
+      "missing": [
+        "Paneer"
+      ]
+    },
+    {
+      "id": "draft-oats-chilla",
+      "name": "Oats & besan chilla",
+      "missing": []
+    },
+    {
+      "id": "draft-dal-tadka",
+      "name": "Red dal tadka with rice",
+      "missing": []
+    },
+    {
+      "id": "draft-palak-paneer",
+      "name": "Simple palak paneer with rice",
+      "missing": [
+        "Paneer",
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "draft-aloo-gobi-complete",
+      "name": "Aloo & courgette sabzi with pita + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "draft-matar-rice",
+      "name": "Peas & cumin rice with yogurt",
+      "missing": []
+    },
+    {
+      "id": "draft-fish-masala",
+      "name": "Tomato fish masala & rice",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "draft-chicken-keema",
+      "name": "Chopped chicken & peas curry",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "draft-cucumber-raita-chana-complete",
+      "name": "Chana & cucumber raita bowl + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "emirati-dango",
+      "name": "Dango with regag",
+      "missing": [
+        "Ready-made regag bread",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "emirati-bajella",
+      "name": "Bajella with regag",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "emirati-beid-tomat",
+      "name": "Beid wa tomat with regag",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "emirati-fresh-rigag",
+      "name": "Fresh rigag with labneh",
+      "missing": [
+        "Plain labneh"
+      ]
+    },
+    {
+      "id": "emirati-chicken-margouga",
+      "name": "Chicken margouga \u2014 home-style",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "emirati-muhammar-fish",
+      "name": "Muhammar rice with pan-cooked fish",
+      "missing": [
+        "Pure date syrup (dibs)"
+      ]
+    },
+    {
+      "id": "emirati-fish-salona",
+      "name": "Fish salona with rice",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "kaggle-299",
+      "name": "Tofu Bhurji Recipe - Spicy Scrambled Tofu",
+      "missing": []
+    },
+    {
+      "id": "kaggle-457",
+      "name": "Spinach Thalipeeth",
+      "missing": []
+    },
+    {
+      "id": "kaggle-641",
+      "name": "Ari Pathiri | Malabar Rice Flatbread",
+      "missing": []
+    },
+    {
+      "id": "kaggle-722",
+      "name": "Masala Palak Bhurji",
+      "missing": [
+        "Ajwain (Carom seeds)",
+        "Salt and Pepper"
+      ]
+    },
+    {
+      "id": "kaggle-1554",
+      "name": "Egg Stuffed Paratha",
+      "missing": []
+    },
+    {
+      "id": "kaggle-1567",
+      "name": "Karnataka Style Sabsige Soppu Akki Rotti (Dill leaves and flattened Rice Bread Recipe)",
+      "missing": [
+        "Poha (Flattened rice)"
+      ]
+    },
+    {
+      "id": "kaggle-1659",
+      "name": "Ghee Tooria Per Eda Recipe - Parsi Style Ridge Gourd With Fried Eggs",
+      "missing": [
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-1771",
+      "name": "Tomato Poha With Peas",
+      "missing": [
+        "Poha (Flattened rice)",
+        "Asafoetida (hing)",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-1886",
+      "name": "Paneer Methi Paratha",
+      "missing": [
+        "Paneer (Homemade Cottage Cheese)",
+        "Methi Leaves (Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "kaggle-1991",
+      "name": "Lauki Paratha Recipe - Bottle Gourd Flatbread",
+      "missing": [
+        "Ajwain (Carom seeds)",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-2187",
+      "name": "North Arcot Special Thavalai Dosai",
+      "missing": [
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-2799",
+      "name": "Onion Rava Dosa Recipe - Spiced Semolina Crepe",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-3191",
+      "name": "Carrot Methi Jowar Thepla",
+      "missing": [
+        "Methi Leaves (Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "kaggle-3273",
+      "name": "Andhra Style Sarva Pindi/Gine Pindi Recipe (Rice Flour and Chana Dal Flatbread Recipe)",
+      "missing": [
+        "Chana dal (Bengal Gram Dal)",
+        "Curry leaves",
+        "Ginger Garlic Paste"
+      ]
+    },
+    {
+      "id": "kaggle-3334",
+      "name": "Spicy Quinoa Upma",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-4038",
+      "name": "Cabbage Bhurji",
+      "missing": []
+    },
+    {
+      "id": "kaggle-4493",
+      "name": "Aval Upma Recipe - South Indian Style Poha",
+      "missing": [
+        "Poha (Flattened rice)",
+        "Asafoetida (hing)",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-4919",
+      "name": "Ajwain Puri Recipe - Puri Flavoured With Carom Seeds",
+      "missing": [
+        "Ajwain (Carom seeds)"
+      ]
+    },
+    {
+      "id": "kaggle-7938",
+      "name": "Methi Jowar Ragi Thalipeeth Recipe - Healthy Diabetic Friendly",
+      "missing": [
+        "Methi Leaves (Fenugreek Leaves)",
+        "Ragi Flour (Finger Millet/ Nagli)"
+      ]
+    },
+    {
+      "id": "kaggle-8187",
+      "name": "Ragi Kanji Recipe - Salt Version",
+      "missing": [
+        "Ragi Flour (Finger Millet/ Nagli)",
+        "Ajwain (Carom seeds)",
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-9318",
+      "name": "Pudina Shavige Recipe - Pudina Semiya Upma",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-11264",
+      "name": "Scrambled Eggs With Ridge Gourd Sabzi",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-12559",
+      "name": "Carrot and Cucumber Thalipeeth",
+      "missing": []
+    },
+    {
+      "id": "kaggle-88-complete",
+      "name": "Crunchy Ginger Capsicum Rice + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-111-complete",
+      "name": "North Indian Style Mushroom Matar Masala + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Ginger Garlic Paste",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-156-complete",
+      "name": "Khara Obbattu Recipe (Bread Stuffed With Spicy Potato Mixture Recipe) + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-307",
+      "name": "Rajasthani Gatte Ki Sabzi Recipe With Onion & Garlic",
+      "missing": [
+        "Ajwain (Carom seeds)",
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-312",
+      "name": "Veg Mughlai Paratha",
+      "missing": [
+        "Paneer (Homemade Cottage Cheese)",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-552-complete",
+      "name": "Shepuchi Bhaji Recipe (Stir Fried Maharashtrian Suva/Dill Greens) + Red Lentil Dal + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-576-complete",
+      "name": "Marwadi Gatte Ki Kadhi Recipe - Gram Flour Dumpling In Yogurt Curry + Rice + Cucumber",
+      "missing": [
+        "Ajwain (Carom seeds)"
+      ]
+    },
+    {
+      "id": "kaggle-807-complete",
+      "name": "Bihari Aloo Bhujiya + Red Lentil Dal + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-1189-complete",
+      "name": "Rajasthani Gatte Ka Pulao + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Ajwain (Carom seeds)"
+      ]
+    },
+    {
+      "id": "kaggle-1295-complete",
+      "name": "Jowar Atta Roti Recipe - Sorghum Wheat Phulka + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-1437-complete",
+      "name": "Masala Akki Roti Recipe - Spicy Rice Flour Flatbread + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-1474-complete",
+      "name": "Jeera Rice Recipe - Cumin And Ghee Flavored Rice + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-1591-complete",
+      "name": "Carrot Lemon Rice + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-1633-complete",
+      "name": "Red Lentil Curry Without Coconut + Rice + Cucumber",
+      "missing": [
+        "Kasuri Methi (Dried Fenugreek Leaves)",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-1756-complete",
+      "name": "Spicy Haryana Style Egg Curry + Rice + Cucumber",
+      "missing": [
+        "Paneer (Homemade Cottage Cheese)",
+        "Ginger Garlic Paste",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-1846-complete",
+      "name": "Kadai Egg Masala + Rice + Cucumber",
+      "missing": [
+        "Kasuri Methi (Dried Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "kaggle-2209-complete",
+      "name": "Mooli Bhurji + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Mooli Ke Patte (Radish Greens)",
+        "Ajwain (Carom seeds)",
+        "Asafoetida (hing)",
+        "Amchur (Dry Mango Powder)"
+      ]
+    },
+    {
+      "id": "kaggle-2311-complete",
+      "name": "Carrot & Green Bean Thoran + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "oil",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-2404-complete",
+      "name": "Radish & Radish-Leaf Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "radish leaves",
+        "oil",
+        "Curry leaves",
+        "tamarind paste",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-2535-complete",
+      "name": "Cabbage Yogurt Curry + Rice + Cucumber",
+      "missing": [
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-2592-complete",
+      "name": "Oats, Peas & Tofu Stuffed Paratha + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Amchur (Dry Mango Powder)"
+      ]
+    },
+    {
+      "id": "kaggle-2628-complete",
+      "name": "Rajasthani Kadhi + Rice + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-2689-complete",
+      "name": "Dubki Wale Aloo Recipe - Potatoes In A Spicy North Indian Gravy + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Amchur (Dry Mango Powder)",
+        "Kasuri Methi (Dried Fenugreek Leaves)",
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "kaggle-2710-complete",
+      "name": "Maharastrian Batatyachi Bhaji Recipe-Quick and Simple Aloo Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Curry leaves",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-2713-complete",
+      "name": "Gopalkala Recipe - Janmashtami Special) + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Poha (Flattened rice)"
+      ]
+    },
+    {
+      "id": "kaggle-2897-complete",
+      "name": "Semiya Biryani + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Ginger Garlic Paste",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-2934-complete",
+      "name": "Kerala Style Tomato Fry + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "Ginger Garlic Paste"
+      ]
+    },
+    {
+      "id": "kaggle-3050-complete",
+      "name": "Palak Baingan Ki Sabzi - Recipe in Hindi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "asafoetida",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-3106-complete",
+      "name": "Parwal Masala Recipe - No Onion No Garlic + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Parwal",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-3214-complete",
+      "name": "Aloo Bhindi Stir-Fry + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "asafoetida",
+        "oil",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-3215-complete",
+      "name": "Soft & Delicious Ragi Mudde Recipe - Karnataka Style Ragi Balls + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Ragi Flour (Finger Millet/ Nagli)"
+      ]
+    },
+    {
+      "id": "kaggle-3316-complete",
+      "name": "Bihari Style Baingan Chokha + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "asafoetida"
+      ]
+    },
+    {
+      "id": "kaggle-3425-complete",
+      "name": "Jeera Aloo Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "oil",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-3467-complete",
+      "name": "Kongunadu Urulai Kurma Recipe (Curried Potatoes from Kongunadu) + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Chana dal (Bengal Gram Dal)"
+      ]
+    },
+    {
+      "id": "kaggle-3573-complete",
+      "name": "Mulyachi Bhaji Recipe - Goan Style Mooli Ki Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Jaggery",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-3691-complete",
+      "name": "Carrot Cauliflower Peas Sabzi Recipe - Gajar Gobi Matar Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Ajwain (Carom seeds)",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-4290-complete",
+      "name": "Matar Chi Usal Recipe - Green Peas In A Onion Tomato Gravy + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Curry leaves",
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-4381-complete",
+      "name": "Mushroom Do Pyaza + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-4811-complete",
+      "name": "Maharashtrian Style Dudhi Kajuchi Sonari Amti Recipe - Bottle Gourd And Cashew Nut Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-5192-complete",
+      "name": "Sesame Peanut Potato Mix + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "Amchur (Dry Mango Powder)"
+      ]
+    },
+    {
+      "id": "kaggle-5297-complete",
+      "name": "Muga Ambat + Rice + Cucumber",
+      "missing": [
+        "Tamarind Water",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-5484-complete",
+      "name": "Spicy Goan Style Mushrooms + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-5553",
+      "name": "Tofu & Capsicum Paratha Recipe (Stuffed Tofu Flatbread)",
+      "missing": []
+    },
+    {
+      "id": "kaggle-5768-complete",
+      "name": "Kodava Kummu Curry Recipe- Coorg Style Mushroom Curry + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-5820-complete",
+      "name": "Punjabi Bhindi Kadhi Recipe - Roasted Okra In Yogurt Curry + Roti + Cucumber",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-6066-complete",
+      "name": "Radish Greens Poriyal Recipe (South Indian Style Radish Greens Stir Fry) + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Mooli Ke Patte (Radish Greens)",
+        "Asafoetida (hing)",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-7122-complete",
+      "name": "Jolada Ganji Recipe (Jowar Savoury Porridge) + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-7131-complete",
+      "name": "Menthya Jolada Mudde Recipe - Methi & Jowar Balls + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Methi Leaves (Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "kaggle-7381",
+      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread)",
+      "missing": []
+    },
+    {
+      "id": "kaggle-7427-complete",
+      "name": "Ukad Recipe (Maharashtrian Rice Flour Porridge) + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Asafoetida (hing)",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-7562-complete",
+      "name": "Spicy & Masaledar Aloo Gobi & Beans Tawa Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "Garam masala powder",
+        "Amchur (Dry Mango Powder)",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-7856-complete",
+      "name": "Kasuri Methi Paneer Sabzi + Roti + Cucumber",
+      "missing": [
+        "Paneer (Homemade Cottage Cheese)",
+        "Garam masala powder",
+        "Kasuri Methi (Dried Fenugreek Leaves)",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-8027-complete",
+      "name": "Green Beans Fry + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "asafoetida",
+        "oil"
+      ]
+    },
+    {
+      "id": "kaggle-8115-complete",
+      "name": "Moong Dal Methi Ki Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "missing": [
+        "fenugreek",
+        "asafoetida",
+        "oil",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "kaggle-8424-complete",
+      "name": "Spiced Khooba Roti (Rajasthani Pinched Flatbread Recipe) + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-8481-complete",
+      "name": "Stuffed Ridge Gourd + Red Lentil Dal + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-8780-complete",
+      "name": "Mooli Jowar Ki Roti Recipe - Mullangi Kambu Chapathi + Red Lentil Dal + Cucumber",
+      "missing": [
+        "Ginger Garlic Paste"
+      ]
+    },
+    {
+      "id": "kaggle-8930-complete",
+      "name": "Cauliflower And Red Bell Pepper Stir Fry + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Garam masala powder",
+        "Kasuri Methi (Dried Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "kaggle-10015",
+      "name": "Bhaat Na Rasawala Muthia Dhokla | Gujarati Rasiya Dhokla",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-10044-complete",
+      "name": "Bandhakopir Ghonto Recipe (Bengali Style Cabbage Fry) + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Garam masala powder"
+      ]
+    },
+    {
+      "id": "kaggle-12374-complete",
+      "name": "Gujarati Whole-Moong Tadka + Rice + Cucumber",
+      "missing": [
+        "Curry leaves",
+        "oil"
+      ]
+    },
+    {
+      "id": "kaggle-12788-complete",
+      "name": "Cabbage And Carrot Thoran + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "kaggle-13445-complete",
+      "name": "Jolada Roti Recipe - Jowar Bhakri + Red Lentil Dal + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "kaggle-13487-complete",
+      "name": "Amritsari Sookhi Dal + Red Lentil Dal + Rice + Cucumber",
+      "missing": [
+        "Ajwain (Carom seeds)",
+        "Asafoetida (hing)"
+      ]
+    },
+    {
+      "id": "uae-machboos",
+      "name": "Chicken Machboos",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-lamb-machboos",
+      "name": "Lamb Machboos",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "emirati-fish-machboos",
+      "name": "Fish Machboos",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "emirati-chicken-harees",
+      "name": "Chicken Harees",
+      "missing": []
+    },
+    {
+      "id": "emirati-lamb-thareed",
+      "name": "Lamb Thareed",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-lamb-khuzi",
+      "name": "Home-Style Lamb Khuzi",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "mealday-samak-mashwi-complete",
+      "name": "Samak Mashwi + Rice + Cucumber",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "mealday-fish-madrooba",
+      "name": "Salted-Fish Madrooba",
+      "missing": [
+        "Salted white fish for desalting",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-chicken-salona-complete",
+      "name": "Chicken Saloona + Rice + Cucumber",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "mealday-lamb-saloona-complete",
+      "name": "Lamb Saloona + Rice + Cucumber",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "mealday-chicken-jareesh",
+      "name": "Chicken Jareesh",
+      "missing": []
+    },
+    {
+      "id": "mealday-camel-stew-complete",
+      "name": "Camel Meat Stew + Rice + Cucumber",
+      "missing": [
+        "Halal-labelled camel stewing meat",
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "uae-balaleet",
+      "name": "Balaleet with Omelette",
+      "missing": []
+    },
+    {
+      "id": "draft-regag-egg",
+      "name": "Regag with Egg & Cheese",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "mealday-egg-saloona-complete",
+      "name": "Egg & Potato Saloona + Rice + Cucumber",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "draft-egg-tomato-loomi",
+      "name": "Loomi Shakshuka with Regag",
+      "missing": [
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "draft-vegetable-thareed",
+      "name": "Vegetable Thareed with Egg",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "mealday-egg-potato-hash",
+      "name": "Emirati-Style Egg & Potato Hash",
+      "missing": []
+    },
+    {
+      "id": "mealday-egg-potato-hash-complete",
+      "name": "Emirati-Style Egg & Potato Hash + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "uae-chebab",
+      "name": "Chebab with Egg",
+      "missing": [
+        "Baking powder"
+      ]
+    },
+    {
+      "id": "mealday-vegetable-machboos-egg",
+      "name": "Vegetable Machboos with Egg",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-dango-egg",
+      "name": "Dango with Egg",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-dango-egg-complete",
+      "name": "Dango with Egg + Rice + Cucumber",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-bajella-egg",
+      "name": "Bajella with Egg",
+      "missing": []
+    },
+    {
+      "id": "mealday-bajella-egg-complete",
+      "name": "Bajella with Egg + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-chicken-kabsa",
+      "name": "Chicken Kabsa",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-beef-shawarma",
+      "name": "Beef Shawarma Rice",
+      "missing": []
+    },
+    {
+      "id": "draft-shawarma-chicken",
+      "name": "Chicken Shawarma Wrap",
+      "missing": []
+    },
+    {
+      "id": "draft-kofta-beef",
+      "name": "Pan-Kofta Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "mealday-shish-tawook",
+      "name": "Shish Tawook Rice",
+      "missing": []
+    },
+    {
+      "id": "mealday-lamb-mansaf",
+      "name": "Home-Style Lamb Mansaf",
+      "missing": [
+        "Jameed (dried fermented yogurt)"
+      ]
+    },
+    {
+      "id": "mealday-chicken-maqluba",
+      "name": "Chicken Maqluba",
+      "missing": []
+    },
+    {
+      "id": "mealday-baked-kibbeh",
+      "name": "Baked Beef Kibbeh",
+      "missing": []
+    },
+    {
+      "id": "mealday-dawood-basha",
+      "name": "Dawood Basha Rice",
+      "missing": []
+    },
+    {
+      "id": "mealday-loubieh-lamb-complete",
+      "name": "Loubieh bil Lahme + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-freekeh-chicken",
+      "name": "Freekeh with Chicken",
+      "missing": [
+        "Cracked freekeh wheat"
+      ]
+    },
+    {
+      "id": "mealday-lamb-chops-complete",
+      "name": "Garlic Lamb Chops + Rice + Cucumber",
+      "missing": [
+        "Halal-labelled lamb chops"
+      ]
+    },
+    {
+      "id": "arab-shakshuka",
+      "name": "Classic Shakshuka with Pita",
+      "missing": []
+    },
+    {
+      "id": "mealday-green-shakshuka",
+      "name": "Green Shakshuka",
+      "missing": []
+    },
+    {
+      "id": "mealday-green-shakshuka-complete",
+      "name": "Green Shakshuka + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-ful-egg",
+      "name": "Ful Medames with Egg",
+      "missing": []
+    },
+    {
+      "id": "mealday-ful-egg-complete",
+      "name": "Ful Medames with Egg + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-egg-fatteh",
+      "name": "Egg Fatteh",
+      "missing": []
+    },
+    {
+      "id": "mealday-mujadara-egg",
+      "name": "Mujadara with Fried Egg",
+      "missing": []
+    },
+    {
+      "id": "mealday-sabich",
+      "name": "Sabich Pita",
+      "missing": []
+    },
+    {
+      "id": "mealday-labneh-eggs",
+      "name": "Labneh & Eggs Pita Plate",
+      "missing": [
+        "Plain labneh",
+        "Zaatar with sesame"
+      ]
+    },
+    {
+      "id": "mealday-vegetable-kofta-egg-complete",
+      "name": "Vegetable Kofta with Egg + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-menemen",
+      "name": "Menemen \u2014 Turkish-Style Eggs",
+      "missing": []
+    },
+    {
+      "id": "mealday-zaatar-eggs",
+      "name": "Zaatar Eggs with Pita",
+      "missing": [
+        "Zaatar with sesame"
+      ]
+    },
+    {
+      "id": "mealday-lemon-cumin-fish-rice",
+      "name": "Lemon-Cumin Fish Rice",
+      "missing": []
+    },
+    {
+      "id": "mealday-thyme-fish-couscous",
+      "name": "Thyme Fish & Vegetable Couscous",
+      "missing": []
+    },
+    {
+      "id": "mealday-mackerel-lemon-complete",
+      "name": "Lemon Grilled Mackerel + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-liver-onions-complete",
+      "name": "Beef Liver with Onions + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-mussels-garlic-complete",
+      "name": "Garlic Mussels + Rice + Cucumber",
+      "missing": [
+        "Fresh live mussels in shells"
+      ]
+    },
+    {
+      "id": "mealday-steak-potatoes-complete",
+      "name": "Steak & Roast Potatoes + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-hawawshi",
+      "name": "Beef Hawawshi",
+      "missing": []
+    },
+    {
+      "id": "mealday-sea-bream-vegetables-complete",
+      "name": "Sea Bream with Vegetables + Rice + Cucumber",
+      "missing": [
+        "Sea bream fillets"
+      ]
+    },
+    {
+      "id": "mealday-sausage-potatoes-complete",
+      "name": "Halal Beef Sausage & Potatoes + Rice + Cucumber",
+      "missing": [
+        "Halal-labelled raw beef sausages"
+      ]
+    },
+    {
+      "id": "mealday-kofta-mushroom-complete",
+      "name": "Kofta with Mushroom Yogurt Sauce + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-okra-beef-complete",
+      "name": "Okra & Beef Stew + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-beef-kabsa",
+      "name": "Beef Kabsa Rice",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "mealday-cheese-olive-toast",
+      "name": "Cheese & Olive Toast",
+      "missing": []
+    },
+    {
+      "id": "mealday-zaatar-olive-toast",
+      "name": "Zaatar Olive-Oil Toast",
+      "missing": [
+        "Zaatar with sesame"
+      ]
+    },
+    {
+      "id": "mealday-qishta-honey-toast",
+      "name": "Qishta Honey & Almond Toast",
+      "missing": [
+        "Plain qishta cream"
+      ]
+    },
+    {
+      "id": "mealday-whole-wheat-pancakes",
+      "name": "Whole-Wheat Pancakes",
+      "missing": [
+        "Baking powder"
+      ]
+    },
+    {
+      "id": "mealday-chicken-biryani",
+      "name": "Chicken Biryani",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-mutton-biryani",
+      "name": "Mutton Biryani",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-chicken-karahi-complete",
+      "name": "Chicken Karahi + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-mutton-karahi",
+      "name": "Mutton Karahi",
+      "missing": []
+    },
+    {
+      "id": "mealday-butter-chicken",
+      "name": "Butter Chicken Rice",
+      "missing": [
+        "Garam masala",
+        "Kasuri Methi (Dried Fenugreek Leaves)"
+      ]
+    },
+    {
+      "id": "mealday-nihari",
+      "name": "Beef Nihari",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-nihari-complete",
+      "name": "Beef Nihari + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-haleem",
+      "name": "Chicken Haleem",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-seekh-kebab-complete",
+      "name": "Beef Seekh Kebab + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-chicken-tikka",
+      "name": "Chicken Tikka Rice",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-lamb-keema-complete",
+      "name": "Lamb Keema with Peas + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-rogan-josh-complete",
+      "name": "Lamb Rogan Josh + Rice + Cucumber",
+      "missing": []
+    },
+    {
+      "id": "mealday-coconut-fish-curry-complete",
+      "name": "South Indian Coconut Fish Curry + Rice + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "mealday-chicken-65-complete",
+      "name": "Chicken 65 + Rice + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "mealday-anda-masala",
+      "name": "Anda Masala Rice",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "desi-bhurji",
+      "name": "Egg Bhurji Wrap",
+      "missing": []
+    },
+    {
+      "id": "draft-masala-omelette",
+      "name": "Masala Omelette Toast",
+      "missing": []
+    },
+    {
+      "id": "mealday-anda-paratha",
+      "name": "Anda Paratha",
+      "missing": []
+    },
+    {
+      "id": "mealday-egg-fried-rice",
+      "name": "Egg Vegetable Fried Rice",
+      "missing": []
+    },
+    {
+      "id": "mealday-egg-biryani",
+      "name": "Egg Biryani",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-egg-drop-curry-complete",
+      "name": "Coconut Egg-Drop Curry + Rice + Cucumber",
+      "missing": [
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "mealday-aloo-egg-curry-complete",
+      "name": "Aloo Egg Curry + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-egg-keema-complete",
+      "name": "Egg Keema + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-egg-masala-dry",
+      "name": "Boiled Egg Masala Dry",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "mealday-egg-masala-dry-complete",
+      "name": "Boiled Egg Masala Dry + Rice + Cucumber",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "coverage-em-courgette-dango",
+      "name": "Loomi Courgette Dango Rice",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "coverage-em-savoury-oats",
+      "name": "Savoury Loomi Oats with Tomato",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "coverage-em-bajella-pepper",
+      "name": "Pepper Bajella Rice Plate",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "coverage-em-carrot-lentil",
+      "name": "Carrot Lentil Regag Supper",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-lentil-spinach",
+      "name": "Loomi Spinach Lentils with Rice",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "coverage-em-potato-dango",
+      "name": "Potato Dango Regag Bowl",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-tomato-fava",
+      "name": "Tomato Fava Loomi Stew",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-ar-lentil-oat",
+      "name": "Savoury Lentil Breakfast Bowl",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-chickpea-potato",
+      "name": "Cumin Potato Chickpea Supper",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-tomato-fava",
+      "name": "Tomato Fava Bulgur Pot",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-chana-pepper",
+      "name": "Pepper Chana Breakfast Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-spinach-oats",
+      "name": "Palak Masala Oats",
+      "missing": []
+    },
+    {
+      "id": "coverage-em-protein-0",
+      "name": "Loomi Chicken Tomato Regag",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-1",
+      "name": "Spinach Chicken Regag Skillet",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-2",
+      "name": "Beef Pepper Regag Plate",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-3",
+      "name": "Beef Potato Breakfast Hash",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-6",
+      "name": "Carrot Chicken Regag Bowl",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-ar-protein-0",
+      "name": "Chicken Tomato Breakfast Pita",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-1",
+      "name": "Spinach Chicken Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-2",
+      "name": "Cumin Beef Pepper Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-3",
+      "name": "Potato Mince Pita Hash",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-6",
+      "name": "Carrot Chicken Cumin Pita",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-2",
+      "name": "Beef Pepper Masala Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-3",
+      "name": "Keema Aloo Breakfast Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-4",
+      "name": "Fish Courgette Masala Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-5",
+      "name": "Tuna Chana Breakfast Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-em-cold-0",
+      "name": "Cucumber Tomato Dango Regag Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-desi-protein-6",
+      "name": "Carrot Chicken Bhuna Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-0",
+      "name": "Chicken Tomato Masala Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-protein-1",
+      "name": "Palak Chicken Breakfast Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-0",
+      "name": "Cucumber Tomato Chickpea Pita Salad",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-1",
+      "name": "Carrot Pepper Ful Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-2",
+      "name": "Pepper Chickpea Lemon Pita",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-3",
+      "name": "Tomato Cucumber Ful Salad Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-4",
+      "name": "Carrot Chana Chaat Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-5",
+      "name": "Pepper Tomato Fava Masala Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-6",
+      "name": "Cucumber Carrot Chana Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-chickpea-pepper",
+      "name": "Pepper Chickpea Couscous",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-chickpea-spinach",
+      "name": "Lemon Spinach Chickpea Breakfast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-4",
+      "name": "Carrot Tomato Chickpea Pita",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-5",
+      "name": "Pepper Tomato Ful Bread Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-cold-6",
+      "name": "Crunchy Chickpea Carrot Pita Salad",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-fava-spinach",
+      "name": "Spinach Fava Rice Skillet",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-ful-carrot",
+      "name": "Warm Carrot Ful Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-ful-pepper",
+      "name": "Cumin Pepper Ful Breakfast",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-lentil-carrot",
+      "name": "Carrot Lentil Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-lentil-courgette",
+      "name": "Courgette Lentil Bulgur Bowl",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-4",
+      "name": "Fish Courgette Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-ar-protein-5",
+      "name": "Tuna Chickpea Breakfast Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-0",
+      "name": "Kachumber Chana Bread Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-1",
+      "name": "Cumin Fava Kachumber Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-2",
+      "name": "Pepper Chana Chaat Toast",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-cold-3",
+      "name": "Tomato Fava Chaat Bread Plate",
+      "missing": []
+    },
+    {
+      "id": "coverage-desi-lentil-tomato",
+      "name": "Tomato Dal Breakfast Bowl",
+      "missing": []
+    },
+    {
+      "id": "coverage-em-bajella-potato",
+      "name": "Potato Bajella Breakfast Pan",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-bajella-spinach",
+      "name": "Bajella Spinach Regag Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-1",
+      "name": "Carrot Pepper Bajella Regag",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-2",
+      "name": "Pepper Dango Cold Regag Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-3",
+      "name": "Tomato Cucumber Bajella Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-4",
+      "name": "Carrot Tomato Dango Salad Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-5",
+      "name": "Pepper Tomato Bajella Regag Plate",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-cold-6",
+      "name": "Crunchy Cucumber Carrot Dango Regag",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-dango-carrot",
+      "name": "Carrot Dango with Regag",
+      "missing": [
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-dango-pepper",
+      "name": "Dango Pepper Breakfast Pan",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-4",
+      "name": "Loomi Fish Courgette Regag",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "coverage-em-protein-5",
+      "name": "Tuna Dango Breakfast Plate",
+      "missing": [
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "quality-aloo-matar-chana",
+      "name": "Aloo Matar Chana with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-palak-paneer",
+      "name": "Palak Paneer Roti Plate",
+      "missing": [
+        "Paneer",
+        "Garam masala",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-pithla",
+      "name": "Besan Pithla with Roti & Cucumber",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-soya-keema",
+      "name": "Soya Keema & Roti",
+      "missing": [
+        "Dried soy mince",
+        "Ready-to-eat whole-wheat roti",
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "quality-mushroom-chana",
+      "name": "Mushroom Chana Masala Rice",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "quality-sambar-rice",
+      "name": "Quick Red-Lentil Sambar-Style Rice",
+      "missing": []
+    },
+    {
+      "id": "quality-chickpea-fatteh",
+      "name": "Chickpea Yogurt Fatteh",
+      "missing": []
+    },
+    {
+      "id": "quality-vegetable-thareed",
+      "name": "Chickpea Vegetable Thareed",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)",
+        "Ready-made regag bread"
+      ]
+    },
+    {
+      "id": "quality-vegetable-machboos",
+      "name": "Chickpea Vegetable Machboos",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "quality-eggless-chebab",
+      "name": "Eggless Saffron Pancakes with Dates",
+      "missing": [
+        "Baking powder"
+      ]
+    },
+    {
+      "id": "quality-khabeesa-yogurt",
+      "name": "Cardamom Khabeesa Yogurt Bowl",
+      "missing": []
+    },
+    {
+      "id": "quality-moong-roti",
+      "name": "Moong Dal Tadka with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-rajma-rice",
+      "name": "Quick Rajma Rice Bowl",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "quality-masoor-rice",
+      "name": "Masoor Dal, Rice & Cucumber",
+      "missing": []
+    },
+    {
+      "id": "quality-paneer-bhurji",
+      "name": "Paneer Bhurji Roti Plate",
+      "missing": [
+        "Paneer",
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-dalia-moong",
+      "name": "Vegetable Dalia & Moong Pot",
+      "missing": []
+    },
+    {
+      "id": "quality-curd-rice-sundal",
+      "name": "Curd Rice with Chana Sundal",
+      "missing": []
+    },
+    {
+      "id": "quality-aubergine-besan",
+      "name": "Aubergine Besan Skillet with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "quality-poha-chana",
+      "name": "Vegetable Poha with Warm Chana",
+      "missing": [
+        "Flattened rice (poha)"
+      ]
+    },
+    {
+      "id": "quality-mujadara",
+      "name": "Quick Lentil Mujadara-Style Rice",
+      "missing": []
+    },
+    {
+      "id": "quality-musabbaha",
+      "name": "Warm Musabbaha with Pita",
+      "missing": []
+    },
+    {
+      "id": "quality-lentil-tabbouleh",
+      "name": "Lentil Tabbouleh Pita Plate",
+      "missing": []
+    },
+    {
+      "id": "quality-fasolia",
+      "name": "White Bean Tomato Rice Bowl",
+      "missing": []
+    },
+    {
+      "id": "quality-bamya",
+      "name": "Okra Chickpea Stew with Rice",
+      "missing": []
+    },
+    {
+      "id": "quality-batata-hummus",
+      "name": "Batata Harra & Rustic Hummus Plate",
+      "missing": []
+    },
+    {
+      "id": "quality-whitebean-couscous",
+      "name": "Pepper White-Bean Couscous",
+      "missing": []
+    },
+    {
+      "id": "target-em-pumpkin-aseeda",
+      "name": "Savoury Pumpkin Aseeda with White Beans",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-coconut-sago",
+      "name": "Coconut Sago & Date Breakfast Bowl",
+      "missing": [
+        "Quick-cooking small sago pearls (15\u201320 min packet)"
+      ]
+    },
+    {
+      "id": "target-em-batheetha-bowl",
+      "name": "Date Batheetha & Tahini Breakfast Bowl",
+      "missing": [
+        "Unsweetened oat drink"
+      ]
+    },
+    {
+      "id": "target-em-pumpkin-khanfaroush",
+      "name": "Baked Pumpkin Khanfaroush-Inspired Cakes",
+      "missing": [
+        "Unsweetened oat drink",
+        "Pure date syrup (dibs)",
+        "Baking powder"
+      ]
+    },
+    {
+      "id": "target-em-tofu-regag-scramble",
+      "name": "Loomi Tofu Scramble with Regag",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-date-chia-oats",
+      "name": "Overnight Saffron Date & Chia Oats",
+      "missing": [
+        "Unsweetened oat drink"
+      ]
+    },
+    {
+      "id": "target-em-millet-date-porridge",
+      "name": "Cardamom Millet & Date Porridge",
+      "missing": [
+        "Quick-cooking millet flakes",
+        "Unsweetened oat drink"
+      ]
+    },
+    {
+      "id": "target-em-sweetpotato-date-mash",
+      "name": "Sesame Sweet Potato & Date Breakfast Mash",
+      "missing": [
+        "Unsweetened oat drink"
+      ]
+    },
+    {
+      "id": "target-em-coconut-rice-breakfast",
+      "name": "Saffron Coconut Rice Breakfast Porridge",
+      "missing": []
+    },
+    {
+      "id": "target-em-regag-bean-bake",
+      "name": "Crisp Regag & White Bean Tray Bake",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-stuffed-aubergine",
+      "name": "Baked Aubergine Boats with Date Bulgur & Beans",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-cauliflower-tahini",
+      "name": "Roast Cauliflower & Chickpea Tahini Rice Plate",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-vineleaf-rice",
+      "name": "Mushroom & Lentil Vine-Leaf Parcels",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-cabbage-rolls",
+      "name": "Black-Eyed Bean & Rice Cabbage Rolls",
+      "missing": [
+        "Canned black-eyed beans (drained weight)",
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-pumpkin-parcels",
+      "name": "Pumpkin Lentil Regag Parcels",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-bzar-rissoles",
+      "name": "Bzar Chickpea & Pumpkin Rissoles with Rice",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-corn-orange-salad",
+      "name": "Charred Corn & Black-Eyed Bean Orange Salad",
+      "missing": [
+        "Canned black-eyed beans (drained weight)",
+        "Ready-made regag bread",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-date-aubergine",
+      "name": "Date-Glazed Aubergine with White Bean Rice",
+      "missing": [
+        "Pure date syrup (dibs)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-courgette-muffins",
+      "name": "Savoury Courgette & Chickpea Breakfast Muffins",
+      "missing": [
+        "Unsweetened oat drink",
+        "Baking powder",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-crisprice-cake",
+      "name": "Crisp-Bottom Lentil Rice Cake",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-liver-regag",
+      "name": "Bzar Liver & Onion Breakfast Regag",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-lamb-arayes",
+      "name": "Bzar Lamb-Stuffed Breakfast Pita",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-chicken-semolina",
+      "name": "Saffron Chicken Semolina Breakfast Porridge",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-fish-potatocakes",
+      "name": "Loomi Fish & Potato Breakfast Cakes",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-fish-potatocakes-complete",
+      "name": "Loomi Fish & Potato Breakfast Cakes + Rice + Cucumber",
+      "missing": [
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-shrimp-eggs",
+      "name": "Shrimp & Tomato Breakfast Scramble with Regag",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-tuna-oat-pancakes",
+      "name": "Tuna & Corn Oat Breakfast Pancakes",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-chicken-date-flatcakes",
+      "name": "Chicken & Date Besan Breakfast Flatcakes",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-mackerel-ricecakes",
+      "name": "Mackerel & Saffron Rice Breakfast Cakes",
+      "missing": []
+    },
+    {
+      "id": "target-em-beef-barley-soup",
+      "name": "Beef & Barley-Flake Breakfast Soup",
+      "missing": [
+        "Quick-cooking barley flakes",
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-beef-barley-soup-complete",
+      "name": "Beef & Barley-Flake Breakfast Soup + Rice + Cucumber",
+      "missing": [
+        "Quick-cooking barley flakes",
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-shrimp-nashef",
+      "name": "Shrimp Nashef-Inspired Regag Plate",
+      "missing": [
+        "Ready-made regag bread",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-chicken-bean-soup",
+      "name": "Chicken & White Bean Loomi Soup with Bread",
+      "missing": [
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-lamb-kousa",
+      "name": "Lamb Rice Stuffed Courgettes in Tomato Broth",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-fish-tahini-bake",
+      "name": "Bzar Fish & Tahini Rice Bake",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-date-chicken-rolls",
+      "name": "Date-Stuffed Chicken Rolls with Saffron Bulgur",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-lamb-dryroast-complete",
+      "name": "Quick Lamb Nashef-Inspired Potato Pan + Rice + Cucumber",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-beef-oat-kofta",
+      "name": "Baked Bzar Beef & Oat Kofta with Pita",
+      "missing": [
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-em-fish-dumpling-broth",
+      "name": "Rice-Flour Fish Dumplings in Loomi Broth",
+      "missing": [
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-ar-bissara",
+      "name": "Fava Bissara Breakfast with Pita",
+      "missing": []
+    },
+    {
+      "id": "target-ar-muhammara-bean",
+      "name": "Muhammara and White-Bean Pita Plate",
+      "missing": [
+        "Pure pomegranate molasses"
+      ]
+    },
+    {
+      "id": "target-ar-hindbeh-bean-wrap",
+      "name": "Hindbeh-Inspired Greens and Bean Wrap",
+      "missing": []
+    },
+    {
+      "id": "target-ar-spinach-bean-fatayer",
+      "name": "Spinach and White-Bean Filo Fatayer",
+      "missing": [
+        "Ground sumac"
+      ]
+    },
+    {
+      "id": "target-ar-zaatar-chickpea-manakish",
+      "name": "Zaatar Manakish with Chickpea Spread",
+      "missing": [
+        "Egg- and dairy-free ready-baked plain flatbread base",
+        "Zaatar with sesame"
+      ]
+    },
+    {
+      "id": "target-ar-freekeh-stuffed-tomato",
+      "name": "Freekeh and Mushroom Stuffed Tomatoes",
+      "missing": [
+        "Cracked freekeh wheat"
+      ]
+    },
+    {
+      "id": "target-ar-makhloota",
+      "name": "Makhloota Mixed-Pulse Bulgur Pot",
+      "missing": []
+    },
+    {
+      "id": "target-ar-lentil-kibbeh",
+      "name": "Red Lentil Kibbeh Patties with Tahini",
+      "missing": []
+    },
+    {
+      "id": "target-ar-koshari",
+      "name": "Small-Pot Egyptian Koshari",
+      "missing": []
+    },
+    {
+      "id": "target-ar-lubia-blackeye",
+      "name": "Black-Eyed Bean Tomato Rice",
+      "missing": [
+        "Canned black-eyed beans (drained weight)"
+      ]
+    },
+    {
+      "id": "target-ar-vegan-harira",
+      "name": "Chickpea Lentil Harira with Vermicelli",
+      "missing": []
+    },
+    {
+      "id": "target-ar-sfiha-flatbread",
+      "name": "Open Beef Sfiha Flatbread",
+      "missing": [
+        "Egg- and dairy-free ready-baked plain flatbread base",
+        "Pure pomegranate molasses"
+      ]
+    },
+    {
+      "id": "target-ar-musakhan-rolls",
+      "name": "Sumac Chicken Musakhan Rolls",
+      "missing": [
+        "Ground sumac"
+      ]
+    },
+    {
+      "id": "target-ar-sujuk-eggs",
+      "name": "Sujuk Tomato Eggs with Pita",
+      "missing": [
+        "Halal-labelled raw beef sausages"
+      ]
+    },
+    {
+      "id": "target-ar-herring-tahini",
+      "name": "Smoked Herring Tahini Pita",
+      "missing": [
+        "Ready-to-eat boneless smoked herring, chilled"
+      ]
+    },
+    {
+      "id": "target-ar-tuna-brik",
+      "name": "Tuna and Egg Brik Parcels",
+      "missing": [
+        "Vegan harissa chilli paste"
+      ]
+    },
+    {
+      "id": "target-ar-beef-mutabbaq",
+      "name": "Beef and Leek Mutabbaq Parcels",
+      "missing": []
+    },
+    {
+      "id": "target-ar-lamb-fatteh",
+      "name": "Lamb and Chickpea Fatteh",
+      "missing": []
+    },
+    {
+      "id": "target-ar-chicken-harira",
+      "name": "Chicken Harira Breakfast Bowl",
+      "missing": []
+    },
+    {
+      "id": "target-ar-sardine-chermoula",
+      "name": "Chermoula Sardine Toast",
+      "missing": [
+        "Fresh boneless sardine fillets"
+      ]
+    },
+    {
+      "id": "target-desi-mas-huni",
+      "name": "Mas Huni with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "target-desi-appam-chicken-ishtu",
+      "name": "Appam with Chicken Ishtu",
+      "missing": [
+        "Ready-to-eat egg- and dairy-free cooked rice appam",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "target-desi-beef-puttu",
+      "name": "Beef Puttu Bowl",
+      "missing": [
+        "Ready-to-eat cooked rice and coconut puttu",
+        "Garam masala",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "target-desi-ambul-thiyal-hoppers",
+      "name": "Sour Pepper Fish with String Hoppers",
+      "missing": [
+        "Ready-to-eat cooked rice string hoppers",
+        "Dried goraka (garcinia) pieces",
+        "Curry leaves"
+      ]
+    },
+    {
+      "id": "target-desi-chicken-kottu",
+      "name": "Chicken Kottu Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti",
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "target-desi-chicken-thukpa",
+      "name": "Chicken Thukpa Noodle Soup",
+      "missing": []
+    },
+    {
+      "id": "target-desi-chicken-mughlai-paratha",
+      "name": "Chicken Mughlai Paratha",
+      "missing": [
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "target-desi-kozhi-rice-dumplings",
+      "name": "Chicken with Rice-Flour Dumplings",
+      "missing": [
+        "Curry leaves",
+        "Garam masala"
+      ]
+    },
+    {
+      "id": "target-desi-recheado-fish-rice",
+      "name": "Recheado-Style Fish with Rice",
+      "missing": []
+    },
+    {
+      "id": "target-desi-mustard-steamed-fish",
+      "name": "Mustard-Steamed Fish with Rice",
+      "missing": []
+    },
+    {
+      "id": "target-desi-besan-fish-fry",
+      "name": "Besan Fish Fry with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti",
+        "Ajwain (Carom seeds)"
+      ]
+    },
+    {
+      "id": "target-desi-chicken-choila",
+      "name": "Chicken Choila with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti"
+      ]
+    },
+    {
+      "id": "target-desi-prawn-patia",
+      "name": "Prawn Patia with Roti",
+      "missing": [
+        "Ready-to-eat whole-wheat roti",
+        "tamarind paste"
+      ]
+    },
+    {
+      "id": "target-em-mushroom-harees",
+      "name": "Mushroom & Chickpea Harees-Inspired Bowl",
+      "missing": []
+    },
+    {
+      "id": "target-em-lentil-jareesh",
+      "name": "Loomi Lentil Jareesh Pot",
+      "missing": [
+        "Emirati bzar spice blend",
+        "Dried lime (loomi)"
+      ]
+    },
+    {
+      "id": "target-em-date-khameer",
+      "name": "Date-Filled Khameer-Style Breakfast Breads",
+      "missing": []
+    },
+    {
+      "id": "target-em-lentil-kousa",
+      "name": "Lentil Rice Stuffed Courgettes in Loomi Broth",
+      "missing": [
+        "Dried lime (loomi)",
+        "Emirati bzar spice blend"
+      ]
+    },
+    {
+      "id": "target-ar-fattet-makdous",
+      "name": "Vegan Fattet Makdous Bowl",
+      "missing": []
+    },
+    {
+      "id": "target-ar-lentil-mahshi",
+      "name": "Lentil and Rice Courgette Mahshi",
+      "missing": []
+    }
+  ]
+}

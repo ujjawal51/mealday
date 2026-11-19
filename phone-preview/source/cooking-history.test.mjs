@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {emptyHistory,loadHistory,hasCooked,recordCook,undoCookedMark,historyEntries} from '../dist/cooking-history.js';
+const old=loadHistory(null,['pasta','pasta','soup'],[{id:'pasta',name:'Pasta'}]);
+assert.equal(old.events.length,2);assert.equal(old.events[0].name,'Pasta');assert.equal(old.events[0].cookedAt,null,'Migration must not invent a cooking date');assert(hasCooked(old,'pasta'));
+const h=recordCook(old,{id:'rice',name:'Rice'},'2026-11-18T10:00:00Z','cook-1');
+const twice=recordCook(h,{id:'rice',name:'Rice'},'2026-11-19T10:00:00Z','cook-2');
+assert.equal(historyEntries(twice)[0].id,'cook-2');assert.equal(twice.events.filter(e=>e.recipeId==='rice').length,2);assert.equal(old.events.length,2,'Immutable history');
+const stored=JSON.stringify(twice);
+const reloaded=loadHistory(JSON.parse(stored),['should-not-reimport']);assert.deepEqual(reloaded,twice);assert(!hasCooked(reloaded,'should-not-reimport'));
+const undone=undoCookedMark(twice,'rice','2026-11-19T11:00:00Z');assert(!hasCooked(undone,'rice'));assert(hasCooked(undone,'pasta'));assert.equal(undone.events.length,twice.events.length,'Undo retains audit entries');
+assert(!hasCooked(loadHistory(JSON.parse(JSON.stringify(undone)),['rice']),'rice'),'Undo must survive reload without remigration');
+assert.deepEqual(loadHistory(emptyHistory(),['pasta']),emptyHistory(),'Explicit full reset must not reimport old marks');
+assert.throws(()=>recordCook(h,{id:'x'},'not-a-date','bad'));
+assert.throws(()=>recordCook(h,{id:'x'},'2026-11-18T10:00:00Z','cook-1'));
+assert.equal(loadHistory({version:1,events:[...h.events,...h.events,{id:'bad',recipeId:'x',cookedAt:'bad'}]}).events.length,h.events.length);
+console.log('Cooking history checks passed: migration, repeat cooks, undo, reload, reset and invalid data.');
