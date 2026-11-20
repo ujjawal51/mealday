@@ -571,7 +571,11 @@ const steps=[
   {title:'How long do you usually spend cooking your meals?',hint:'We’ll match recipes to your routine.',field:'minutes',choices:cookingTimes,required:true},
   {title:'Where did you hear about us?',field:'heardAbout',choices:discoveryChoices,required:true},
   {title:'Choose your shop',hint:'We’ll plan your weekly shop around it. Prices are estimates.',field:'shop',choices:supermarkets.map(x=>[x,'',x]),required:true,layout:'shops'},
-  {title:'Who are you cooking for?',hint:'Choose your servings, days and meals.',type:'household'},
+  {title:'How many are you cooking for?',hint:'We’ll scale your meals and budget.',type:'people'},
+  {title:'Which days will you cook?',hint:'Pick the days you want meals planned for.',field:'days',choices:DAYS.map((day,index)=>[index,'',day]),multi:true,layout:'days'},
+  {title:'Which meals should we plan?',hint:'Choose at least one meal.',field:'mealTypes',choices:[['breakfast','🌅','Breakfast'],['lunch','☀️','Lunch'],['dinner','🌙','Dinner']],multi:true},
+  {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(city=>[city,'pin',city]),required:true},
+  {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
   {title:'What’s your weekly budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
   {title:'A little planning. A clearer weekly shop.',type:'budget-recap'},
   {title:'What are you in the mood for?',hint:'Pick up to 3.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
@@ -699,9 +703,7 @@ function renderWizard(preserveScroll=true){
   const current=steps[step],p=wizardDraft;
   if(!p)return;
   let body='';
-  if(current.type==='household'){
-    body=wizardSection('Household servings','<div class="counter quick-counter">'+button('−','people','counter-button','','data-id="-1" aria-label="One fewer person" '+(p.people===1?'disabled':''))+'<div><strong>'+p.people+'</strong><small>'+(p.people===1?'person':'people')+'</small></div>'+button('+','people','counter-button','','data-id="1" aria-label="One more person" '+(p.people===12?'disabled':''))+'</div>')+wizardSection('Cooking days',wizardChoices('days',DAYS.map((d,i)=>[i,'',d.slice(0,3)])))+wizardSection('Meals to plan',wizardChoices('mealTypes',[['breakfast','🌅','Breakfast'],['lunch','☀️','Lunch'],['dinner','🌙','Dinner']]))+'<details class="household-extra"><summary>City &amp; favourite cuisines</summary><label class="field">Your city'+dropdown('wizard-city',places,p.city).replace('name="wizard-city"','data-wizard-field="city"')+'</label>'+wizardSection('Favourite cuisines',wizardChoices('cuisines',styles))+'</details>';
-  }else if(current.type==='food'){
+  if(current.type==='food'){
     body='<label class="field">Diet'+dropdown('wizard-diet',foodTypes.map(x=>x[0]),p.diet).replace('name="wizard-diet"','data-wizard-field="diet"')+'</label>'+wizardSection('Ingredients to avoid',wizardChoices('allergies',allergyOptions))+'<p class="allergy-note">Select None if no exclusions apply. Always check packaged food labels.</p>';
   }else if(current.type==='identity'){
     body='<label class="identity-name">Your first name<input id="wizard-name" class="control wizard-name" aria-label="Your name" autocomplete="given-name" maxlength="40" placeholder="Your first name" value="'+esc(p.name)+'"></label><div class="wizard-choices rows">'+ageGroups.map(([value,symbol,label])=>'<button type="button" class="wizard-choice '+(p.ageGroup===value?'selected':'')+'" data-action="pick-one" data-field="ageGroup" data-id="'+value+'" aria-pressed="'+(p.ageGroup===value)+'">'+label+'</button>').join('')+'</div>';
@@ -760,7 +762,7 @@ function renderWizard(preserveScroll=true){
 function canContinue(){
   if(busy||!wizardDraft)return false;
   const current=steps[step],p=wizardDraft;
-  if(current.type==='household')return Number.isInteger(p.people)&&p.people>=1&&p.people<=12&&p.days.length>0&&p.mealTypes.length>0;
+  if(current.type==='people')return Number.isInteger(p.people)&&p.people>=1&&p.people<=12;
   if(current.type==='food')return foodTypes.some(x=>x[0]===p.diet)&&allergiesReviewed;
   if(current.type==='review')return p.appliances.length>0;
   if(current.type==='identity')return Boolean(p.name.trim())&&ageGroups.some(([id])=>id===p.ageGroup);
@@ -817,7 +819,7 @@ function cookingHistoryPage(){
 function settings(){
   return '<div class="phone-settings"><header><p>Your account</p><h1>Settings</h1></header>'+
   '<div class="settings-profile"><div><h2>Hi, '+esc(state.profile.name||'Chef')+' '+button('','edit-name','edit-person','edit','aria-label="Edit your name"')+'</h2><p>Shopping at '+esc(state.profile.shop)+'</p></div><span>'+(cloudBackup.info().account?'Account':'On device')+'</span></div>'+
-  cloudAccountCard()+'<h2 class="settings-caption">App</h2><div class="setting-list">'+settingRow('Welcome screen','go-home')+settingRow('Recipe library','open-recipes','Browse or find your saved meals')+settingRow('Cooking history','go-history','Your cooked meals, saved across rebuilt plans')+settingRow('Profile & food preferences','edit-setup')+settingRow('Review setup · 14 steps','review-setup')+'<div class="setting-row"><span><strong>Language</strong><small>English</small></span></div>'+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+'</div>'+
+  cloudAccountCard()+'<h2 class="settings-caption">App</h2><div class="setting-list">'+settingRow('Welcome screen','go-home')+settingRow('Recipe library','open-recipes','Browse or find your saved meals')+settingRow('Cooking history','go-history','Your cooked meals, saved across rebuilt plans')+settingRow('Profile & food preferences','edit-setup')+settingRow('Review setup · '+steps.length+' steps','review-setup')+'<div class="setting-row"><span><strong>Language</strong><small>English</small></span></div>'+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+'</div>'+
   '<h2 class="settings-caption">Notifications</h2><div class="setting-list">'+settingRow('Weekly plan reminder','weekly-reminder','Sunday at 10:00 · Add to calendar')+'</div>'+
   '<h2 class="settings-caption">Support</h2><div class="setting-list">'+settingRow('Share meal plan','share-plan')+'</div>'+
   '<h2 class="settings-caption">Privacy</h2><div class="setting-list">'+settingRow('Privacy policy','privacy')+settingRow('Reset this kitchen','settings-reset','Clear your plan, cooking history, pantry, notes and ratings')+'</div></div>';
