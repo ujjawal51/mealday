@@ -1,3 +1,4 @@
+import {createOnboardingMotion} from './onboarding-motion.js';
 import {savingsComparison} from './savings.js';
 import {weeklyCalendar,kitchenBackup} from './settings-tools.js';
 import {createPreviewSlideshow} from './preview-slideshow.js';
@@ -12,6 +13,8 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const screen = $('#screen');
 const dialog = $('#dialog');
 const toast = $('#toast');
+const onboardingMotion=createOnboardingMotion(window);
+let previousWizardStep=-1;
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const ICONS = {
   week:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m-14 5h2m4 0h2"/>',
@@ -102,6 +105,7 @@ function initNavigation(){
   }
 }
 function render(){
+  onboardingMotion.cancel();
   document.body.dataset.view=view;
   $('.nav').hidden=['welcome','setup','recipe'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
@@ -166,7 +170,7 @@ async function generate(profile=state.profile){
     if(attempt!==requestId)return;
     if(onboarding&&view==='setup'){
       screen.innerHTML=renderGeneration(true);
-      await new Promise(resolve=>setTimeout(resolve,450));
+      await new Promise(resolve=>setTimeout(resolve,720));
     }
     state={...state,profile,result,seed,checked:[],suggestionsReset:false,planHistory:rememberPlan(result)};
     day=profile.days[0];persist();
@@ -561,7 +565,7 @@ document.addEventListener('input',event=>{
   if(event.target.id==='wizard-usual-spend'&&wizardDraft){
     wizardDraft.usualWeeklySpend=event.target.value;
     const result=$('#savings-comparison');
-    if(result)result.innerHTML=savingsResult(wizardDraft);
+    if(result){onboardingMotion.cancel();result.innerHTML=savingsResult(wizardDraft);onboardingMotion.counts(result);}
     return;
   }
   if(event.target.id==='wizard-budget-range'||event.target.id==='wizard-budget-input'){setWizardBudget(event.target);return;}
@@ -679,7 +683,7 @@ screen.addEventListener('touchend',event=>{
   if(Math.abs(delta)>36)selectSlide((previewSlide+(delta<0?1:2))%3);
 },{passive:true});
 function beginWizard(edit){
-  editing=edit;step=0;error='';wizardDraft=JSON.parse(JSON.stringify(state.profile));
+  editing=edit;step=0;previousWizardStep=-1;error='';wizardDraft=JSON.parse(JSON.stringify(state.profile));
   if(!edit&&!state.result)wizardDraft.shop='Any supermarket';
   allergiesReviewed=false;
   wizardDraft.name??='';
@@ -716,23 +720,34 @@ function setWizardBudget(el){
   else range.value=String(Math.max(30,Math.min(600,value)));
   wizardDraft.budget=value;
   $('#wizard-budget-value').textContent=el.value?money(value):'—';
+  onboardingMotion.pulse($('#wizard-budget-value'));
   updateWizardContinue();
 }
 function renderGeneration(ready=false){
   const title=ready?'Your week is ready':(wizardDraft.name?wizardDraft.name+', we’re building your week…':'We’re building your week…');
   const tasks=ready?['Preferences applied','Meals scheduled','Grocery list ready']:['Matching recipes to your preferences','Lining up meals for the week','Putting together your grocery list'];
-  return '<section class="wizard generation" role="status"><h1>'+esc(title)+'</h1><div class="food-orbit" aria-hidden="true">'+
+  return '<section class="wizard generation '+(ready?'generation-ready':'generation-working')+'" role="status"><h1>'+esc(title)+'</h1><div class="food-orbit" aria-hidden="true">'+
     '<div><img src="/chef.png" alt=""><b>mealday</b></div>'+
-    ['🥒','🍋','🥑','🍅','🫑','🥬','🍆','🧄'].map((food,index)=>'<span style="--angle:'+index*45+'deg">'+food+'</span>').join('')+
-    '</div><ul class="generation-list">'+tasks.map(task=>'<li><span aria-hidden="true">'+(ready?icon('check'):'')+'</span>'+task+'</li>').join('')+'</ul></section>';
+    ['🥒','🍋','🥑','🍅','🫑','🥬','🍆','🧄'].map((food,index)=>'<span class="food-track" style="--angle:'+index*45+'deg"><i>'+food+'</i></span>').join('')+
+    '</div><ul class="generation-list">'+tasks.map((task,index)=>'<li style="--task-delay:'+index*160+'ms"><span aria-hidden="true">'+(ready?icon('check'):'')+'</span>'+task+'</li>').join('')+'</ul></section>';
+}
+function motionBenefits(){
+  const cards=[['📅','A week, planned','Meals arranged around your cooking days.'],['🥕','Use what you have','Your pantry helps shape your shopping list.'],['🛒','One grocery list','Ingredients brought together for your plan.']];
+  const row=cards.map(([symbol,title,copy])=>'<article class="motion-benefit"><span aria-hidden="true">'+symbol+'</span><b>'+title+'</b><p>'+copy+'</p></article>').join('');
+  return '<div class="motion-benefits" aria-label="What Mealday brings to your week"><div class="motion-benefit-track">'+row+'<div class="motion-benefit-copy" aria-hidden="true">'+row+'</div></div></div>';
 }
 function savingsResult(p){
   const result=savingsComparison(p.usualWeeklySpend,p.budget);
   if(!result)return '<div class="savings-empty"><span>'+icon('wallet')+'</span><p>Add your usual spend to see your potential weekly and yearly savings.</p></div>';
   if(result.weekly===0)return '<div class="savings-neutral"><b>No savings projected yet</b><p>'+(result.over?'Your chosen budget is AED '+money(result.over)+' above your usual spend.':'Your chosen budget matches your usual spend.')+' Go back to adjust your budget, or keep it for more flexibility.</p></div>';
-  return '<div class="savings-outcome"><p class="savings-eyebrow">Potential weekly saving</p><strong class="savings-amount">AED '+money(result.weekly)+'</strong><span class="savings-percent">'+result.percent+'% below your usual spend</span><div class="savings-bars" aria-hidden="true"><span style="--bar:100%"></span><span style="--bar:'+Math.max(2,100-result.percent)+'%"></span></div><div class="savings-bar-labels"><span>Usually AED '+money(result.before)+'</span><span>Target AED '+money(result.target)+'</span></div><div class="savings-year"><span>If repeated for 52 weeks</span><b>AED '+money(result.yearly)+' / year</b></div></div>';
+  return '<div class="savings-outcome"><p class="savings-eyebrow">Potential weekly saving</p><strong class="savings-amount" data-count="'+result.weekly+'" aria-label="AED '+money(result.weekly)+'">AED '+money(result.weekly)+'</strong><span class="savings-percent">'+result.percent+'% below your usual spend</span><div class="savings-bars" aria-hidden="true"><span style="--bar:100%"></span><span style="--bar:'+Math.max(2,100-result.percent)+'%"></span></div><div class="savings-bar-labels"><span>Usually AED '+money(result.before)+'</span><span>Target AED '+money(result.target)+'</span></div><div class="savings-year"><span>If repeated for 52 weeks</span><b data-count="'+result.yearly+'" data-suffix=" / year" aria-label="AED '+money(result.yearly)+' per year">AED '+money(result.yearly)+' / year</b></div></div>';
 }
 function renderWizard(preserveScroll=true){
+  onboardingMotion.cancel();
+  const entering=previousWizardStep!==step;
+  const direction=step<previousWizardStep?'back':'forward';
+  const progressFrom=Math.max(0,previousWizardStep+1)/steps.length;
+  previousWizardStep=step;
   const scroll=preserveScroll?screen.querySelector('.wizard-body')?.scrollTop??0:0;
   const current=steps[step],p=wizardDraft;
   if(!p)return;
@@ -779,7 +794,7 @@ function renderWizard(preserveScroll=true){
       current.field==='priorities'?selected.length+' of 3 selected':'';
     body='<div class="wizard-options">'+(current.field==='days'?'<p class="selected-count" aria-live="polite">'+countText+'</p>':'')+
       (current.field==='priorities'?'<span class="visually-hidden" aria-live="polite">'+countText+'</span>':'')+
-      '<div class="wizard-choices '+layout+'">'+(layout==='appliance-scene'?'<img src="/appliance-kitchen.jpg" alt="">':'')+current.choices.map(([value,symbol,label])=>{
+      '<div class="wizard-choices '+layout+(current.multi?'':' single-choice')+'">'+(layout==='appliance-scene'?'<img src="/appliance-kitchen.jpg" alt="">':'')+current.choices.map(([value,symbol,label])=>{
         const active=value==='None'?(current.field!=='allergies'||allergiesReviewed)&&selected.length===0:current.multi?selected.includes(value):String(selected)===String(value);
         const disabled=current.field==='priorities'&&selected.length===3&&!active&&value!=='None';
         const artwork=onboardingIcon(symbol);
@@ -788,13 +803,18 @@ function renderWizard(preserveScroll=true){
           '<span class="choice-label">'+(layout==='shops'?shopArtwork(value):esc(label||value))+'</span><span class="choice-mark" aria-hidden="true">'+(active?'✓':'○')+'</span></button>';
       }).join('')+'</div>'+(current.field==='allergies'?'<p class="allergy-note">Always check packaged food labels.</p>':'')+'</div>';
   }
+  if(current.field==='appliances')body=motionBenefits()+body;
+  if(current.field==='savingConfidence')body='<div class="motion-chef-note" aria-hidden="true"><img src="/chef.png" alt=""><span>✦</span></div>'+body;
+  if(current.field==='minutes')body+='<div class="motion-time-story"><p>One plan. Your cooking days.</p><div class="motion-time-bars" aria-hidden="true"><i style="--height:22%"></i><i style="--height:100%"></i></div><div class="motion-time-labels"><span><b>1</b> weekly plan</span><span><b>'+p.days.length+'</b> cooking '+(p.days.length===1?'day':'days')+'</span></div><small>Choose your meals together, then cook at your own pace.</small></div>';
   screen.innerHTML='<div class="wizard"><div class="wizard-header">'+button('←','back-step','back-circle','','aria-label="Go back" '+(busy?'disabled':''))+
-   '<span class="setup-step">'+(step+1)+' of '+steps.length+'</span><progress max="'+steps.length+'" value="'+(step+1)+'" aria-label="Setup progress"></progress></div>'+
-   '<div class="wizard-body" data-step="'+(current.type||current.field)+'"><h1>'+esc(current.title)+'</h1>'+
+   '<span class="setup-step">'+(step+1)+' of '+steps.length+'</span><span class="wizard-progress" style="--progress-from:'+(entering?progressFrom:(step+1)/steps.length)+';--progress-to:'+((step+1)/steps.length)+'"><progress max="'+steps.length+'" value="'+(step+1)+'" aria-label="Setup progress"></progress><span aria-hidden="true"></span></span></div>'+
+   '<div class="wizard-body '+(entering?'motion-'+direction:'motion-selection')+'" data-step="'+(current.type||current.field)+'"><h1>'+esc(current.title)+'</h1>'+
    (current.hint?'<p class="wizard-hint">'+esc(current.hint)+'</p>':'')+body+'</div>'+
    '<div class="wizard-footer">'+(error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
    button(step===steps.length-1?'Generate plan':'Continue','next-step','green wide'+(step===steps.length-1?' generate-button':''),'',canContinue()?'':'disabled')+'</div></div>';
   screen.querySelector('.wizard-body').scrollTop=scroll;
+  onboardingMotion.counts(screen);
+  if(!entering&&current.type==='people')onboardingMotion.pulse(screen.querySelector('.counter strong'));
 }
 function canContinue(){
   if(busy||!wizardDraft)return false;

@@ -1,0 +1,6 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {createOnboardingMotion} from '../dist/onboarding-motion.js';
+function harness(reduced=false){let id=0;const pending=new Map();const host={matchMedia:()=>({matches:reduced}),requestAnimationFrame:fn=>{pending.set(++id,fn);return id;},cancelAnimationFrame:id=>pending.delete(id)};return {pending,motion:createOnboardingMotion(host),tick(now){const work=[...pending.values()];pending.clear();work.forEach(fn=>fn(now));}};}
+test('Savings counters settle on the exact amount and preserve suffix',()=>{const h=harness(),node={dataset:{count:'4420.5',suffix:' / year'},textContent:''};h.motion.counts({querySelectorAll:()=>[node]});h.tick(0);h.tick(425);assert.notEqual(node.textContent,'AED 4,420.5 / year');h.tick(850);assert.equal(node.textContent,'AED 4,420.5 / year');assert.equal(h.pending.size,0);});
+test('Step changes cancel callbacks and reduced motion preserves final text',()=>{const h=harness(),node={dataset:{count:'85'},textContent:'AED 85'};h.motion.counts({querySelectorAll:()=>[node]});h.motion.cancel();assert.equal(h.pending.size,0);const reduced=harness(true);reduced.motion.counts({querySelectorAll:()=>[node]});assert.equal(reduced.pending.size,0);assert.equal(node.textContent,'AED 85');});
