@@ -748,3 +748,21 @@ body[data-view=settings] main{padding:0}
 .reminder-toggle>span{position:absolute;left:-2px;top:-2px;width:21px;height:21px;border:1px solid #f1f1ef;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002}
 .settings-extra{margin-top:5px;color:#808975;font-size:12px}.settings-extra summary{padding:12px 4px;cursor:pointer}.settings-extra .setting-list{margin-top:5px}
 @media(max-width:380px){.phone-settings.simple-settings{padding:28px 15px 95px}.simple-settings .setting-row strong{font-size:14px}}
+
+/* Onboarding savings comparison: user-provided baseline, with a short entrance animation. */
+.wizard .savings-recap{max-width:480px;margin:0 auto;padding:0 0 12px}
+.savings-art{position:relative;width:120px;height:96px;margin:2px auto 10px;display:grid;place-items:center}
+.savings-art img{width:74px;height:80px;object-fit:contain;animation:savings-chef 1.4s ease-in-out 3}
+.savings-coin,.savings-spark{position:absolute;display:grid;place-items:center;color:#668e18}
+.savings-coin{width:25px;height:25px;border-radius:50%;background:#e6f3c6;border:1px solid #c2de89;font-weight:700;animation:savings-pop 1.4s ease-in-out 3}
+.coin-one{left:3px;top:16px}.coin-two{right:2px;bottom:6px;animation-delay:.25s}.spark-one{right:4px;top:5px}.spark-two{left:10px;bottom:4px;font-size:14px}
+.savings-target{display:grid;gap:4px;text-align:center;margin-bottom:20px}.savings-target>span{font-size:14px;color:#62675a}.savings-target b{font-size:26px;color:#282e21;letter-spacing:-.6px}.savings-target small{font-size:13px;color:#686e60}
+.savings-input-label{display:block;font-size:16px;font-weight:600;margin-bottom:9px;line-height:1.4}.savings-input{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #dfe3d8;border-radius:14px;padding:0 14px}.savings-input:focus-within{outline:2px solid #9bce31;outline-offset:2px}.savings-input>span{color:#626d50;font-weight:600;font-size:16px}.savings-input input{width:100%;min-width:0;border:0;background:transparent;color:#252b21;font:inherit;font-size:16px;padding:16px 0;outline:none}.savings-input input::placeholder{font-size:14px;color:#7b8074}
+.savings-help,.savings-disclaimer{font-size:13px!important;line-height:1.5;color:#73796b;margin:8px 0 16px}.savings-disclaimer{margin:14px 0 0}
+.savings-empty,.savings-neutral{border:1px solid #e5e8de;border-radius:17px;padding:18px;background:#fff}.savings-empty{display:flex;gap:12px;align-items:center}.savings-empty svg{width:26px;height:26px;color:#789c39}.savings-empty p,.savings-neutral p{font-size:14px;color:#686e60;line-height:1.5;margin:0}.savings-neutral b{display:block;font-size:17px;margin-bottom:7px}
+.savings-outcome{padding:22px 19px 16px;border-radius:20px;border:1px solid #dae9bb;background:linear-gradient(145deg,#f6fbea,#fff);text-align:center;animation:savings-reveal .55s ease-out both}.savings-eyebrow{font-size:14px;font-weight:600;margin:0;color:#55683c}.savings-amount{display:block;font-size:clamp(36px,10vw,48px);line-height:1.2;letter-spacing:-1.5px;color:#689c19;margin:7px 0}.savings-percent{display:inline-block;font-size:13px;color:#526d2c;background:#eaf3d8;border-radius:20px;padding:5px 10px}.savings-bars{display:grid;gap:5px;margin-top:18px}.savings-bars>span{display:block;width:var(--bar);height:7px;border-radius:8px;background:#cfd4c6;transform-origin:left;animation:savings-bar .75s ease-out both}.savings-bars>span+span{background:#9bce31}.savings-bar-labels{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:12px;color:#666e5c;text-align:left}.savings-year{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #e1e9d6;margin-top:17px;padding-top:14px;text-align:left}.savings-year span{font-size:13px;color:#6b745e}.savings-year b{font-size:17px;color:#334721}
+@keyframes savings-chef{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+@keyframes savings-pop{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.1)}}
+@keyframes savings-reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes savings-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.savings-art img,.savings-coin,.savings-outcome,.savings-bars>span{animation:none}}

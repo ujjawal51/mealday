@@ -1,3 +1,4 @@
+import {savingsComparison} from './savings.js';
 import {weeklyCalendar,kitchenBackup} from './settings-tools.js';
 import {createPreviewSlideshow} from './preview-slideshow.js';
 import {createCloudBackup} from './cloud-backup.js';
@@ -557,6 +558,12 @@ document.addEventListener('input',event=>{
     updateWizardContinue();
     return;
   }
+  if(event.target.id==='wizard-usual-spend'&&wizardDraft){
+    wizardDraft.usualWeeklySpend=event.target.value;
+    const result=$('#savings-comparison');
+    if(result)result.innerHTML=savingsResult(wizardDraft);
+    return;
+  }
   if(event.target.id==='wizard-budget-range'||event.target.id==='wizard-budget-input'){setWizardBudget(event.target);return;}
   if(event.target.id!=='search')return;
   library.q=event.target.value;clearTimeout(libraryDelay);libraryDelay=setTimeout(()=>loadRecipes(),260);
@@ -598,7 +605,7 @@ const steps=[
   {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(city=>[city,'pin',city]),required:true},
   {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
   {title:'What’s your weekly budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
-  {title:'A little planning. A clearer weekly shop.',type:'budget-recap'},
+  {title:'See what your plan could save.',type:'budget-recap'},
   {title:'What are you in the mood for?',hint:'Pick up to 3.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
   {title:'Any dietary needs?',hint:'Choose the diet that fits your kitchen.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
   {title:'Any allergies?',hint:'Pick all that apply, or select None.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
@@ -719,6 +726,12 @@ function renderGeneration(ready=false){
     ['🥒','🍋','🥑','🍅','🫑','🥬','🍆','🧄'].map((food,index)=>'<span style="--angle:'+index*45+'deg">'+food+'</span>').join('')+
     '</div><ul class="generation-list">'+tasks.map(task=>'<li><span aria-hidden="true">'+(ready?icon('check'):'')+'</span>'+task+'</li>').join('')+'</ul></section>';
 }
+function savingsResult(p){
+  const result=savingsComparison(p.usualWeeklySpend,p.budget);
+  if(!result)return '<div class="savings-empty"><span>'+icon('wallet')+'</span><p>Add your usual spend to see your potential weekly and yearly savings.</p></div>';
+  if(result.weekly===0)return '<div class="savings-neutral"><b>No savings projected yet</b><p>'+(result.over?'Your chosen budget is AED '+money(result.over)+' above your usual spend.':'Your chosen budget matches your usual spend.')+' Go back to adjust your budget, or keep it for more flexibility.</p></div>';
+  return '<div class="savings-outcome"><p class="savings-eyebrow">Potential weekly saving</p><strong class="savings-amount">AED '+money(result.weekly)+'</strong><span class="savings-percent">'+result.percent+'% below your usual spend</span><div class="savings-bars" aria-hidden="true"><span style="--bar:100%"></span><span style="--bar:'+Math.max(2,100-result.percent)+'%"></span></div><div class="savings-bar-labels"><span>Usually AED '+money(result.before)+'</span><span>Target AED '+money(result.target)+'</span></div><div class="savings-year"><span>If repeated for 52 weeks</span><b>AED '+money(result.yearly)+' / year</b></div></div>';
+}
 function renderWizard(preserveScroll=true){
   const scroll=preserveScroll?screen.querySelector('.wizard-body')?.scrollTop??0:0;
   const current=steps[step],p=wizardDraft;
@@ -741,9 +754,12 @@ function renderWizard(preserveScroll=true){
      '<input id="wizard-budget-range" aria-label="Shopping budget slider" type="range" min="30" max="600" step="5" value="'+Math.max(30,Math.min(600,p.budget))+'"><div class="range-labels"><span>AED 30</span><span>AED 600</span></div>'+
      '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label>';
   }else if(current.type==='budget-recap'){
-    body='<div class="budget-recap"><span aria-hidden="true">🤯</span><strong>AED '+money(p.budget)+'</strong>'+
-      '<p>Grocery budget for '+p.days.length+' cooking '+(p.days.length===1?'day':'days')+' and '+p.people+(p.people===1?' person':' people')+'.</p>'+
-      '<p>Mealday uses catalogue prices to estimate your total.</p></div>';
+    body='<div class="savings-recap"><div class="savings-art" aria-hidden="true"><span class="savings-spark spark-one">✦</span><span class="savings-spark spark-two">✦</span><span class="savings-coin coin-one">+</span><img src="/chef.png" alt=""><span class="savings-coin coin-two">+</span></div>'+
+      '<div class="savings-target"><span>Your weekly grocery budget</span><b>AED '+money(p.budget)+'</b><small>'+p.days.length+' cooking '+(p.days.length===1?'day':'days')+' · '+p.people+(p.people===1?' person':' people')+' · '+esc(p.mealTypes.map(cap).join(', '))+'</small></div>'+
+      '<label class="savings-input-label" for="wizard-usual-spend">What do you usually spend on these meals?</label><div class="savings-input"><span>AED</span><input id="wizard-usual-spend" type="number" inputmode="decimal" min="0.01" max="50000" step="0.01" placeholder="Enter your usual weekly spend" value="'+esc(p.usualWeeklySpend??'')+'" aria-describedby="savings-input-help"></div>'+
+      '<p id="savings-input-help" class="savings-help">Use the same people, cooking days and meals for a fair comparison. Optional.</p>'+
+      '<div id="savings-comparison" aria-live="polite" aria-atomic="true">'+savingsResult(p)+'</div>'+
+      '<p class="savings-disclaimer">Budget comparison only, not money already saved. Mealday uses catalogue prices for meal estimates; actual shop prices and spending may differ.</p></div>';
   }else if(current.type==='review'){
     const dinners=p.mealTypes.map(cap).join(', ');
     const days=p.days.map(day=>DAYS[day]).join(', ');
