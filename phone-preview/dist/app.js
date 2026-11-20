@@ -550,38 +550,52 @@ dialog.addEventListener('close',()=>{swapIndex=null;});
 
 const places=['Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'];
 const supermarkets=['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Choithrams','Any supermarket'];
-const priorities=[['Quick','⚡','Speedy meals'],['Fresh','🥗','Fresh and light'],['Family','🏡','Family favourites'],['Comfort','🍲','Comfort food'],['Everyday','🍽️','Everyday meals'],['None','✨','Surprise me'],['Protein','💪','Protein packed']];
-const foodTypes=[['Any','🍽️','No preference'],['Vegetarian','🥕'],['Vegan','🌱'],['Pescatarian','🐟'],['Eggless vegetarian','🥦'],['Non-vegetarian','🍗']];
-const allergyOptions=[['None','➖'],['Gluten','🌾'],['Milk','🥛'],['Egg','🥚'],['Peanuts','🥜'],['Tree nuts','🌰'],['Fish','🐟'],['Shellfish','🦐'],['Sesame','🫘'],['Soy','🌱']];
+const priorities=[['Quick','⚡','Speedy meals'],['Fresh','⚖️','Fresh and light'],['Family','👨‍👩‍👧‍👦','Family favs'],['Comfort','🥦','Healthy comfort'],['Everyday','🥡','Everyday favourites'],['None','✨','Surprise me'],['Protein','💪','Protein packed']];
+const foodTypes=[['Any','🚫','None'],['Vegetarian','🥕'],['Vegan','🌱'],['Pescatarian','🐟'],['Eggless vegetarian','🥦'],['Non-vegetarian','🍗']];
+const allergyOptions=[['None','🚫','None'],['Gluten','🌾','Gluten free'],['Milk','🥛','Dairy free'],['Egg','🥚','Egg free'],['Peanuts','🥜','Peanut free'],['Tree nuts','🌰','Tree nut free'],['Fish','🐟','Fish free'],['Shellfish','🦐','Shellfish free'],['Sesame','🌰','Sesame free'],['Soy','🫘','Soy free']];
 const appliances=[['Microwave','microwave'],['Hob','hob'],['Air fryer','fryer'],['Oven','oven']];
 const styles=[['UAE mix','','UAE favourites'],['Emirati'],['Arab','','Arab / Middle Eastern'],['South Asian','','South Asian / Desi'],['Turkish']];
 let wizardDraft=null,step=0,editing=false,previewSlide=2;
-const goals=[['prep','🗓️','Meal prep for the week'],['simple','✨','Find simple recipes'],['solo','🍽️','Cook for myself'],['family','🏡','Cook for my family']];
-const obstacles=[['time','⏱️','Not enough time'],['tired','🌙','Too tired after work'],['difficult','🥣','Cooking feels difficult'],['ideas','💭','I need meal ideas']];
+const ageGroups=[['under25','','24 and under'],['25-34','','25–34'],['35-44','','35–44'],['45-54','','45–54'],['55plus','','55+'],['private','','Prefer not to say']];
+const savingsChoices=[['definitely','','Definitely'],['likely','','Most likely'],['somewhat','','Somewhat'],['no','','Not really']];
+const discoveryChoices=[['instagram','social-instagram','Instagram'],['tiktok','social-tiktok','TikTok'],['youtube','social-youtube','YouTube'],['facebook','social-facebook','Facebook'],['word','💬','Word of mouth'],['google','social-play','Google Play'],['other','🌐','Somewhere else']];
+const goals=[['prep','📅','Meal prep for the week'],['simple','✨','Find simple recipes'],['solo','🍽️','Feed myself'],['family','👨‍👩‍👧‍👦','Feed my family']];
+const obstacles=[['time','⏱️','Not enough time'],['tired','😴','Too tired after work'],['difficult','🤔','Cooking feels difficult'],['ideas','💭','I need meal ideas']];
 const cookingTimes=[[15,'','Up to 15 min'],[30,'','15–30 min'],[45,'','30–45 min'],[60,'','45–60 min'],[1440,'','60+ min']];
 
 const steps=[
-  {title:'What should we call you?',hint:'Your name makes your kitchen feel like yours.',type:'name'},
-  {title:'What brings you to Mealday?',hint:'Choose the main thing you want help with.',field:'goal',choices:goals,required:true},
-  {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(x=>[x,'pin',x]),required:true},
-  {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
-  {title:'Which meals should we plan?',hint:'Choose at least one meal for your cooking week.',field:'mealTypes',choices:[['breakfast','plate','Breakfast'],['lunch','plate','Lunch'],['dinner','plate','Dinner']],multi:true},
-  {title:'How long do you like to cook?',hint:'Choose the most time you want to spend on a meal.',field:'minutes',choices:cookingTimes,required:true},
-  {title:'What is your grocery budget?',hint:'We’ll estimate your weekly shop in AED.',type:'budget'},
-  {title:'Choose your supermarket',hint:'We’ll plan your grocery list around your preferred shop. Prices are catalogue estimates.',field:'shop',choices:supermarkets.map(x=>[x,'shopping',x]),required:true},
-  {title:'How many are you cooking for?',hint:'We’ll scale your meals and shopping quantities.',type:'people'},
-  {title:'Which days will you cook?',hint:'Pick the days you want meals planned for.',field:'days',choices:DAYS.map((x,i)=>[i,'',x]),multi:true,layout:'days'},
-  {title:'What are you in the mood for?',hint:'Pick up to 3 meal styles.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
-  {title:'Any dietary needs?',hint:'Choose the diet your meal plan should follow.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
-  {title:'Any ingredients to avoid?',hint:'Choose all that apply, or select None. Always check food labels.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
-  {title:'What appliances do you have?',hint:'Select at least one appliance, then generate your plan.',field:'appliances',choices:appliances,multi:true,layout:'appliance-scene'},
+  {title:'How old are you?',hint:'We only use this information to personalise your experience.',type:'identity'},
+  {title:'What are you trying to achieve?',field:'goal',choices:goals,required:true},
+  {title:'What prevents you from doing that?',field:'obstacle',choices:obstacles,required:true},
+  {title:'Do you feel like you could save more on your shopping?',field:'savingConfidence',choices:savingsChoices,required:true},
+  {title:'How long do you usually spend cooking your meals?',hint:'We’ll match recipes to your routine.',field:'minutes',choices:cookingTimes,required:true},
+  {title:'Where did you hear about us?',field:'heardAbout',choices:discoveryChoices,required:true},
+  {title:'Choose your shop',hint:'We’ll plan your weekly shop around it. Prices are estimates.',field:'shop',choices:supermarkets.map(x=>[x,'',x]),required:true,layout:'shops'},
+  {title:'Who are you cooking for?',hint:'Choose your servings, days and meals.',type:'household'},
+  {title:'What’s your weekly budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
+  {title:'A little planning. A clearer weekly shop.',type:'budget-recap'},
+  {title:'What are you in the mood for?',hint:'Pick up to 3.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
+  {title:'Any dietary needs?',hint:'Choose the diet that fits your kitchen.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
+  {title:'Any allergies?',hint:'Pick all that apply, or select None.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
+  {title:'What appliances do you have?',hint:'Select at least one to plan with.',field:'appliances',choices:appliances,multi:true,layout:'appliance-scene'},
 ];
 let allergiesReviewed=false;
+function onboardingIcon(symbol){
+  const shapes={
+    'social-instagram':'<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#d6457b" stroke-width="2.2"/><circle cx="12" cy="12" r="4" fill="none" stroke="#d6457b" stroke-width="2.2"/><circle cx="18" cy="6" r="1.2" fill="#d6457b"/>',
+    'social-youtube':'<rect x="1" y="5" width="22" height="15" rx="5" fill="#f00035"/><path d="m10 9 6 3.5-6 3.5z" fill="white"/>',
+    'social-facebook':'<circle cx="12" cy="12" r="11" fill="#0866ff"/><path d="M14 22v-9h3l.5-4H14V7c0-1.3.5-2 2-2h2V2.5c-1-.3-2-.4-3-.4-3 0-5 1.8-5 5V9H7v4h3v9" fill="white"/>',
+    'social-tiktok':'<path d="M14 2h3c.4 3 2 4 5 4v3c-2 0-3.6-.6-5-1.6V16a6 6 0 1 1-6-6h1v3.2h-1a2.8 2.8 0 1 0 3 2.8Z" fill="#202020"/>',
+    'social-play':'<path d="M4 2v20l11-10Z" fill="#35ae70"/><path d="m4 2 14 8-3 2Z" fill="#4da9ed"/><path d="m4 22 14-8-3-2Z" fill="#f1bd35"/><path d="m18 10 4 2-4 2-3-2Z" fill="#ed635c"/>'
+  };
+  return shapes[symbol]?'<svg viewBox="0 0 24 24" aria-hidden="true">'+shapes[symbol]+'</svg>':Object.hasOwn(ICONS,symbol)?icon(symbol):esc(symbol);
+}
+function shopArtwork(name){return '<span class="shop-wordmark shop-'+name.toLowerCase().replace(/[^a-z]/g,'')+'">'+(name==='Any supermarket'?'<span aria-hidden="true">🛒</span><small>Any supermarket</small>':esc(name))+'</span>';}
 function wizardChoices(field,choices,multi=true){
   const selected=wizardDraft[field];
   return '<div class="quick-choices">'+choices.map(([value,symbol,label])=>{
     const active=value==='None'?allergiesReviewed&&selected.length===0:multi?selected.includes(value):String(selected)===String(value);
-    return '<button type="button" class="button quick-choice '+(active?'selected':'')+'" data-action="'+(multi?'pick-many':'pick-one')+'" data-field="'+field+'" data-id="'+esc(value)+'" aria-pressed="'+active+'">'+esc(label||value)+'</button>';
+    return '<button type="button" class="button quick-choice '+(active?'selected':'')+'" data-action="'+(multi?'pick-many':'pick-one')+'" data-field="'+field+'" data-id="'+esc(value)+'" aria-pressed="'+active+'">'+(symbol?'<span class="quick-choice-icon" aria-hidden="true">'+onboardingIcon(symbol)+'</span>':'')+esc(label||value)+'</button>';
   }).join('')+'</div>';
 }
 function wizardSection(title,content){return '<fieldset class="quick-section"><legend>'+esc(title)+'</legend>'+content+'</fieldset>';}
@@ -676,7 +690,7 @@ function renderGeneration(ready=false){
   const title=ready?'Your week is ready':(wizardDraft.name?wizardDraft.name+', we’re building your week…':'We’re building your week…');
   const tasks=ready?['Preferences applied','Meals scheduled','Grocery list ready']:['Matching recipes to your preferences','Lining up meals for the week','Putting together your grocery list'];
   return '<section class="wizard generation" role="status"><h1>'+esc(title)+'</h1><div class="food-orbit" aria-hidden="true">'+
-    '<div><img src="/brand.svg" alt=""><b>mealday</b></div>'+
+    '<div><img src="/chef.png" alt=""><b>mealday</b></div>'+
     ['🥒','🍋','🥑','🍅','🫑','🥬','🍆','🧄'].map((food,index)=>'<span style="--angle:'+index*45+'deg">'+food+'</span>').join('')+
     '</div><ul class="generation-list">'+tasks.map(task=>'<li><span aria-hidden="true">'+(ready?icon('check'):'')+'</span>'+task+'</li>').join('')+'</ul></section>';
 }
@@ -686,9 +700,11 @@ function renderWizard(preserveScroll=true){
   if(!p)return;
   let body='';
   if(current.type==='household'){
-    body=wizardSection('Household servings','<div class="counter quick-counter">'+button('−','people','counter-button','','data-id="-1" aria-label="One fewer person" '+(p.people===1?'disabled':''))+'<div><strong>'+p.people+'</strong><small>'+(p.people===1?'person':'people')+'</small></div>'+button('+','people','counter-button','','data-id="1" aria-label="One more person" '+(p.people===12?'disabled':''))+'</div>')+wizardSection('Cooking days',wizardChoices('days',DAYS.map((d,i)=>[i,'',d.slice(0,3)])))+wizardSection('Meals to plan',wizardChoices('mealTypes',[['breakfast','','Breakfast'],['lunch','','Lunch'],['dinner','','Dinner']]));
+    body=wizardSection('Household servings','<div class="counter quick-counter">'+button('−','people','counter-button','','data-id="-1" aria-label="One fewer person" '+(p.people===1?'disabled':''))+'<div><strong>'+p.people+'</strong><small>'+(p.people===1?'person':'people')+'</small></div>'+button('+','people','counter-button','','data-id="1" aria-label="One more person" '+(p.people===12?'disabled':''))+'</div>')+wizardSection('Cooking days',wizardChoices('days',DAYS.map((d,i)=>[i,'',d.slice(0,3)])))+wizardSection('Meals to plan',wizardChoices('mealTypes',[['breakfast','🌅','Breakfast'],['lunch','☀️','Lunch'],['dinner','🌙','Dinner']]))+'<details class="household-extra"><summary>City &amp; favourite cuisines</summary><label class="field">Your city'+dropdown('wizard-city',places,p.city).replace('name="wizard-city"','data-wizard-field="city"')+'</label>'+wizardSection('Favourite cuisines',wizardChoices('cuisines',styles))+'</details>';
   }else if(current.type==='food'){
     body='<label class="field">Diet'+dropdown('wizard-diet',foodTypes.map(x=>x[0]),p.diet).replace('name="wizard-diet"','data-wizard-field="diet"')+'</label>'+wizardSection('Ingredients to avoid',wizardChoices('allergies',allergyOptions))+'<p class="allergy-note">Select None if no exclusions apply. Always check packaged food labels.</p>';
+  }else if(current.type==='identity'){
+    body='<label class="identity-name">Your first name<input id="wizard-name" class="control wizard-name" aria-label="Your name" autocomplete="given-name" maxlength="40" placeholder="Your first name" value="'+esc(p.name)+'"></label><div class="wizard-choices rows">'+ageGroups.map(([value,symbol,label])=>'<button type="button" class="wizard-choice '+(p.ageGroup===value?'selected':'')+'" data-action="pick-one" data-field="ageGroup" data-id="'+value+'" aria-pressed="'+(p.ageGroup===value)+'">'+label+'</button>').join('')+'</div>';
   }else if(current.type==='name'){
     body='<input id="wizard-name" class="control wizard-name" aria-label="Your name" type="text" autocomplete="given-name" maxlength="40" placeholder="Your first name" value="'+esc(p.name)+'">';
   }else if(current.type==='intro'){
@@ -700,9 +716,9 @@ function renderWizard(preserveScroll=true){
   }else if(current.type==='budget'){
     body='<div class="wizard-budget"><small>AED</small><strong id="wizard-budget-value">'+money(p.budget)+'</strong><p>for '+p.days.length+(p.days.length===1?' day':' days')+' · '+p.people+(p.people===1?' person':' people')+'</p></div>'+
      '<input id="wizard-budget-range" aria-label="Shopping budget slider" type="range" min="30" max="600" step="5" value="'+Math.max(30,Math.min(600,p.budget))+'"><div class="range-labels"><span>AED 30</span><span>AED 600</span></div>'+
-     '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label><label class="field quick-time">Maximum cooking time'+dropdown('wizard-minutes',[15,20,30,45,60,90,120,240,1440],p.minutes).replace('name="wizard-minutes"','data-wizard-field="minutes"')+'</label>';
+     '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label>';
   }else if(current.type==='budget-recap'){
-    body='<div class="budget-recap"><span aria-hidden="true">🛒</span><strong>AED '+money(p.budget)+'</strong>'+
+    body='<div class="budget-recap"><span aria-hidden="true">🤯</span><strong>AED '+money(p.budget)+'</strong>'+
       '<p>Grocery budget for '+p.days.length+' cooking '+(p.days.length===1?'day':'days')+' and '+p.people+(p.people===1?' person':' people')+'.</p>'+
       '<p>Mealday uses catalogue prices to estimate your total.</p></div>';
   }else if(current.type==='review'){
@@ -727,10 +743,10 @@ function renderWizard(preserveScroll=true){
       '<div class="wizard-choices '+layout+'">'+(layout==='appliance-scene'?'<img src="/appliance-kitchen.jpg" alt="">':'')+current.choices.map(([value,symbol,label])=>{
         const active=value==='None'?(current.field!=='allergies'||allergiesReviewed)&&selected.length===0:current.multi?selected.includes(value):String(selected)===String(value);
         const disabled=current.field==='priorities'&&selected.length===3&&!active&&value!=='None';
-        const artwork=symbol&&Object.hasOwn(ICONS,symbol)?icon(symbol):esc(symbol);
+        const artwork=onboardingIcon(symbol);
         return '<button type="button" class="wizard-choice '+(active?'selected':'')+'" data-action="'+(current.multi?'pick-many':'pick-one')+'" data-field="'+current.field+'" data-id="'+esc(value)+'" aria-pressed="'+active+'" '+(disabled?'disabled':'')+'>'+
           (symbol&&layout!=='appliance-scene'?'<span class="choice-icon" aria-hidden="true">'+artwork+'</span>':'')+
-          '<span class="choice-label">'+esc(label||value)+'</span><span class="choice-mark" aria-hidden="true">'+(active?'✓':'○')+'</span></button>';
+          '<span class="choice-label">'+(layout==='shops'?shopArtwork(value):esc(label||value))+'</span><span class="choice-mark" aria-hidden="true">'+(active?'✓':'○')+'</span></button>';
       }).join('')+'</div>'+(current.field==='allergies'?'<p class="allergy-note">Always check packaged food labels.</p>':'')+'</div>';
   }
   screen.innerHTML='<div class="wizard"><div class="wizard-header">'+button('←','back-step','back-circle','','aria-label="Go back" '+(busy?'disabled':''))+
@@ -747,6 +763,7 @@ function canContinue(){
   if(current.type==='household')return Number.isInteger(p.people)&&p.people>=1&&p.people<=12&&p.days.length>0&&p.mealTypes.length>0;
   if(current.type==='food')return foodTypes.some(x=>x[0]===p.diet)&&allergiesReviewed;
   if(current.type==='review')return p.appliances.length>0;
+  if(current.type==='identity')return Boolean(p.name.trim())&&ageGroups.some(([id])=>id===p.ageGroup);
   if(current.type==='name')return Boolean(p.name.trim());
   if(current.type==='budget')return Number.isFinite(p.budget)&&p.budget>=20&&p.budget<=5000;
   if(current.field==='allergies')return allergiesReviewed;
@@ -761,7 +778,7 @@ function updateWizardContinue(){
 async function nextWizard(){
   if(!canContinue())return;
   const current=steps[step],p=wizardDraft;
-  if(current.type==='name')p.name=p.name.trim();
+  if(current.type==='name'||current.type==='identity')p.name=p.name.trim();
   if(!editing&&current.field==='goal'){
     p.people=p.goal==='solo'?1:p.goal==='family'?4:p.people;
     p.priorities=p.goal==='simple'?['Quick']:p.goal==='family'?['Family']:['Everyday'];

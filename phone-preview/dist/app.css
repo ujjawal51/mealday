@@ -643,3 +643,53 @@ body[data-view=plan] .optional-fields .surface-card{box-shadow:none;border:0;pad
 .phone-welcome .mini-cuisines small{display:block;font-size:4px;line-height:1.5;font-weight:400;color:#8a8a84}
 .phone-welcome .mini-cuisines div:last-child{grid-column:1/-1;width:50%;justify-self:center}
 .phone-welcome .preview-autoplay svg{width:12px;height:12px}
+
+/* One consistent, spacious 14-step setup with reference-style cards and icons. */
+.wizard{--setup-bg:#fafaf8;--setup-lime:#9bce31;background:var(--setup-bg);max-width:575px;height:100svh;height:100dvh}
+body[data-view=setup]{background:#fafaf8}
+.wizard .wizard-header{display:flex;align-items:center;gap:12px;padding:20px 18px 0;min-height:50px;margin:0 0 30px}
+.wizard .back-circle{width:30px;height:30px;min-width:30px;padding:0;border:1px solid #e8e8e6;background:white;border-radius:50%;font-size:17px;color:#222;box-shadow:none}
+.wizard .setup-step{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.wizard progress{flex:1;height:4px;border:0;border-radius:10px;overflow:hidden;background:#e5e5e3;accent-color:#9bce31}
+.wizard progress::-webkit-progress-bar{background:#e5e5e3;border-radius:10px}
+.wizard progress::-webkit-progress-value{background:#9bce31;border-radius:10px}
+.wizard progress::-moz-progress-bar{background:#9bce31;border-radius:10px}
+.wizard .wizard-body{padding:0 18px 18px;min-height:0;overflow-y:auto;flex:1;scrollbar-width:thin}
+.wizard .wizard-body h1{margin:0 0 18px;font:730 23px/1.22 system-ui,sans-serif;letter-spacing:-.65px;color:#242624;text-transform:lowercase}
+.wizard .wizard-hint{font-size:14px;line-height:1.45;font-weight:500;color:#70736c;margin:-4px 0 22px}
+.wizard .wizard-choices{gap:10px}
+.wizard .wizard-choice{min-height:56px;padding:14px 16px;border:2px solid transparent;border-radius:14px;background:#fff;gap:14px;font-size:15px;line-height:1.3;font-weight:600;box-shadow:none}
+.wizard .wizard-choice.selected{border-color:#9bce31}
+.wizard .rows .choice-mark{display:none}
+.wizard .choice-icon{width:27px;min-width:27px;font-size:26px;line-height:1.15}
+.wizard .choice-icon svg{width:26px;height:26px;display:block}
+.wizard .tiles .wizard-choice{min-height:86px;padding:14px 7px;gap:9px;border:2px solid #e7e7e9;border-radius:13px;font-size:14px}
+.wizard .tiles .wizard-choice.selected{border-color:#9bce31}
+.wizard .wizard-choices.tiles{gap:9px}
+.wizard .wizard-choice:disabled{opacity:.5}
+.wizard .wizard-footer{padding:10px 18px max(20px,env(safe-area-inset-bottom));background:#fafaf8;flex-shrink:0}
+.wizard .wizard-footer>.button{border-radius:999px;min-height:47px;font-size:16px;color:white;font-weight:650;background:#9bce31;box-shadow:0 7px 13px #91bc3030}
+.wizard .wizard-footer>.button:disabled{color:#f7fbe9;background:#d0e79d;box-shadow:none}
+.wizard .identity-name{display:block;margin:0 0 15px;text-align:left;font-size:12px;color:#72756d}
+.wizard .identity-name input{margin-top:5px;min-height:43px;font-size:15px;background:#fff;border:1px solid #e7e7e4;border-radius:12px}
+.wizard [data-step=identity] .wizard-choice{min-height:48px;padding-block:12px}
+.wizard .shops{gap:14px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.wizard .shops .wizard-choice{min-height:0;padding:10px 5px;border:2px solid transparent;border-radius:17px;aspect-ratio:1}
+.wizard .shops .wizard-choice.selected{border-color:#9bce31}
+.shop-wordmark{display:block;font-size:clamp(14px,4.8vw,25px);font-weight:850;letter-spacing:-.6px;line-height:1.1}
+.shop-carrefour{color:#15539f}.shop-lulu{color:#159345;font-size:clamp(25px,7vw,38px)}.shop-spinneys{color:#24633b;font-style:italic}.shop-waitrose{color:#52753b}.shop-unioncoop{color:#146784}.shop-nesto{color:#d82d36;font-size:clamp(22px,6vw,31px)}.shop-choithrams{color:#bc263c}
+.shop-wordmark small{display:block;font-size:12px;font-weight:650;letter-spacing:0}.shop-anysupermarket>span{display:block;font-size:28px;margin-bottom:8px}
+.wizard .counter{padding:12px 0 27px;gap:25px}
+.wizard .counter strong{font-size:54px}.wizard .counter-button{width:44px;height:44px}
+.wizard .quick-section{margin:0 0 20px;padding:0;border:0}.wizard .quick-section legend{font-size:13px;color:#787b73;font-weight:600;margin-bottom:10px}
+.wizard .quick-choices{display:flex;flex-wrap:wrap;gap:7px}
+.wizard .quick-choice{display:flex;align-items:center;gap:6px;min-height:39px;padding:9px 12px;border:1.5px solid #e3e4df;background:white;font-size:13px;color:#333;border-radius:12px;box-shadow:none}
+.wizard .quick-choice.selected{border-color:#9bce31;background:#f8fbed}
+.quick-choice-icon svg{width:18px;height:18px}.household-extra{padding:14px 0;border-top:1px solid #e7e7e3}.household-extra summary{font-size:14px;color:#586b37;cursor:pointer;margin-bottom:12px}
+.wizard .wizard-budget{padding-top:46px}.wizard .wizard-budget strong{font-size:64px}.wizard .wizard-budget p{font-size:13px;color:#999c93}
+.wizard input[type=range]{margin-top:20px;accent-color:#e8bf40}.wizard .range-labels{color:#999c93;font-size:12px}
+.wizard .budget-recap{margin-top:20px}.wizard .budget-recap>span{font-size:66px;display:block;margin-bottom:25px}.wizard .budget-recap strong{font-size:56px;color:#9bce31}.wizard .budget-recap p{font-size:15px;line-height:1.5;max-width:300px;margin:20px auto}
+.wizard .allergy-note{font-size:12px;line-height:1.4;color:#7e8276;margin-top:12px}
+.generation{padding:40px 18px 20px}.generation h1{font-size:23px;line-height:1.25;letter-spacing:-.5px}.generation .food-orbit{margin:auto;flex-shrink:0}.generation .food-orbit img{object-fit:contain;width:52px;height:65px}.generation .generation-list{background:white;border-radius:18px;box-shadow:0 5px 8px #0002;padding:20px 18px;margin:0;font-size:14px}
+@media(max-height:700px){.wizard .wizard-header{padding-top:14px;margin-bottom:22px}.wizard .wizard-body h1{font-size:21px}.wizard .wizard-choice{min-height:50px;padding-block:11px}.wizard .tiles .wizard-choice{min-height:77px}.wizard .wizard-footer{padding-bottom:14px}}
+.wizard .back-circle{height:30px;min-height:30px;flex-shrink:0;line-height:1;display:grid;place-items:center}
