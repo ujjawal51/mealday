@@ -693,3 +693,36 @@ body[data-view=setup]{background:#fafaf8}
 .generation{padding:40px 18px 20px}.generation h1{font-size:23px;line-height:1.25;letter-spacing:-.5px}.generation .food-orbit{margin:auto;flex-shrink:0}.generation .food-orbit img{object-fit:contain;width:52px;height:65px}.generation .generation-list{background:white;border-radius:18px;box-shadow:0 5px 8px #0002;padding:20px 18px;margin:0;font-size:14px}
 @media(max-height:700px){.wizard .wizard-header{padding-top:14px;margin-bottom:22px}.wizard .wizard-body h1{font-size:21px}.wizard .wizard-choice{min-height:50px;padding-block:11px}.wizard .tiles .wizard-choice{min-height:77px}.wizard .wizard-footer{padding-bottom:14px}}
 .wizard .back-circle{height:30px;min-height:30px;flex-shrink:0;line-height:1;display:grid;place-items:center}
+
+/* Settings: readable account overview, clear actions and comfortable touch targets. */
+body[data-view=settings] main{padding-top:0}
+.phone-settings{max-width:640px;margin:0 auto;padding:28px 20px 34px;color:#252b25}
+.phone-settings .settings-heading{text-align:left;margin:0 0 24px;padding:0}
+.phone-settings .settings-heading>p{font-size:11px;font-weight:750;letter-spacing:1.5px;text-transform:uppercase;color:#818875;margin-bottom:8px}
+.phone-settings .settings-heading h1{font-size:32px;line-height:1.1;letter-spacing:-1px;margin:0 0 10px;font-weight:760}
+.phone-settings .settings-heading>span{font-size:14px;color:#71786c;line-height:1.5}
+.phone-settings .settings-profile{display:flex;align-items:center;gap:15px;padding:22px 18px;background:linear-gradient(125deg,#edf4dc,#fff 85%);border:1px solid #e1e8d5;border-radius:22px;box-shadow:none;margin:0}
+.phone-settings .profile-avatar{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;padding:0;border-radius:18px;background:#fff;color:#688a28;border:1px solid #dbe6c8;font-size:26px;font-weight:750}
+.phone-settings .profile-details{min-width:0;flex:1}
+.phone-settings .profile-eyebrow{display:block;background:transparent;padding:0;color:#85936b;font-size:9px;letter-spacing:1.4px;font-weight:750;margin:0 0 6px}
+.phone-settings .settings-profile h2{font-size:22px;line-height:1.2;font-weight:750;overflow-wrap:anywhere;margin:0 0 5px}
+.phone-settings .settings-profile p{font-size:13px;line-height:1.4;color:#6b755f;margin:0 0 8px}
+.phone-settings .profile-storage{display:inline-block;font-size:11px;padding:4px 7px;border-radius:6px;background:#e5edda;color:#5e7245;line-height:1.4;overflow-wrap:anywhere}
+.phone-settings .edit-person{width:36px;min-width:36px;height:36px;min-height:36px;border:1px solid #dde4d3;border-radius:50%;background:#fff;padding:9px;margin:0;color:#657452;align-self:flex-start}
+.phone-settings .edit-person svg{width:17px;height:17px}
+.settings-stats{display:grid;grid-template-columns:repeat(3,1fr);margin:16px 0 30px;padding:16px 0;background:white;border:1px solid #e8ebe3;border-radius:17px}
+.settings-stats>div{text-align:center;border-right:1px solid #e8ebe3}.settings-stats>div:last-child{border:0}
+.settings-stats strong{display:block;font-size:23px;font-weight:750;line-height:1.2}.settings-stats span{display:block;color:#7b8374;font-size:11px;margin-top:6px}
+.settings-section{margin:0 0 26px}.settings-section>h2{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#7a8370;font-weight:750;margin:0 0 11px;padding:0 5px}
+.phone-settings .setting-list{border:1px solid #e6e9e0;border-radius:18px;overflow:hidden;background:white;box-shadow:none;margin:0}
+.phone-settings .setting-row{display:flex;align-items:center;gap:13px;padding:16px;min-height:72px;width:100%;border:0;border-bottom:1px solid #eef0e9;background:white;text-align:left;border-radius:0;color:#30392c;font-family:inherit;box-shadow:none}
+.phone-settings .setting-row:last-child{border-bottom:0}.phone-settings .setting-row:hover{background:#fbfcf8}.phone-settings .setting-row:disabled{opacity:.52;cursor:default}
+.setting-symbol{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:11px;background:#f0f4e8;color:#7b9354}.setting-symbol svg{width:19px;height:19px}
+.phone-settings .setting-label{flex:1;min-width:0}.phone-settings .setting-row strong{display:block;font-size:15px;line-height:1.35;font-weight:620}.phone-settings .setting-row small{display:block;margin-top:4px;color:#858b7f;font-size:12px;line-height:1.5;font-weight:400}
+.phone-settings .setting-chevron{font-size:22px;font-weight:400;color:#b0b7a7;flex:none}
+.phone-settings .setting-destructive strong{color:#a74c3d}.phone-settings .setting-destructive .setting-symbol{background:#fcf0eb;color:#b37c6a}
+.settings-backup{background:white;border:1px solid #e6e9e0;border-radius:18px;padding:18px}.backup-status{display:flex;align-items:flex-start;gap:12px}.backup-status h3{font-size:15px;font-weight:650;margin:0 0 6px}.backup-status p{font-size:12px;line-height:1.6;color:#858b7f}
+.backup-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.phone-settings .settings-outline{flex:1;font-size:12px;padding:11px 9px;min-height:40px;border:1px solid #dfe5d5;border-radius:11px;background:#fafcf6;color:#607543;font-weight:650;box-shadow:none;white-space:nowrap}
+.settings-footnote{text-align:center;font-size:12px;line-height:1.7;color:#9aa38f;margin:30px 0 5px}.settings-footnote strong{font-size:19px;color:#90ac5d;letter-spacing:-.6px}
+.dialog-settings-actions{display:grid;gap:10px;margin-top:20px}.language-active{display:flex;gap:12px;align-items:center;background:#f4f8ec;padding:16px;border:1px solid #dfebcc;border-radius:14px;margin-bottom:15px;color:#627a39}.language-active small{display:block;font-size:12px;margin-top:4px;color:#84916f}
+@media(max-width:380px){.phone-settings{padding:24px 14px}.phone-settings .settings-profile{gap:10px;padding:18px 13px}.phone-settings .profile-avatar{width:44px;height:44px;flex-basis:44px}.phone-settings .settings-profile h2{font-size:20px}.phone-settings .setting-row{padding:14px 12px;gap:10px}}

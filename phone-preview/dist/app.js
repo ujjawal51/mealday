@@ -1,3 +1,4 @@
+import {weeklyCalendar,kitchenBackup} from './settings-tools.js';
 import {createPreviewSlideshow} from './preview-slideshow.js';
 import {createCloudBackup} from './cloud-backup.js';
 import {createCookingTimer,timerText} from './cooking-timer.js';
@@ -40,6 +41,7 @@ const ICONS = {
   back:'<path d="M19 12H5m6-6-6 6 6 6"/>',
   gear:'<path d="M10 3h4l.6 2.5 1.6.9 2.5-.7 2 3.4-1.9 1.8v2.2l1.9 1.8-2 3.4-2.5-.7-1.6.9L14 21h-4l-.6-2.5-1.6-.9-2.5.7-2-3.4 1.9-1.8v-2.2L3.3 9.1l2-3.4 2.5.7 1.6-.9L10 3Z"/><circle cx="12" cy="12" r="3"/>',
 };
+Object.assign(ICONS,{cloud:'<path d="M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 4.5 4.5 0 1 1 0 9Z"/>',download:'<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>',bell:'<path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5Zm5 3h4"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18m0-18c5 5 5 13 0 18"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/>'});
 const labels = {week:'Plan',recipes:'Meals',shopping:'Shopping',pantry:'Kitchen',plan:'Preferences',settings:'Settings',history:'Cooking history'};
 function icon(name){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
 const esc = value => String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -422,11 +424,12 @@ document.addEventListener('click',async event=>{
   else if(action==='open-recipes')setView('recipes');
   else if(action==='share-plan')sharePlan();
   else if(action==='privacy')showPrivacy();
+  else if(action==='export-backup'){downloadKitchen();}
+  else if(action==='language'){openDialog('App language','English is the current app language.','<div class="language-active">'+icon('check')+'<span><strong>English</strong><small>Active language</small></span></div><p class="quick-help">Other languages are not available yet.</p>'+button('Done','close','green wide'));}
   else if(action==='edit-name')openDialog('Edit your name','','<form id="name-form"><label class="field">Name<input class="control" name="name" maxlength="40" required value="'+esc(state.profile.name)+'"></label><button class="button green wide">Save name</button></form>');
   else if(action==='clear-saved')openDialog('Reset saved meals?','This clears your favourites list.',button('Cancel','close')+' '+button('Reset saved meals','confirm-saved','danger'));
   else if(action==='confirm-saved'){state.favorites=[];persist();dialog.close();notify('Saved meals cleared.');}
-  else if(action==='weekly-reminder')openDialog('Weekly plan reminder','Add a recurring Sunday reminder for 10:00 in your calendar.',
-    window.MealdayAndroid?.weeklyReminder?button('Open calendar','open-reminder-calendar','green wide','week'):'<p>This option opens your calendar in the Android app.</p>');
+  else if(action==='weekly-reminder')openReminder();
   else if(action==='open-reminder-calendar'){dialog.close();window.MealdayAndroid.weeklyReminder();}
   else if(action==='settings-reset')resetDialog();
   else if(action==='confirm-reset'){dialog.close();resetKitchen();}
@@ -477,6 +480,10 @@ document.addEventListener('click',async event=>{
 });
 document.addEventListener('submit',async event=>{
   const form=event.target;
+  if(form.id==='reminder-form'){
+    event.preventDefault();const data=new FormData(form),day=Number(data.get('day')),time=String(data.get('time'));
+    try{const calendar=weeklyCalendar((day+1)%7,time);downloadFile('mealday-weekly-reminder.ics',calendar,'text/calendar;charset=utf-8');state.reminder={day,time};persist();dialog.close();render();notify('Calendar file downloaded. Open it in your calendar to enable reminders.');}catch(e){notify(e.message);}return;
+  }
   if(form.id==='extra-grocery-form'){event.preventDefault();const name=String(new FormData(form).get('item')||'').trim();if(!name)return;state.extraGroceries=[...(state.extraGroceries||[]),{id:crypto.randomUUID(),name,checked:false}];persist();dialog.close();render();return;}
   if(form.id==='cloud-login'){
     event.preventDefault();const data=new FormData(form),submit=form.querySelector('button[type="submit"]');submit.disabled=true;
@@ -807,8 +814,11 @@ function planSettings(){
     '<div class="setting-list">'+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have')+'</div><button class="button green wide" '+(busy?'disabled':'')+'>'+icon('refresh')+(busy?'Building your plan…':'Apply & rebuild plan')+'</button></form>';
 }
 function settingRow(label,action,note=''){
-  return '<button type="button" class="setting-row" data-action="'+action+'"><span><strong>'+label+'</strong>'+(note?'<small>'+note+'</small>':'')+'</span><span aria-hidden="true">›</span></button>';
+  const symbols={'edit-name':'people','edit-setup':'leaf','open-recipes':'recipes','go-history':'week','go-pantry':'pantry','go-home':'hob','review-setup':'check','language':'globe','weekly-reminder':'bell','cloud-account':'cloud','export-backup':'download','share-plan':'share','privacy':'shield','clear-saved':'heart','settings-reset':'refresh'};
+  const disabled=action==='share-plan'&&!state.result;
+  return '<button type="button" class="setting-row '+(['clear-saved','settings-reset'].includes(action)?'setting-destructive':'')+'" data-action="'+action+'" '+(disabled?'disabled':'')+'><span class="setting-symbol" aria-hidden="true">'+icon(symbols[action]||'gear')+'</span><span class="setting-label"><strong>'+esc(label)+'</strong>'+(note?'<small>'+esc(note)+'</small>':'')+'</span><span class="setting-chevron" aria-hidden="true">›</span></button>';
 }
+
 function cookingDate(value){return value?new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)):'Date not recorded';}
 function cookingHistoryPage(){
   const entries=historyEntries(cookingHistory),recipes=new Set(entries.map(e=>e.recipeId));
@@ -817,13 +827,28 @@ function cookingHistoryPage(){
     (entries.length?'<ul class="cooking-history-list">'+entries.map(e=>'<li class="surface-card"><span class="history-check" aria-hidden="true">'+icon('check')+'</span><div><h2>'+esc(e.name||'Previously cooked recipe')+'</h2><p>'+esc(cookingDate(e.cookedAt))+(e.cookedAt?'':' · imported from your earlier saved marks')+'</p>'+button('View recipe','recipe','ghost small','right','data-id="'+esc(e.recipeId)+'"')+'</div></li>').join('')+'</ul>':'<div class="surface-card empty">No cooked meals yet. Mark a recipe as cooked to start your history.'+button('Browse recipes','open-recipes','ghost small','right')+'</div>');
 }
 function settings(){
-  return '<div class="phone-settings"><header><p>Your account</p><h1>Settings</h1></header>'+
-  '<div class="settings-profile"><div><h2>Hi, '+esc(state.profile.name||'Chef')+' '+button('','edit-name','edit-person','edit','aria-label="Edit your name"')+'</h2><p>Shopping at '+esc(state.profile.shop)+'</p></div><span>'+(cloudBackup.info().account?'Account':'On device')+'</span></div>'+
-  cloudAccountCard()+'<h2 class="settings-caption">App</h2><div class="setting-list">'+settingRow('Welcome screen','go-home')+settingRow('Recipe library','open-recipes','Browse or find your saved meals')+settingRow('Cooking history','go-history','Your cooked meals, saved across rebuilt plans')+settingRow('Profile & food preferences','edit-setup')+settingRow('Review setup · '+steps.length+' steps','review-setup')+'<div class="setting-row"><span><strong>Language</strong><small>English</small></span></div>'+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+'</div>'+
-  '<h2 class="settings-caption">Notifications</h2><div class="setting-list">'+settingRow('Weekly plan reminder','weekly-reminder','Sunday at 10:00 · Add to calendar')+'</div>'+
-  '<h2 class="settings-caption">Support</h2><div class="setting-list">'+settingRow('Share meal plan','share-plan')+'</div>'+
-  '<h2 class="settings-caption">Privacy</h2><div class="setting-list">'+settingRow('Privacy policy','privacy')+settingRow('Reset this kitchen','settings-reset','Clear your plan, cooking history, pantry, notes and ratings')+'</div></div>';
+ const c=cloudBackup.info(),p=state.profile,count=historyEntries(cookingHistory).length;
+ const section=(title,body)=>'<section class="settings-section"><h2>'+title+'</h2><div class="setting-list">'+body+'</div></section>';
+ return '<div class="phone-settings"><header class="settings-heading"><p>Your kitchen, your way</p><h1>Settings</h1><span>Manage your profile, preferences and data.</span></header>'+
+ '<section class="settings-profile"><span class="profile-avatar" aria-hidden="true">'+esc((p.name||'C').trim().slice(0,1).toUpperCase())+'</span><div class="profile-details"><span class="profile-eyebrow">MEALDAY PROFILE</span><h2>'+esc(p.name||'Chef')+'</h2><p>'+esc(p.city)+' · '+esc(p.shop)+'</p><span class="profile-storage">'+(c.account?'Signed in · '+esc(c.account.email):'Saved on this device')+'</span></div>'+button('','edit-name','edit-person','edit','aria-label="Edit your name"')+'</section>'+
+ '<div class="settings-stats"><div><strong>'+state.favorites.length+'</strong><span>Saved meals</span></div><div><strong>'+count+'</strong><span>Times cooked</span></div><div><strong>'+p.days.length+'</strong><span>Cooking days</span></div></div>'+
+ section('Your kitchen',settingRow('Profile & food preferences','edit-setup','Diet, budget, household and supermarkets')+settingRow('Recipe library','open-recipes','Browse recipes and your saved favourites')+settingRow('Cooking history','go-history','Your meals, saved across rebuilt plans')+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have'))+
+ '<section class="settings-section"><h2>Account & backup</h2><div class="settings-backup"><div class="backup-status"><span class="setting-symbol" aria-hidden="true">'+icon('cloud')+'</span><div><h3>'+(c.account?'Your cloud account':'Your data stays with you')+'</h3><p>'+(c.account?esc(c.message):'A device backup is available now. Cloud sync requires a connected Mealday server.')+'</p></div></div><div class="backup-actions">'+button(c.account?'Manage account':'Backup & login','cloud-account','settings-outline')+button('Download backup','export-backup','settings-outline')+'</div></div></section>'+
+ section('App preferences',settingRow('Weekly plan reminder','weekly-reminder',state.reminder?DAYS[state.reminder.day]+' at '+state.reminder.time+' · Calendar download':'Choose a day and time for your calendar')+settingRow('Language','language','English')+settingRow('Review setup','review-setup',steps.length+' choices · edit your kitchen setup')+settingRow('Welcome screen','go-home','See how Mealday works'))+
+ section('Sharing & privacy',settingRow('Share meal plan','share-plan',state.result?'Send your weekly meals to someone': 'Build a plan to start sharing')+settingRow('Privacy & data','privacy','How Mealday stores your kitchen'))+
+ section('Data controls',settingRow('Reset saved meals','clear-saved','Clear favourites; keep your plan and cooking history')+settingRow('Reset this kitchen','settings-reset','Clear this kitchen’s meals, notes and preferences'))+
+ '<p class="settings-footnote">Made for your everyday cooking.<br><strong>mealday.</strong></p></div>';
 }
+function downloadFile(name,content,type){
+ const url=URL.createObjectURL(new Blob([content],{type})),link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+function downloadKitchen(){downloadFile('mealday-kitchen-backup.json',kitchenBackup(state,cookingHistory),'application/json');notify('Kitchen backup downloaded. Keep the file somewhere safe.');}
+function openReminder(){
+ const reminder=state.reminder||{day:6,time:'10:00'};
+ openDialog('Weekly plan reminder','Choose a time in your local calendar.',
+ '<form id="reminder-form"><label class="field">Day<select class="control" name="day">'+DAYS.map((name,i)=>'<option value="'+i+'" '+(i===reminder.day?'selected':'')+'>'+name+'</option>').join('')+'</select></label><label class="field">Time<input class="control" name="time" type="time" value="'+esc(reminder.time)+'" required></label><p class="quick-help">Download and open the calendar file, then save the repeating event in your calendar. Calendar notifications follow your calendar app’s settings.</p><button class="button green wide" type="submit">Download calendar reminder</button></form>'+(window.MealdayAndroid?.weeklyReminder?button('Use Android calendar','open-reminder-calendar','ghost wide'):''));
+}
+
 function sharePlan(){
   const text=state.result?.meals.map(x=>DAYS[x.day]+' · '+cap(x.meal)+': '+x.name).join('\n');
   if(!text){notify('Build a meal plan before sharing.');return;}
@@ -831,7 +856,7 @@ function sharePlan(){
   openDialog('Share your plan','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(text)+'</textarea>');
 }
 function showPrivacy(){
-  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Account passwords are hashed by the Mealday backend; session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>When you share a plan or add a reminder, Android opens the corresponding app. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
+  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Account passwords are hashed by the Mealday backend; session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>Plan sharing uses Android sharing or a copyable text view. Calendar reminders are downloaded as a file for you to open and save in your calendar. A downloaded backup contains your kitchen data; keep it private. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
 }
 function resetDialog(){
   openDialog('Reset this kitchen?','','<p class="notice">This resets your current kitchen. If it belongs to an account, the reset will sync to that account when connected. Other account and guest recovery copies on this browser are retained.</p>'+button('Cancel','close')+' '+button('Reset kitchen','confirm-reset','danger'));
@@ -864,7 +889,10 @@ function cloudAccountCard(){
   const c=cloudBackup.info();return '<h2 class="settings-caption">Backup & sync</h2><div class="setting-list">'+settingRow(c.account?c.account.email:'Cloud backup & login','cloud-account',c.message)+'</div>';
 }
 function openCloudAccount(){
-  const c=cloudBackup.info();if(!c.account){location.href='/login.html';return;}let content='<p class="notice">'+esc(c.message)+'</p>';
+  const c=cloudBackup.info();if(!c.account){
+    if(['unavailable','checking'].includes(c.status)){openDialog('Backup & login','Your kitchen is saved on this device.','<p class="quick-help">'+esc(c.message)+'</p><p>Download a copy of your preferences, saved meals, notes, ratings and cooking history. Online login and sync will become available when this deployment connects to a Mealday server.</p><div class="dialog-settings-actions">'+button('Download kitchen backup','export-backup','green wide')+button('Check cloud connection','cloud-connect','ghost wide')+button('Done','close','ghost wide')+'</div>');return;}
+    location.href='/login.html';return;
+  }let content='<p class="notice">'+esc(c.message)+'</p>';
   if(c.account){
     if(c.conflict)content+='<p>Keep this device’s full kitchen, or load the cloud version. This choice applies to the full backup.</p>'+button('Keep this device','cloud-local','primary')+button('Load cloud version','cloud-remote','ghost');
     else content+=button('Sync now','cloud-retry','primary')+(c.hasGuest?button('Import guest kitchen','cloud-import','ghost'):'');

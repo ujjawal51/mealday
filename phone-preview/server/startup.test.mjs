@@ -7,6 +7,7 @@ async function boot(stored=null){
  const classes={toggle(){},contains(){return false;}};
  const node=()=>({innerHTML:'',dataset:{},classList:classes,setAttribute(){},removeAttribute(){},addEventListener(){},focus(){},querySelector(){return null;}});
  const screen=node(),nav=node(),dialog=node(),main=node(),toast=node();
+ dialog.showModal=()=>{dialog.open=true;};dialog.close=()=>{dialog.open=false;};
  screen.querySelector=s=>s==='.wizard-body'?{scrollTop:0}:null;screen.querySelectorAll=()=>[];
  const nodes={'#screen':screen,'.nav':nav,'#dialog':dialog,'#main':main,'#toast':toast};
  const buttons=['week','recipes','plan','settings'].map(view=>({...node(),dataset:{view},classList:{toggle(){}},setAttribute(){},removeAttribute(){}}));
@@ -18,7 +19,7 @@ async function boot(stored=null){
  assert.ok(html.indexOf('/startup.js')<html.indexOf('/'+entry));
  vm.runInContext(await readFile(new URL('startup.js',dist),'utf8'),context);
  try{vm.runInContext(await readFile(new URL(entry,dist),'utf8'),context);}catch(e){throw Error(e.message);}
- return {screen,buttons,context,storage,events};
+ return {screen,buttons,context,storage,events,dialog};
 }
 test('Fresh phone boots the shipped classic bundle without module loading or modern hasOwn/structuredClone APIs',async()=>{
  const {screen,buttons,context}=await boot();assert.equal(context.mealdayStarted,true);assert.match(screen.innerHTML,/Get started/);assert.match(screen.innerHTML,/Plan dinners/);assert.match(screen.innerHTML,/src="\/chef.png" alt="Mealday chef"/);assert.match(screen.innerHTML,/Pause slideshow/);assert.ok(buttons.every(b=>b.innerHTML.includes('<svg')));
@@ -61,4 +62,18 @@ test('All 18 onboarding screens return, keep choices on Back, and require explic
  await click('back-step');at(9);assert.match(screen.innerHTML,/data-field="days" data-id="6" aria-pressed="true"/);
  await click('back-step');at(8);assert.match(screen.innerHTML,/>5<\/strong>/);
  assert.equal(storage.has('mealday.android.v1'),false,'Unfinished wizard must not overwrite the kitchen');
+});
+
+test('Settings actions open real controls and saved-meal reset preserves notes and ratings',async()=>{
+ const {screen,events,dialog,storage}=await boot({profile:{name:'Chef',city:'Dubai',shop:'LuLu',days:[0],people:1,budget:100,mealTypes:['dinner']},pantry:{},favorites:[{id:'rice'}],recipeJournal:{rice:{rating:5,note:'Keep'}},checked:[],result:null});
+ const click=async(action)=>events.click({target:{closest:()=>({dataset:{action}})}});
+ await events.click({target:{closest:()=>({dataset:{view:'settings'}})}});
+ assert.match(screen.innerHTML,/Your kitchen, your way/);assert.match(screen.innerHTML,/Download backup/);
+ await click('weekly-reminder');assert.match(dialog.innerHTML,/id="reminder-form"/);assert.match(dialog.innerHTML,/type="time"/);assert.match(dialog.innerHTML,/Download calendar reminder/);
+ await click('close');await click('language');assert.match(dialog.innerHTML,/Active language/);
+ await click('close');await click('edit-name');assert.match(dialog.innerHTML,/id="name-form"/);
+ await click('close');await click('cloud-account');assert.match(dialog.innerHTML,/Download kitchen backup/);assert.match(dialog.innerHTML,/Check cloud connection/);
+ await click('close');
+ await click('clear-saved');assert.match(dialog.innerHTML,/confirm-saved/);await click('confirm-saved');
+ const saved=JSON.parse(storage.get('mealday.android.v1'));assert.equal(saved.favorites.length,0);assert.equal(saved.recipeJournal.rice.rating,5);assert.equal(saved.recipeJournal.rice.note,'Keep');
 });
