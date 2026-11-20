@@ -819,6 +819,7 @@ if(persistHistory()&&Object.hasOwn(state,'cooked')){delete state.cooked;persist(
 cloudApplying=false;
 initNavigation();
 setView(state.result?'week':'welcome',false);
+window.mealdayStarted=true;
 if (window.MealdayAndroid && typeof window.MealdayAndroid.ready === 'function') {
   window.MealdayAndroid.ready();
 }

@@ -7,7 +7,8 @@
     "build": "node scripts/build.cjs",
     "recipes:import": "node --env-file-if-exists=.env phone-preview/server/import-recipes.mjs",
     "start:legacy": "node scripts/serve.cjs",
-    "test:phone": "node --test phone-preview/server/*.test.mjs"
+    "test:phone": "node --test phone-preview/server/*.test.mjs",
+    "build:phone": "node phone-preview/scripts/build-client.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",

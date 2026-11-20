@@ -1,0 +1,16 @@
+import {fileURLToPath} from 'node:url';
+import {build} from 'esbuild';
+import {createHash} from 'node:crypto';
+import {readFile,writeFile,readdir,unlink} from 'node:fs/promises';
+const dist=new URL('../dist/',import.meta.url);
+const result=await build({entryPoints:[fileURLToPath(new URL('../dist/app.js',import.meta.url))],bundle:true,write:false,format:'iife',target:['es2018'],minify:true,legalComments:'inline'});
+const data=result.outputFiles[0].contents;
+const name='client-'+createHash('sha256').update(data).digest('hex').slice(0,12)+'.js';
+for(const old of await readdir(dist))if(/^client-[a-f0-9]+\.js$/.test(old)&&old!==name)await unlink(new URL(old,dist));
+await writeFile(new URL(name,dist),data);
+let html=await readFile(new URL('index.html',dist),'utf8');
+html=html.replace(/  <script[^>]+src="\/(?:app|client-[a-f0-9]+)\.js"[^>]*><\/script>/g,'');
+html=html.replace(/  <script[^>]+src="\/startup\.js[^\"]*"[^>]*><\/script>/g,'');
+html=html.replace('</head>','  <script defer src="/startup.js?v=2"></script>\n  <script defer src="/'+name+'"></script>\n</head>');
+await writeFile(new URL('index.html',dist),html);
+console.log(name);
