@@ -5,7 +5,7 @@ import {COOKING_HISTORY_KEY,emptyHistory,loadHistory,hasCooked,recordCook,undoCo
 import {filterSavedRecipes} from './recipe-filters.js';
 import {calculateNutrition,nutritionSource} from './nutrition.js';
 import {recipePhotos} from './recipe-photos.js';
-import {personalizedApi as api} from './recommendations.js';
+import {personalizedApi as api} from './lazy-api.js';
 const $ = (selector, root = document) => root.querySelector(selector);
 const screen = $('#screen');
 const dialog = $('#dialog');
