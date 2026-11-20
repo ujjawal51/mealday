@@ -414,6 +414,7 @@ document.addEventListener('click',async event=>{
   else if(action==='cloud-logout'){try{await cloudBackup.logout();dialog.close();}catch(e){notify(e.message);}}
   else if(action==='cloud-local'||action==='cloud-remote'){try{await cloudBackup.resolve(action==='cloud-local');dialog.close();}catch(e){notify(e.message);}}
   else if(action==='start-setup'){beginWizard(false);}
+  else if(action==='review-setup'){beginWizard(true);}
   else if(action==='preview-slide'){selectSlide(Number(id));}
   else if(action==='edit-setup'){setView('plan');}
   else if(action==='back-step'){backWizard();}
@@ -572,10 +573,20 @@ const obstacles=[['time','⏱️','Not enough time'],['tired','🌙','Too tired 
 const cookingTimes=[[15,'','Up to 15 min'],[30,'','15–30 min'],[45,'','30–45 min'],[60,'','45–60 min'],[1440,'','60+ min']];
 
 const steps=[
-  {title:'Plan your cooking week',hint:'Start with your household. You can change everything later in Preferences.',type:'household'},
-  {title:'What works for your diet?',hint:'Choose your diet and confirm any ingredients to avoid.',type:'food'},
-  {title:'Set your budget and time',hint:'We’ll match your meals to these limits.',type:'budget'},
-  {title:'Ready to plan your week?',hint:'Check your week and the appliances you can cook with.',type:'review'},
+  {title:'What should we call you?',hint:'Your name makes your kitchen feel like yours.',type:'name'},
+  {title:'What brings you to Mealday?',hint:'Choose the main thing you want help with.',field:'goal',choices:goals,required:true},
+  {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(x=>[x,'pin',x]),required:true},
+  {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
+  {title:'Which meals should we plan?',hint:'Choose at least one meal for your cooking week.',field:'mealTypes',choices:[['breakfast','plate','Breakfast'],['lunch','plate','Lunch'],['dinner','plate','Dinner']],multi:true},
+  {title:'How long do you like to cook?',hint:'Choose the most time you want to spend on a meal.',field:'minutes',choices:cookingTimes,required:true},
+  {title:'What is your grocery budget?',hint:'We’ll estimate your weekly shop in AED.',type:'budget'},
+  {title:'Choose your supermarket',hint:'We’ll plan your grocery list around your preferred shop. Prices are catalogue estimates.',field:'shop',choices:supermarkets.map(x=>[x,'shopping',x]),required:true},
+  {title:'How many are you cooking for?',hint:'We’ll scale your meals and shopping quantities.',type:'people'},
+  {title:'Which days will you cook?',hint:'Pick the days you want meals planned for.',field:'days',choices:DAYS.map((x,i)=>[i,'',x]),multi:true,layout:'days'},
+  {title:'What are you in the mood for?',hint:'Pick up to 3 meal styles.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
+  {title:'Any dietary needs?',hint:'Choose the diet your meal plan should follow.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
+  {title:'Any ingredients to avoid?',hint:'Choose all that apply, or select None. Always check food labels.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
+  {title:'What appliances do you have?',hint:'Select at least one appliance, then generate your plan.',field:'appliances',choices:appliances,multi:true,layout:'appliance-scene'},
 ];
 let allergiesReviewed=false;
 function wizardChoices(field,choices,multi=true){
@@ -688,7 +699,7 @@ function renderWizard(preserveScroll=true){
   }else if(current.type==='budget'){
     body='<div class="wizard-budget"><small>AED</small><strong id="wizard-budget-value">'+money(p.budget)+'</strong><p>for '+p.days.length+(p.days.length===1?' day':' days')+' · '+p.people+(p.people===1?' person':' people')+'</p></div>'+
      '<input id="wizard-budget-range" aria-label="Shopping budget slider" type="range" min="30" max="600" step="5" value="'+Math.max(30,Math.min(600,p.budget))+'"><div class="range-labels"><span>AED 30</span><span>AED 600</span></div>'+
-     '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label><label class="field quick-time">Maximum cooking time'+dropdown('wizard-minutes',[15,20,30,45,60,90,120,240,1440],p.minutes).replace('name="wizard-minutes"','data-wizard-field="minutes"')+'</label>';
+     '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label>';
   }else if(current.type==='budget-recap'){
     body='<div class="budget-recap"><span aria-hidden="true">🛒</span><strong>AED '+money(p.budget)+'</strong>'+
       '<p>Grocery budget for '+p.days.length+' cooking '+(p.days.length===1?'day':'days')+' and '+p.people+(p.people===1?' person':' people')+'.</p>'+
@@ -713,7 +724,7 @@ function renderWizard(preserveScroll=true){
     body='<div class="wizard-options">'+(current.field==='days'?'<p class="selected-count" aria-live="polite">'+countText+'</p>':'')+
       (current.field==='priorities'?'<span class="visually-hidden" aria-live="polite">'+countText+'</span>':'')+
       '<div class="wizard-choices '+layout+'">'+(layout==='appliance-scene'?'<img src="/appliance-kitchen.jpg" alt="">':'')+current.choices.map(([value,symbol,label])=>{
-        const active=value==='None'?selected.length===0:current.multi?selected.includes(value):String(selected)===String(value);
+        const active=value==='None'?(current.field!=='allergies'||allergiesReviewed)&&selected.length===0:current.multi?selected.includes(value):String(selected)===String(value);
         const disabled=current.field==='priorities'&&selected.length===3&&!active&&value!=='None';
         const artwork=symbol&&Object.hasOwn(ICONS,symbol)?icon(symbol):esc(symbol);
         return '<button type="button" class="wizard-choice '+(active?'selected':'')+'" data-action="'+(current.multi?'pick-many':'pick-one')+'" data-field="'+current.field+'" data-id="'+esc(value)+'" aria-pressed="'+active+'" '+(disabled?'disabled':'')+'>'+
@@ -737,6 +748,7 @@ function canContinue(){
   if(current.type==='review')return p.appliances.length>0;
   if(current.type==='name')return Boolean(p.name.trim());
   if(current.type==='budget')return Number.isFinite(p.budget)&&p.budget>=20&&p.budget<=5000;
+  if(current.field==='allergies')return allergiesReviewed;
   if(current.field==='shop')return supermarkets.includes(p.shop);
   if(['days','cuisines','mealTypes','appliances'].includes(current.field))return p[current.field].length>0;
   return !current.required||current.choices.some(([value])=>value===p[current.field]);
@@ -750,7 +762,7 @@ async function nextWizard(){
   const current=steps[step],p=wizardDraft;
   if(current.type==='name')p.name=p.name.trim();
   if(!editing&&current.field==='goal'){
-    p.people=p.goal==='solo'?1:p.goal==='family'?4:2;
+    p.people=p.goal==='solo'?1:p.goal==='family'?4:p.people;
     p.priorities=p.goal==='simple'?['Quick']:p.goal==='family'?['Family']:['Everyday'];
   }
   if(!editing&&current.field==='obstacle'&&['time','tired','difficult'].includes(p.obstacle)){
@@ -787,7 +799,7 @@ function cookingHistoryPage(){
 function settings(){
  const p=state.profile,c=cloudBackup.info();
  const row=(label,action,symbol,note='')=>'<button class="profile-row" data-action="'+action+'">'+icon(symbol)+'<span>'+label+(note?'<small>'+note+'</small>':'')+'</span><span class="row-chevron" aria-hidden="true">›</span></button>';
- return appHeader('Profile')+'<div class="profile-page"><section class="profile-summary"><span class="profile-avatar">'+esc((p.name||'Chef').charAt(0).toUpperCase())+'</span><div><h2>'+esc(p.name||'Your kitchen')+'</h2><div class="profile-stats"><span><b>'+state.favorites.length+'</b>Saved meals</span><span><b>'+historyEntries(cookingHistory).length+'</b>Times cooked</span><span><b>'+esc(p.people)+'</b>Servings</span></div></div></section><div class="profile-group">'+row('Personal info','edit-name','profile')+row('Food profile','go-plan','plate','Diet, budget and cooking preferences')+row('Cooking history','go-history','week')+row('Kitchen pantry','go-pantry','pantry')+'</div><div class="profile-group">'+row(c.account?'Account & backup':'Log in & backup','cloud-account','people',esc(c.message))+row('Weekly plan reminder','weekly-reminder','time')+row('Share my plan','share-plan','copy')+'</div><div class="profile-group">'+row('Privacy & data','privacy','cookbook')+row('Reset saved meals','clear-saved','refresh')+row('Reset kitchen','settings-reset','gear')+'</div><p class="profile-footnote">Mealday · Made for your everyday cooking</p></div>';
+ return appHeader('Profile')+'<div class="profile-page"><section class="profile-summary"><span class="profile-avatar">'+esc((p.name||'Chef').charAt(0).toUpperCase())+'</span><div><h2>'+esc(p.name||'Your kitchen')+'</h2><div class="profile-stats"><span><b>'+state.favorites.length+'</b>Saved meals</span><span><b>'+historyEntries(cookingHistory).length+'</b>Times cooked</span><span><b>'+esc(p.people)+'</b>Servings</span></div></div></section><div class="profile-group">'+row('Personal info','edit-name','profile')+row('Food profile','go-plan','plate','Diet, budget and cooking preferences')+row('Review setup · 14 steps','review-setup','edit')+row('Cooking history','go-history','week')+row('Kitchen pantry','go-pantry','pantry')+'</div><div class="profile-group">'+row(c.account?'Account & backup':'Log in & backup','cloud-account','people',esc(c.message))+row('Weekly plan reminder','weekly-reminder','time')+row('Share my plan','share-plan','copy')+'</div><div class="profile-group">'+row('Privacy & data','privacy','cookbook')+row('Reset saved meals','clear-saved','refresh')+row('Reset kitchen','settings-reset','gear')+'</div><p class="profile-footnote">Mealday · Made for your everyday cooking</p></div>';
 }
 function sharePlan(){
   const text=state.result?.meals.map(x=>DAYS[x.day]+' · '+cap(x.meal)+': '+x.name).join('\n');
