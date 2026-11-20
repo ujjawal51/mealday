@@ -73,7 +73,7 @@ function persistHistory(){try{localStorage.setItem(COOKING_HISTORY_KEY,JSON.stri
 function logCook(recipe){cookingHistory=recordCook(cookingHistory,recipe,new Date().toISOString(),crypto.randomUUID());persistHistory();}
 function notify(message){clearTimeout(toastTimer);toast.textContent=message;toastTimer=setTimeout(()=>toast.textContent='',3500);}
 function recommendationSignals(){
-  return {ratings:Object.entries(state.recipeJournal||{}).filter(([,entry])=>Number.isInteger(entry.rating)&&entry.rating>=1&&entry.rating<=5).slice(-500).map(([id,entry])=>[id,entry.rating]),saved:state.favorites.map(r=>r.id).slice(-500),cooked:historyEntries(cookingHistory).filter(e=>e.cookedAt).slice(0,80).map(e=>[e.recipeId,e.cookedAt]),previous:(state.result?.meals||[]).map(r=>r.id),plans:(state.planHistory||[]).slice(-6)};
+  return {ratings:Object.entries(state.recipeJournal||{}).filter(([,entry])=>Number.isInteger(entry.rating)&&entry.rating>=1&&entry.rating<=5).slice(-500).map(([id,entry])=>[id,entry.rating]),saved:state.favorites.map(r=>r.id).slice(-500),cooked:(state.suggestionsReset?[]:historyEntries(cookingHistory)).filter(e=>e.cookedAt).slice(0,80).map(e=>[e.recipeId,e.cookedAt]),previous:(state.suggestionsReset?[]:state.result?.meals||[]).map(r=>r.id),plans:(state.planHistory||[]).slice(-6)};
 }
 function rememberPlan(result){
   return [...(state.planHistory||[]),{at:new Date().toISOString(),ids:result.meals.map(r=>r.id)}].slice(-8);
@@ -167,7 +167,7 @@ async function generate(profile=state.profile){
       screen.innerHTML=renderGeneration(true);
       await new Promise(resolve=>setTimeout(resolve,450));
     }
-    state={...state,profile,result,seed,checked:[],planHistory:rememberPlan(result)};
+    state={...state,profile,result,seed,checked:[],suggestionsReset:false,planHistory:rememberPlan(result)};
     day=profile.days[0];persist();
     if(dialog.open)dialog.close();
     setView('week');
@@ -423,8 +423,18 @@ document.addEventListener('click',async event=>{
   else if(action==='go-plan')setView('plan');
   else if(action==='open-recipes')setView('recipes');
   else if(action==='share-plan')sharePlan();
+  else if(action==='share-app')openDialog('Share Mealday','Copy this link to invite someone.','<input class="control" readonly aria-label="Mealday link" value="'+esc(location.origin)+'"><p class="quick-help">Select the link and copy it into your preferred messaging app.</p>');
   else if(action==='privacy')showPrivacy();
   else if(action==='export-backup'){downloadKitchen();}
+  else if(action==='rate-app'||action==='request-feature')openFeedback(action==='rate-app'?'rating':'feature');
+  else if(action==='download-feedback'){const draft=readFeedback();downloadFile('mealday-feedback.txt',feedbackText(draft),'text/plain;charset=utf-8');}
+  else if(action==='contact')openDialog('Contact us','Mealday project support','<p>Report a problem or ask the Mealday team a question through the project’s support page.</p><a class="button green wide" href="https://github.com/ujjawal51/mealday/issues/new" target="_blank" rel="noopener noreferrer">Open project support</a><p class="quick-help">GitHub may ask you to sign in. Do not include passwords or private kitchen data in a public issue.</p>');
+  else if(action==='subscription')openDialog('Manage subscription','No billing is connected to this version.','<p>This Mealday preview does not sell or manage paid subscriptions. No subscription can be cancelled or changed here.</p>'+button('Done','close','green wide'));
+  else if(action==='terms')openDialog('Terms of service','Mealday preview information','<div class="privacy-copy"><p>Mealday helps you plan meals and organise a grocery list. Prices and nutrition totals are estimates; recipe photographs are representative.</p><p>Check ingredients, allergens and food labels before cooking. Store availability, ordering and payments are not included in this preview.</p><p>Your kitchen is stored on your device unless you sign in to a connected backup server. See Privacy policy for details. There is no paid subscription on this version.</p></div>'+button('Done','close','green wide'));
+  else if(action==='reset-suggestions')openDialog('Reset suggested meal history?','Start fresh with your next suggestions.','<p>This clears previous plan suggestions. Your current plan, favourites, ratings, notes and cooking history are kept.</p>'+button('Cancel','close')+' '+button('Reset suggestions','confirm-suggestions','danger'));
+  else if(action==='confirm-suggestions'){state.planHistory=[];state.suggestionsReset=true;persist();dialog.close();notify('Suggested meal history cleared. Rebuild your plan for fresh suggestions.');}
+  else if(action==='delete-account'){const c=cloudBackup.info();openDialog('Delete my account',c.account?'Account deletion is not supported by this server.':'You are using a device-only kitchen.',c.account?'<p>Contact project support to request account deletion. This button does not delete your online account or cancel billing.</p>'+button('Contact support','contact','green wide'):'<p>You are not signed in, so there is no online account to delete here. You can clear this device’s kitchen in Data controls.</p>'+button('Clear this device’s kitchen','settings-reset','danger wide'));}
+
   else if(action==='language'){openDialog('App language','English is the current app language.','<div class="language-active">'+icon('check')+'<span><strong>English</strong><small>Active language</small></span></div><p class="quick-help">Other languages are not available yet.</p>'+button('Done','close','green wide'));}
   else if(action==='edit-name')openDialog('Edit your name','','<form id="name-form"><label class="field">Name<input class="control" name="name" maxlength="40" required value="'+esc(state.profile.name)+'"></label><button class="button green wide">Save name</button></form>');
   else if(action==='clear-saved')openDialog('Reset saved meals?','This clears your favourites list.',button('Cancel','close')+' '+button('Reset saved meals','confirm-saved','danger'));
@@ -480,6 +490,10 @@ document.addEventListener('click',async event=>{
 });
 document.addEventListener('submit',async event=>{
   const form=event.target;
+  if(form.id==='feedback-form'){
+    event.preventDefault();const data=new FormData(form),draft={kind:String(data.get('kind')),rating:Number(data.get('rating')||0),message:String(data.get('message')||'').trim().slice(0,2000)};
+    try{localStorage.setItem('mealday.feedback-draft.v1',JSON.stringify(draft));openDialog('Feedback draft saved','Saved on this device; it has not been sent.','<textarea class="control" rows="7" readonly aria-label="Your feedback draft">'+esc(feedbackText(draft))+'</textarea><div class="dialog-settings-actions">'+button('Download draft','download-feedback','green wide')+'<a class="button ghost wide" href="https://github.com/ujjawal51/mealday/issues/new" target="_blank" rel="noopener noreferrer">Open project support</a></div>');}catch{notify('Could not save this draft. Please allow browser storage.');}return;
+  }
   if(form.id==='reminder-form'){
     event.preventDefault();const data=new FormData(form),day=Number(data.get('day')),time=String(data.get('time'));
     try{const calendar=weeklyCalendar((day+1)%7,time);downloadFile('mealday-weekly-reminder.ics',calendar,'text/calendar;charset=utf-8');state.reminder={day,time};persist();dialog.close();render();notify('Calendar file downloaded. Open it in your calendar to enable reminders.');}catch(e){notify(e.message);}return;
@@ -827,18 +841,20 @@ function cookingHistoryPage(){
     (entries.length?'<ul class="cooking-history-list">'+entries.map(e=>'<li class="surface-card"><span class="history-check" aria-hidden="true">'+icon('check')+'</span><div><h2>'+esc(e.name||'Previously cooked recipe')+'</h2><p>'+esc(cookingDate(e.cookedAt))+(e.cookedAt?'':' · imported from your earlier saved marks')+'</p>'+button('View recipe','recipe','ghost small','right','data-id="'+esc(e.recipeId)+'"')+'</div></li>').join('')+'</ul>':'<div class="surface-card empty">No cooked meals yet. Mark a recipe as cooked to start your history.'+button('Browse recipes','open-recipes','ghost small','right')+'</div>');
 }
 function settings(){
- const c=cloudBackup.info(),p=state.profile,count=historyEntries(cookingHistory).length;
- const section=(title,body)=>'<section class="settings-section"><h2>'+title+'</h2><div class="setting-list">'+body+'</div></section>';
- return '<div class="phone-settings"><header class="settings-heading"><p>Your kitchen, your way</p><h1>Settings</h1><span>Manage your profile, preferences and data.</span></header>'+
- '<section class="settings-profile"><span class="profile-avatar" aria-hidden="true">'+esc((p.name||'C').trim().slice(0,1).toUpperCase())+'</span><div class="profile-details"><span class="profile-eyebrow">MEALDAY PROFILE</span><h2>'+esc(p.name||'Chef')+'</h2><p>'+esc(p.city)+' · '+esc(p.shop)+'</p><span class="profile-storage">'+(c.account?'Signed in · '+esc(c.account.email):'Saved on this device')+'</span></div>'+button('','edit-name','edit-person','edit','aria-label="Edit your name"')+'</section>'+
- '<div class="settings-stats"><div><strong>'+state.favorites.length+'</strong><span>Saved meals</span></div><div><strong>'+count+'</strong><span>Times cooked</span></div><div><strong>'+p.days.length+'</strong><span>Cooking days</span></div></div>'+
- section('Your kitchen',settingRow('Profile & food preferences','edit-setup','Diet, budget, household and supermarkets')+settingRow('Recipe library','open-recipes','Browse recipes and your saved favourites')+settingRow('Cooking history','go-history','Your meals, saved across rebuilt plans')+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have'))+
- '<section class="settings-section"><h2>Account & backup</h2><div class="settings-backup"><div class="backup-status"><span class="setting-symbol" aria-hidden="true">'+icon('cloud')+'</span><div><h3>'+(c.account?'Your cloud account':'Your data stays with you')+'</h3><p>'+(c.account?esc(c.message):'A device backup is available now. Cloud sync requires a connected Mealday server.')+'</p></div></div><div class="backup-actions">'+button(c.account?'Manage account':'Backup & login','cloud-account','settings-outline')+button('Download backup','export-backup','settings-outline')+'</div></div></section>'+
- section('App preferences',settingRow('Weekly plan reminder','weekly-reminder',state.reminder?DAYS[state.reminder.day]+' at '+state.reminder.time+' · Calendar download':'Choose a day and time for your calendar')+settingRow('Language','language','English')+settingRow('Review setup','review-setup',steps.length+' choices · edit your kitchen setup')+settingRow('Welcome screen','go-home','See how Mealday works'))+
- section('Sharing & privacy',settingRow('Share meal plan','share-plan',state.result?'Send your weekly meals to someone': 'Build a plan to start sharing')+settingRow('Privacy & data','privacy','How Mealday stores your kitchen'))+
- section('Data controls',settingRow('Reset saved meals','clear-saved','Clear favourites; keep your plan and cooking history')+settingRow('Reset this kitchen','settings-reset','Clear this kitchen’s meals, notes and preferences'))+
- '<p class="settings-footnote">Made for your everyday cooking.<br><strong>mealday.</strong></p></div>';
+ const section=(title,content)=>'<section class="settings-section"><h2>'+title+'</h2><div class="setting-list">'+content+'</div></section>';
+ const reminder=state.reminder;
+ return '<div class="phone-settings simple-settings"><header class="settings-heading"><p>Your account</p><h1>settings</h1></header>'+
+ section('App',settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
+ section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
+ section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact')+settingRow('Manage subscription','subscription'))+
+ section('Legal',settingRow('Privacy policy','privacy')+settingRow('Terms of service','terms'))+
+ section('Account',settingRow('Delete my account','delete-account'))+
+ '<details class="settings-extra"><summary>Kitchen &amp; backup</summary><div class="setting-list">'+settingRow('Edit your name','edit-name')+settingRow('Profile & food preferences','edit-setup')+settingRow('Cooking history','go-history')+settingRow('Review setup · '+steps.length+' steps','review-setup')+settingRow('Welcome screen','go-home')+settingRow('Backup & login','cloud-account')+settingRow('Download kitchen backup','export-backup')+settingRow('Share meal plan','share-plan')+settingRow('Reset this kitchen','settings-reset')+'</div></details></div>';
 }
+function readFeedback(){try{return JSON.parse(localStorage.getItem('mealday.feedback-draft.v1')||'null')||{};}catch{return {};}}
+function feedbackText(draft){return 'Mealday '+(draft.kind==='rating'?'feedback':'feature request')+'\n'+(draft.rating?'Rating: '+draft.rating+'/5\n':'')+'\n'+(draft.message||'');}
+function openFeedback(kind){const draft=readFeedback();openDialog(kind==='rating'?'Rate Mealday':'Request a feature','Prepare a feedback draft on this device.','<form id="feedback-form"><input type="hidden" name="kind" value="'+kind+'">'+(kind==='rating'?'<label class="field">Your rating<select class="control" name="rating">'+[5,4,3,2,1].map(n=>'<option value="'+n+'" '+(draft.rating===n?'selected':'')+'>'+n+' out of 5</option>').join('')+'</select></label>':'')+'<label class="field">'+(kind==='rating'?'Your feedback':'What would you like Mealday to do?')+'<textarea class="control" name="message" maxlength="2000" rows="5" '+(kind==='feature'?'required':'')+'>'+esc(draft.kind===kind?draft.message||'':'')+'</textarea></label><p class="quick-help">Save and download your draft, or copy it to project support. Saving does not send feedback.</p><button class="button green wide" type="submit">Save feedback draft</button></form>');}
+
 function downloadFile(name,content,type){
  const url=URL.createObjectURL(new Blob([content],{type})),link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }

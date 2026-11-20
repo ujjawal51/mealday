@@ -726,3 +726,25 @@ body[data-view=settings] main{padding-top:0}
 .settings-footnote{text-align:center;font-size:12px;line-height:1.7;color:#9aa38f;margin:30px 0 5px}.settings-footnote strong{font-size:19px;color:#90ac5d;letter-spacing:-.6px}
 .dialog-settings-actions{display:grid;gap:10px;margin-top:20px}.language-active{display:flex;gap:12px;align-items:center;background:#f4f8ec;padding:16px;border:1px solid #dfebcc;border-radius:14px;margin-bottom:15px;color:#627a39}.language-active small{display:block;font-size:12px;margin-top:4px;color:#84916f}
 @media(max-width:380px){.phone-settings{padding:24px 14px}.phone-settings .settings-profile{gap:10px;padding:18px 13px}.phone-settings .profile-avatar{width:44px;height:44px;flex-basis:44px}.phone-settings .settings-profile h2{font-size:20px}.phone-settings .setting-row{padding:14px 12px;gap:10px}}
+
+/* Minimal account settings, following the supplied grouped-list reference. */
+body[data-view=settings] main{padding:0}
+.phone-settings.simple-settings{max-width:575px;margin:0 auto;padding:32px 18px 100px}
+.simple-settings .settings-heading{text-align:center;margin:0 0 28px}
+.simple-settings .settings-heading p{font-size:10px;line-height:1.4;letter-spacing:1.3px;font-weight:450;color:#a2a59d;text-transform:uppercase;margin:0 0 9px}
+.simple-settings .settings-heading h1{font-size:25px;line-height:1.2;font-weight:650;letter-spacing:-.6px;text-transform:lowercase;margin:0}
+.simple-settings .settings-section{margin:0 0 23px}
+.simple-settings .settings-section>h2{font-size:10px;font-weight:500;color:#767c70;letter-spacing:.8px;margin:0 0 11px;padding:0 3px}
+.simple-settings .setting-list{border:1px solid #ebede7;border-radius:17px;box-shadow:none;background:white}
+.simple-settings .setting-row{min-height:48px;padding:15px 13px;gap:10px;border-color:#f0f1ed}
+.simple-settings .setting-symbol{display:none}
+.simple-settings .setting-row strong{font-size:15px;font-weight:450;line-height:1.35;color:#30352d}
+.simple-settings .setting-row small{font-size:11px;line-height:1.4;font-weight:450;color:#73796c;margin-top:3px}
+.simple-settings .setting-chevron{font-size:19px;color:#c4c8bd}
+.simple-settings .setting-destructive strong{color:#30352d}
+.simple-settings [data-action=delete-account] strong{color:#c34b45}
+.simple-settings .reminder-row{min-height:60px}
+.reminder-toggle{width:29px;height:17px;border-radius:15px;flex:none;background:#e7e8e5;position:relative;margin-right:7px}
+.reminder-toggle>span{position:absolute;left:-2px;top:-2px;width:21px;height:21px;border:1px solid #f1f1ef;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0002}
+.settings-extra{margin-top:5px;color:#808975;font-size:12px}.settings-extra summary{padding:12px 4px;cursor:pointer}.settings-extra .setting-list{margin-top:5px}
+@media(max-width:380px){.phone-settings.simple-settings{padding:28px 15px 95px}.simple-settings .setting-row strong{font-size:14px}}
