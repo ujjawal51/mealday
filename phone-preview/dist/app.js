@@ -1,3 +1,4 @@
+import {createPreviewSlideshow} from './preview-slideshow.js';
 import {createCloudBackup} from './cloud-backup.js';
 import {createCookingTimer,timerText} from './cooking-timer.js';
 import {COOKING_HISTORY_KEY,emptyHistory,loadHistory,hasCooked,recordCook,undoCookedMark,historyEntries} from './cooking-history.js';
@@ -118,6 +119,7 @@ function render(){
   if(view==='settings')screen.innerHTML=settings();
   if(view==='history')screen.innerHTML=cookingHistoryPage();
   if(view==='recipe'&&detail)renderRecipeDetail(detail);
+  if(view==='welcome')previewSlideshow.start();else {previewSlideshow.stop();previewHovered=false;}
 }
 function heading(title,description){return '<div class="page-head"><h1>'+title+'</h1><p>'+description+'</p></div>';}
 function week(){
@@ -399,6 +401,7 @@ document.addEventListener('click',async event=>{
   else if(action==='start-setup'){beginWizard(false);}
   else if(action==='review-setup'){beginWizard(true);}
   else if(action==='preview-slide'){selectSlide(Number(id));}
+  else if(action==='preview-toggle'){previewAutoplayPaused=!previewAutoplayPaused;previewSlideshow.setPaused(previewAutoplayPaused);updatePreviewSlides();}
   else if(action==='edit-setup'){setView('plan');}
   else if(action==='back-step'){backWizard();}
   else if(action==='next-step'){await nextWizard();}
@@ -595,14 +598,28 @@ function welcome(){
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome"><div class="welcome-brand"><img src="/brand.svg" alt=""><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-dots">'+dots+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
+  return '<div class="phone-welcome"><div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayPaused?'Play slideshow':'Pause slideshow','preview-toggle','preview-autoplay','','aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
 }
-function selectSlide(index){
-  if(!Number.isInteger(index)||index<0||index>=productPreviews.length)return;
-  const focused=document.activeElement?.classList.contains('preview-dot');
-  previewSlide=index;render();
-  if(focused)screen.querySelector('.preview-dot[aria-pressed="true"]')?.focus();
+let previewAutoplayPaused=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),previewHovered=false;
+const previewSlideshow=createPreviewSlideshow({count:productPreviews.length,initial:previewSlide,
+  canAdvance:()=>view==='welcome'&&!document.hidden&&!dialog.open&&!previewHovered&&swipeStart==null&&!document.activeElement?.closest?.('.preview-carousel, .preview-dots'),
+  onChange:index=>{previewSlide=index;updatePreviewSlides();}});
+previewSlideshow.setPaused(previewAutoplayPaused);
+function updatePreviewSlides(){
+  if(view!=='welcome')return;
+  screen.querySelectorAll('.preview-phone').forEach((node,index)=>{
+    node.classList.toggle('center',index===previewSlide);
+    node.classList.toggle('left',index===(previewSlide+productPreviews.length-1)%productPreviews.length);
+    node.classList.toggle('right',index!==(previewSlide+productPreviews.length-1)%productPreviews.length&&index!==previewSlide);
+  });
+  screen.querySelectorAll('.preview-dot').forEach((node,index)=>node.setAttribute('aria-pressed',String(index===previewSlide)));
+  const control=screen.querySelector('[data-action="preview-toggle"]');
+  if(control){control.textContent=previewAutoplayPaused?'Play slideshow':'Pause slideshow';control.setAttribute('aria-pressed',String(previewAutoplayPaused));}
 }
+function selectSlide(index){previewSlideshow.select(index);}
+screen.addEventListener('mouseover',event=>{if(event.target.closest('.preview-carousel'))previewHovered=true;});
+screen.addEventListener('mouseout',event=>{if(event.target.closest('.preview-carousel')&&!event.relatedTarget?.closest?.('.preview-carousel'))previewHovered=false;});
+
 let swipeStart;
 screen.addEventListener('touchstart',event=>{
   swipeStart=event.target.closest('.preview-carousel')?event.changedTouches[0].clientX:null;

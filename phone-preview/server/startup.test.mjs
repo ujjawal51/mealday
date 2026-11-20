@@ -21,7 +21,7 @@ async function boot(stored=null){
  return {screen,buttons,context,storage,events};
 }
 test('Fresh phone boots the shipped classic bundle without module loading or modern hasOwn/structuredClone APIs',async()=>{
- const {screen,buttons,context}=await boot();assert.equal(context.mealdayStarted,true);assert.match(screen.innerHTML,/Get started/);assert.match(screen.innerHTML,/Plan dinners/);assert.ok(buttons.every(b=>b.innerHTML.includes('<svg')));
+ const {screen,buttons,context}=await boot();assert.equal(context.mealdayStarted,true);assert.match(screen.innerHTML,/Get started/);assert.match(screen.innerHTML,/Plan dinners/);assert.match(screen.innerHTML,/src="\/chef.png" alt="Mealday chef"/);assert.match(screen.innerHTML,/Pause slideshow/);assert.ok(buttons.every(b=>b.innerHTML.includes('<svg')));
 });
 test('Existing kitchen survives the new entrypoint and renders its plan',async()=>{
  const state={profile:{name:'Chef',days:[0],people:1,mealTypes:['dinner'],shop:'LuLu',budget:100},pantry:{},checked:[],favorites:[],result:{meals:[],items:[],total:0}};
