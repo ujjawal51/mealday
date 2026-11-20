@@ -416,6 +416,7 @@ document.addEventListener('click',async event=>{
   else if(action==='go-history')setView('history');
   else if(action==='go-settings')setView('settings');
   else if(action==='go-home')setView('welcome');
+  else if(action==='welcome-back'){if(state.result)setView('week');else window.history.back();}
   else if(action==='log-cook'&&detail){logCook(detail);renderRecipeDetail(detail);notify('Another cook added to your history.');}
   else if(action==='go-plan')setView('plan');
   else if(action==='open-recipes')setView('recipes');
@@ -554,7 +555,7 @@ const foodTypes=[['Any','🍽️','No preference'],['Vegetarian','🥕'],['Vegan
 const allergyOptions=[['None','➖'],['Gluten','🌾'],['Milk','🥛'],['Egg','🥚'],['Peanuts','🥜'],['Tree nuts','🌰'],['Fish','🐟'],['Shellfish','🦐'],['Sesame','🫘'],['Soy','🌱']];
 const appliances=[['Microwave','microwave'],['Hob','hob'],['Air fryer','fryer'],['Oven','oven']];
 const styles=[['UAE mix','','UAE favourites'],['Emirati'],['Arab','','Arab / Middle Eastern'],['South Asian','','South Asian / Desi'],['Turkish']];
-let wizardDraft=null,step=0,editing=false,previewSlide=1;
+let wizardDraft=null,step=0,editing=false,previewSlide=2;
 const goals=[['prep','🗓️','Meal prep for the week'],['simple','✨','Find simple recipes'],['solo','🍽️','Cook for myself'],['family','🏡','Cook for my family']];
 const obstacles=[['time','⏱️','Not enough time'],['tired','🌙','Too tired after work'],['difficult','🥣','Cooking feels difficult'],['ideas','💭','I need meal ideas']];
 const cookingTimes=[[15,'','Up to 15 min'],[30,'','15–30 min'],[45,'','30–45 min'],[60,'','45–60 min'],[1440,'','60+ min']];
@@ -590,15 +591,16 @@ const productPreviews=[
   {title:'Recipe details',description:'Open a recipe with ingredients and cooking steps',
     body:'<img class="mini-photo" src="/bowls.jpg" alt=""><div class="mini-heading">Chicken rice bowl</div><div class="mini-stats"><span><b>30 min</b>Cook time</span><span><b>2</b>Serves</span></div><div class="mini-heading">Ingredients</div><div class="mini-ingredient">🍗 Chicken</div><div class="mini-ingredient">🌾 Rice</div><div class="mini-ingredient">🍋 Lemon</div>'},
   {title:'Recipe library',description:'Explore recipes by cuisine',
-    body:'<div class="mini-heading">Explore by cuisine</div><div class="mini-cuisines"><div><img src="/table.jpg" alt="">Emirati</div><div><img src="/bowls.jpg" alt="">Middle Eastern</div><div><img src="/hero.jpg" alt="">South Asian</div><div><img src="/table.jpg" alt="">UAE favourites</div></div>'},
+    body:'<div class="mini-heading">Explore by cuisine</div><div class="mini-cuisines"><div><img src="/recipes/arab-mujadara.webp" alt="">Emirati<small>Rice · Grills · Seafood</small></div><div><img src="/recipes/arab-ful.webp" alt="">Middle Eastern<small>Mezze · Beans · Flatbreads</small></div><div><img src="/recipes/mealday-aloo-egg-curry-complete.webp" alt="">South Asian<small>Curry · Rice · Biryani</small></div><div><img src="/recipes/arab-shakshuka.webp" alt="">Mediterranean<small>Fresh · Colourful · Simple</small></div><div><img src="/recipes/draft-hummus-chicken-bowl-complete.webp" alt="">UAE favourites<small>Meals for your week</small></div></div><div class="mini-nav" aria-hidden="true"><span>▤</span><span>♥</span><span>☷</span><span>⚙</span></div>'},
 ];
+function previewAutoplayIcon(){return '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true">'+(previewAutoplayPaused?'<path d="M6 3l11 7-11 7z"/>':'<path d="M5 3h3v14H5zm7 0h3v14h-3z"/>')+'</svg>';}
 function welcome(){
   const previews=productPreviews.map((item,index)=>{
     const position=index===previewSlide?'center':index===(previewSlide+2)%3?'left':'right';
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome"><div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayPaused?'Play slideshow':'Pause slideshow','preview-toggle','preview-autoplay','','aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
+  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
 }
 let previewAutoplayPaused=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),previewHovered=false;
 const previewSlideshow=createPreviewSlideshow({count:productPreviews.length,initial:previewSlide,
@@ -614,7 +616,7 @@ function updatePreviewSlides(){
   });
   screen.querySelectorAll('.preview-dot').forEach((node,index)=>node.setAttribute('aria-pressed',String(index===previewSlide)));
   const control=screen.querySelector('[data-action="preview-toggle"]');
-  if(control){control.textContent=previewAutoplayPaused?'Play slideshow':'Pause slideshow';control.setAttribute('aria-pressed',String(previewAutoplayPaused));}
+  if(control){control.innerHTML=previewAutoplayIcon();control.setAttribute('aria-label',previewAutoplayPaused?'Play slideshow':'Pause slideshow');control.setAttribute('aria-pressed',String(previewAutoplayPaused));}
 }
 function selectSlide(index){previewSlideshow.select(index);}
 screen.addEventListener('mouseover',event=>{if(event.target.closest('.preview-carousel'))previewHovered=true;});
