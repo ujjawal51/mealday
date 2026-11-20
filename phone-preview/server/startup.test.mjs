@@ -39,10 +39,10 @@ test('All 18 onboarding screens return, keep choices on Back, and require explic
  events.input({target:{id:'wizard-name',value:'Test Chef'}});await next();at(1);
  await click('pick-one','25-34','ageGroup');await next();at(2);
  assert.match(screen.innerHTML,/👨‍👩‍👧‍👦/);await click('pick-one','family','goal');await next();at(3);
- assert.match(screen.innerHTML,/😴/);await click('pick-one','time','obstacle');await next();at(4);
+ assert.match(screen.innerHTML,/😴/);await click('pick-one','time','obstacle');await next();assert.match(screen.innerHTML,/story-chef/);await click('back-step');at(3);await next();await click('story-next');at(4);
  await click('pick-one','likely','savingConfidence');await next();at(5);
  await click('pick-one','45','minutes');await next();at(6);
- assert.match(screen.innerHTML,/social|<svg/);assert.match(screen.innerHTML,/Instagram/);await click('pick-one','instagram','heardAbout');await next();at(7);
+ assert.match(screen.innerHTML,/social|<svg/);assert.match(screen.innerHTML,/Instagram/);await click('pick-one','instagram','heardAbout');await next();assert.match(screen.innerHTML,/story-time/);await click('story-next');at(7);
  assert.match(screen.innerHTML,/shop-wordmark/);await click('pick-one','Carrefour','shop');await next();at(8);
  assert.match(screen.innerHTML,/>4<\/strong>/);assert.doesNotMatch(screen.innerHTML,/data-field="days"|data-field="mealTypes"|City &amp;/);
  await click('people','1');assert.match(screen.innerHTML,/>5<\/strong>/);await next();at(9);
@@ -52,10 +52,10 @@ test('All 18 onboarding screens return, keep choices on Back, and require explic
  await click('pick-many','lunch','mealTypes');await next();at(11);
  await click('pick-one','Dubai','city');await next();at(12);
  await click('pick-many','Arab','cuisines');await next();at(13);
- await next();at(14);assert.match(screen.innerHTML,/catalogue prices/);assert.doesNotMatch(screen.innerHTML,/1040|save an average/);
+ await next();at(14);assert.match(screen.innerHTML,/catalogue prices/i);assert.doesNotMatch(screen.innerHTML,/1040|save an average/);
  await next();at(15);await next();at(16);await next();at(17);
  await next();at(17);await click('pick-many','None','allergies');await next();at(18);
- assert.match(screen.innerHTML,/Generate plan/);assert.match(screen.innerHTML,/appliance-kitchen/);
+ assert.match(screen.innerHTML,/Generate plan/);assert.match(screen.innerHTML,/appliance-kitchen/);await next();assert.match(screen.innerHTML,/story-benefits/);assert.match(screen.innerHTML,/ref-wall-row row-2/);await click('story-motion');assert.match(screen.innerHTML,/ref-paused/);await click('back-step');at(18);
  await click('back-step');at(17);assert.match(screen.innerHTML,/aria-pressed="true"/);
  for(let n=16;n>=10;n--){await click('back-step');at(n);}
  assert.match(screen.innerHTML,/data-field="mealTypes" data-id="lunch" aria-pressed="true"/);

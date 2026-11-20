@@ -11,7 +11,7 @@ export function createOnboardingMotion(host){
       const suffix=node.dataset.suffix||'';let started;
       const tick=now=>{
         if(started===undefined)started=now;
-        const part=Math.min(1,(now-started)/850),ease=1-Math.pow(1-part,3);
+        const part=Math.max(0,Math.min(1,(now-started-Number(node.dataset.delay||0))/850)),ease=1-Math.pow(1-part,3);
         const value=part===1?target:Math.floor(target*ease);
         node.textContent='AED '+new Intl.NumberFormat('en-AE',{maximumFractionDigits:2}).format(value)+suffix;
         if(part<1)schedule(tick);

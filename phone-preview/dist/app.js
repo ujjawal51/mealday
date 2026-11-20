@@ -15,6 +15,7 @@ const dialog = $('#dialog');
 const toast = $('#toast');
 const onboardingMotion=createOnboardingMotion(window);
 let previousWizardStep=-1;
+let wizardStory=null,storyCardsPaused=false;
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const ICONS = {
   week:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m-14 5h2m4 0h2"/>',
@@ -412,6 +413,8 @@ document.addEventListener('click',async event=>{
   else if(action==='edit-setup'){setView('plan');}
   else if(action==='back-step'){backWizard();}
   else if(action==='next-step'){await nextWizard();}
+  else if(action==='story-next'){await nextStory();}
+  else if(action==='story-motion'){storyCardsPaused=!storyCardsPaused;renderStory();}
   else if(action==='pick-one'){
     const field=b.dataset.field;
     wizardDraft[field]=field==='minutes'?Number(id):id;
@@ -609,7 +612,7 @@ const steps=[
   {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(city=>[city,'pin',city]),required:true},
   {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
   {title:'What’s your weekly budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
-  {title:'See what your plan could save.',type:'budget-recap'},
+  {title:'A little planning can add up.',type:'budget-recap'},
   {title:'What are you in the mood for?',hint:'Pick up to 3.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
   {title:'Any dietary needs?',hint:'Choose the diet that fits your kitchen.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
   {title:'Any allergies?',hint:'Pick all that apply, or select None.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
@@ -683,7 +686,7 @@ screen.addEventListener('touchend',event=>{
   if(Math.abs(delta)>36)selectSlide((previewSlide+(delta<0?1:2))%3);
 },{passive:true});
 function beginWizard(edit){
-  editing=edit;step=0;previousWizardStep=-1;error='';wizardDraft=JSON.parse(JSON.stringify(state.profile));
+  editing=edit;step=0;wizardStory=null;previousWizardStep=-1;error='';wizardDraft=JSON.parse(JSON.stringify(state.profile));
   if(!edit&&!state.result)wizardDraft.shop='Any supermarket';
   allergiesReviewed=false;
   wizardDraft.name??='';
@@ -693,6 +696,7 @@ function beginWizard(edit){
 function backWizard(){
   if(busy)return;
   error='';
+  if(wizardStory){wizardStory=null;renderWizard(false);return;}
   if(step===0){setView(editing?'plan':'welcome',false);return;}
   step--;renderWizard(false);
 }
@@ -731,18 +735,47 @@ function renderGeneration(ready=false){
     ['🥒','🍋','🥑','🍅','🫑','🥬','🍆','🧄'].map((food,index)=>'<span class="food-track" style="--angle:'+index*45+'deg"><i>'+food+'</i></span>').join('')+
     '</div><ul class="generation-list">'+tasks.map((task,index)=>'<li style="--task-delay:'+index*160+'ms"><span aria-hidden="true">'+(ready?icon('check'):'')+'</span>'+task+'</li>').join('')+'</ul></section>';
 }
-function motionBenefits(){
-  const cards=[['📅','A week, planned','Meals arranged around your cooking days.'],['🥕','Use what you have','Your pantry helps shape your shopping list.'],['🛒','One grocery list','Ingredients brought together for your plan.']];
-  const row=cards.map(([symbol,title,copy])=>'<article class="motion-benefit"><span aria-hidden="true">'+symbol+'</span><b>'+title+'</b><p>'+copy+'</p></article>').join('');
-  return '<div class="motion-benefits" aria-label="What Mealday brings to your week"><div class="motion-benefit-track">'+row+'<div class="motion-benefit-copy" aria-hidden="true">'+row+'</div></div></div>';
+function storyWall(){
+  const rows=[
+    [['📅','Your cooking days','A plan that follows the days you choose.'],['🍽️','Meals for your household','Portions shaped around your servings.'],['🥕','A place for your pantry','Keep track of ingredients you already have.']],
+    [['🛒','One shopping list','Bring recipe ingredients together in one place.'],['💚','Save your favourites','Keep meals you want to cook again.'],['📝','Your own recipe notes','Remember the tweaks that worked for you.']],
+    [['👨‍🍳','Cook step by step','Follow the recipe one step at a time.'],['⭐','Your tastes matter','Ratings help shape future suggestions.'],['🥗','Find your next meal','Search recipes and filter your favourites.']]
+  ];
+  return '<div class="ref-card-wall '+(storyCardsPaused?'ref-paused':'')+'">'+rows.map((cards,index)=>{
+    const row=cards.map(([symbol,title,copy])=>'<article class="ref-feature-card"><span aria-hidden="true">'+symbol+'</span><b>'+title+'</b><p>'+copy+'</p></article>').join('');
+    return '<div class="ref-wall-row row-'+index+'"><div class="ref-wall-track"><div class="ref-card-set">'+row+'</div><div class="ref-card-set" aria-hidden="true">'+row+'</div></div></div>';
+  }).join('')+'</div>';
+}
+function renderStory(){
+  onboardingMotion.cancel();
+  const p=wizardDraft;
+  let body='',title='';
+  if(wizardStory==='chef'){
+    title='Planning for meals is time-consuming…';
+    body='<div class="ref-chef-stage"><img src="/chef.png" alt="Mealday chef"></div><p class="ref-story-copy">Tell us what you enjoy. We’ll help bring your meals and shopping list together.</p>';
+  }else if(wizardStory==='time'){
+    title='Plan your week in one place';
+    body='<div class="ref-stopwatch" aria-hidden="true">'+icon('time')+'</div><p class="ref-time-copy">Choose your meals together, then cook at your own pace.</p><div class="ref-time-chart" aria-label="One weekly plan for '+p.days.length+' cooking days"><div><i class="ref-bar-plan"></i><b>1</b><span>weekly plan</span></div><div><i class="ref-bar-days" style="--day-height:'+Math.max(25,p.days.length/7*125)+'px"></i><b>'+p.days.length+'</b><span>cooking '+(p.days.length===1?'day':'days')+'</span></div></div><p class="ref-chart-caption">Less deciding. More time for your kitchen.</p>';
+  }else{
+    title='Made for your weekly kitchen';
+    body='<p class="ref-wall-hint">Your meals, your preferences, your routine.</p>'+storyWall()+button(storyCardsPaused?'Play card animation':'Pause card animation','story-motion','ref-motion-control','','aria-pressed="'+storyCardsPaused+'"');
+  }
+  screen.innerHTML='<div class="wizard reference-story story-'+wizardStory+'"><div class="wizard-header">'+button('←','back-step','back-circle','','aria-label="Go back"')+'<span class="setup-step">'+(step+1)+' of '+steps.length+'</span><progress max="'+steps.length+'" value="'+(step+1)+'" aria-label="Setup progress"></progress></div><div class="wizard-body ref-story-body" data-step="story-'+wizardStory+'"><h1>'+title+'</h1>'+body+'</div><div class="wizard-footer">'+button(wizardStory==='benefits'?'Build my week':'Continue','story-next','green wide')+'</div></div>';
+}
+async function nextStory(){
+  if(busy||!wizardStory)return;
+  const last=wizardStory==='benefits';wizardStory=null;
+  if(last){const p=wizardDraft;await generate({...p,minutes:Number(p.minutes),cuisine:p.cuisines[0]});}
+  else{step++;renderWizard(false);}
 }
 function savingsResult(p){
   const result=savingsComparison(p.usualWeeklySpend,p.budget);
-  if(!result)return '<div class="savings-empty"><span>'+icon('wallet')+'</span><p>Add your usual spend to see your potential weekly and yearly savings.</p></div>';
-  if(result.weekly===0)return '<div class="savings-neutral"><b>No savings projected yet</b><p>'+(result.over?'Your chosen budget is AED '+money(result.over)+' above your usual spend.':'Your chosen budget matches your usual spend.')+' Go back to adjust your budget, or keep it for more flexibility.</p></div>';
-  return '<div class="savings-outcome"><p class="savings-eyebrow">Potential weekly saving</p><strong class="savings-amount" data-count="'+result.weekly+'" aria-label="AED '+money(result.weekly)+'">AED '+money(result.weekly)+'</strong><span class="savings-percent">'+result.percent+'% below your usual spend</span><div class="savings-bars" aria-hidden="true"><span style="--bar:100%"></span><span style="--bar:'+Math.max(2,100-result.percent)+'%"></span></div><div class="savings-bar-labels"><span>Usually AED '+money(result.before)+'</span><span>Target AED '+money(result.target)+'</span></div><div class="savings-year"><span>If repeated for 52 weeks</span><b data-count="'+result.yearly+'" data-suffix=" / year" aria-label="AED '+money(result.yearly)+' per year">AED '+money(result.yearly)+' / year</b></div></div>';
+  if(!result)return '<div class="ref-savings-empty"><p>Enter your usual spend above to compare it with your AED '+money(p.budget)+' budget.</p></div>';
+  if(!result.weekly)return '<div class="savings-neutral"><b>No savings projected yet</b><p>'+(result.over?'Your budget is AED '+money(result.over)+' above your usual spend.':'Your budget matches your usual spend.')+' You can go back to adjust it.</p></div>';
+  return '<div class="ref-savings-reveal"><p class="ref-save-lead">You could spend less by</p><strong class="ref-save-value" data-delay="850" data-count="'+result.weekly+'" aria-label="AED '+money(result.weekly)+'">AED '+money(result.weekly)+'</strong><p class="ref-save-period">on these meals each week</p><div class="ref-save-year"><b data-delay="1900" data-count="'+result.yearly+'" data-suffix=" / year" aria-label="AED '+money(result.yearly)+' per year">AED '+money(result.yearly)+' / year</b><p>if you meet this budget for 52 weeks</p></div></div>';
 }
 function renderWizard(preserveScroll=true){
+  if(wizardStory){renderStory();return;}
   onboardingMotion.cancel();
   const entering=previousWizardStep!==step;
   const direction=step<previousWizardStep?'back':'forward';
@@ -769,12 +802,7 @@ function renderWizard(preserveScroll=true){
      '<input id="wizard-budget-range" aria-label="Shopping budget slider" type="range" min="30" max="600" step="5" value="'+Math.max(30,Math.min(600,p.budget))+'"><div class="range-labels"><span>AED 30</span><span>AED 600</span></div>'+
      '<label class="field">Or enter your budget<input id="wizard-budget-input" class="control" type="number" min="20" max="5000" step="0.01" value="'+esc(p.budget)+'"></label>';
   }else if(current.type==='budget-recap'){
-    body='<div class="savings-recap"><div class="savings-art" aria-hidden="true"><span class="savings-spark spark-one">✦</span><span class="savings-spark spark-two">✦</span><span class="savings-coin coin-one">+</span><img src="/chef.png" alt=""><span class="savings-coin coin-two">+</span></div>'+
-      '<div class="savings-target"><span>Your weekly grocery budget</span><b>AED '+money(p.budget)+'</b><small>'+p.days.length+' cooking '+(p.days.length===1?'day':'days')+' · '+p.people+(p.people===1?' person':' people')+' · '+esc(p.mealTypes.map(cap).join(', '))+'</small></div>'+
-      '<label class="savings-input-label" for="wizard-usual-spend">What do you usually spend on these meals?</label><div class="savings-input"><span>AED</span><input id="wizard-usual-spend" type="number" inputmode="decimal" min="0.01" max="50000" step="0.01" placeholder="Enter your usual weekly spend" value="'+esc(p.usualWeeklySpend??'')+'" aria-describedby="savings-input-help"></div>'+
-      '<p id="savings-input-help" class="savings-help">Use the same people, cooking days and meals for a fair comparison. Optional.</p>'+
-      '<div id="savings-comparison" aria-live="polite" aria-atomic="true">'+savingsResult(p)+'</div>'+
-      '<p class="savings-disclaimer">Budget comparison only, not money already saved. Mealday uses catalogue prices for meal estimates; actual shop prices and spending may differ.</p></div>';
+    body='<div class="reference-savings"><div class="ref-surprise" aria-hidden="true">🤯</div><details class="ref-spend-editor" '+(savingsComparison(p.usualWeeklySpend,p.budget)?'':'open')+'><summary>Compare your weekly spend</summary><p>Your budget: <b>AED '+money(p.budget)+'</b> · '+p.days.length+' cooking days · '+p.people+' people</p><label for="wizard-usual-spend">Usual spend on these same meals (AED)</label><input id="wizard-usual-spend" class="control" type="number" inputmode="decimal" min="0.01" max="50000" step="0.01" placeholder="e.g. 600" value="'+esc(p.usualWeeklySpend??'')+'"></details><div id="savings-comparison" aria-live="polite" aria-atomic="true">'+savingsResult(p)+'</div><p class="ref-estimate-note">Potential savings from your spend versus your chosen budget. Catalogue prices are estimates; savings are not guaranteed.</p></div>';
   }else if(current.type==='review'){
     const dinners=p.mealTypes.map(cap).join(', ');
     const days=p.days.map(day=>DAYS[day]).join(', ');
@@ -803,9 +831,6 @@ function renderWizard(preserveScroll=true){
           '<span class="choice-label">'+(layout==='shops'?shopArtwork(value):esc(label||value))+'</span><span class="choice-mark" aria-hidden="true">'+(active?'✓':'○')+'</span></button>';
       }).join('')+'</div>'+(current.field==='allergies'?'<p class="allergy-note">Always check packaged food labels.</p>':'')+'</div>';
   }
-  if(current.field==='appliances')body=motionBenefits()+body;
-  if(current.field==='savingConfidence')body='<div class="motion-chef-note" aria-hidden="true"><img src="/chef.png" alt=""><span>✦</span></div>'+body;
-  if(current.field==='minutes')body+='<div class="motion-time-story"><p>One plan. Your cooking days.</p><div class="motion-time-bars" aria-hidden="true"><i style="--height:22%"></i><i style="--height:100%"></i></div><div class="motion-time-labels"><span><b>1</b> weekly plan</span><span><b>'+p.days.length+'</b> cooking '+(p.days.length===1?'day':'days')+'</span></div><small>Choose your meals together, then cook at your own pace.</small></div>';
   screen.innerHTML='<div class="wizard"><div class="wizard-header">'+button('←','back-step','back-circle','','aria-label="Go back" '+(busy?'disabled':''))+
    '<span class="setup-step">'+(step+1)+' of '+steps.length+'</span><span class="wizard-progress" style="--progress-from:'+(entering?progressFrom:(step+1)/steps.length)+';--progress-to:'+((step+1)/steps.length)+'"><progress max="'+steps.length+'" value="'+(step+1)+'" aria-label="Setup progress"></progress><span aria-hidden="true"></span></span></div>'+
    '<div class="wizard-body '+(entering?'motion-'+direction:'motion-selection')+'" data-step="'+(current.type||current.field)+'"><h1>'+esc(current.title)+'</h1>'+
@@ -846,8 +871,10 @@ async function nextWizard(){
     p.priorities=[...new Set([...p.priorities,'Quick'])];
   }
   error='';
+  if(current.field==='obstacle'){wizardStory='chef';renderStory();return;}
+  if(current.field==='heardAbout'){wizardStory='time';renderStory();return;}
   if(step<steps.length-1){step++;renderWizard(false);return;}
-  await generate({...p,minutes:Number(p.minutes),cuisine:p.cuisines[0]});
+  wizardStory='benefits';renderStory();
 }
 function planSettings(){
   const p=state.profile;
