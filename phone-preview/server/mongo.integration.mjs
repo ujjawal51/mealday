@@ -45,6 +45,14 @@ try{
   assert(await store.userByEmail('keep@example.com'));assert.deepEqual((await store.kitchen('other')).data,{note:'keep'});
   assert.equal(await db.collection('accounts').countDocuments({userId:'other'}),1);assert.equal(await db.collection('plan_history').countDocuments({userId:'other'}),1);
   assert.equal(await db.collection('recipes').countDocuments(),420);
+  const {catalogueDocuments,seedRecipes}=await import('./recipe-catalogue.mjs');
+  const catalogue=catalogueDocuments(),original=catalogue[0],edited=catalogue[1];
+  await db.collection('recipes').updateOne({id:original.id},{$set:{nutrition:{complete:false,totals:null},privateNote:'keep this'}});
+  await db.collection('recipes').updateOne({id:edited.id},{$set:{'data.items.0.1':999,nutrition:{custom:true}}});
+  await seedRecipes(db);
+  const refreshed=await db.collection('recipes').findOne({id:original.id});assert.equal(refreshed.nutrition.dataVersion,original.nutrition.dataVersion);assert.deepEqual(refreshed.nutrition.totals,original.nutrition.totals);assert.equal(refreshed.privateNote,'keep this');
+  assert.deepEqual((await db.collection('recipes').findOne({id:edited.id})).nutrition,{custom:true});
+
   await assert.rejects(store.saveKitchen('one',0,{note:'must not resurrect'}),{status:401});
   await assert.rejects(store.saveSession({_id:'after-delete',userId:'one',expiresAt:new Date(Date.now()+60000)}),{status:401});
  }finally{await inspector.close();}
