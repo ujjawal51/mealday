@@ -27,6 +27,8 @@ jobs:
           node --test phone-preview/server/*.test.mjs
           node phone-preview/source/nutrition.test.mjs
           node phone-preview/scripts/audit-nutrition.mjs --check
+          npm run test:kitchen
+          node phone-preview/scripts/audit-kitchen-tests.mjs --check
       - name: Start a disposable MongoDB replica set
         run: |
           docker run --detach --name mealday-test-mongo --publish 27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
