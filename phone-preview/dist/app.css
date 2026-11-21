@@ -804,3 +804,50 @@ body[data-view=settings] main{padding:0}
 @media(max-height:740px){.ref-stopwatch{margin-top:24px}.ref-time-chart{height:195px}.ref-chef-stage{min-height:170px}.ref-chef-stage img{height:170px;width:128px}.ref-feature-card{min-height:92px}.ref-card-wall{gap:8px}.ref-surprise{font-size:60px;margin-top:0}.ref-save-year{margin-top:26px}.ref-story-copy{margin-bottom:18px}}
 @media(prefers-reduced-motion:reduce){.reference-story *,.reference-savings *{animation:none!important;transition:none!important}.ref-card-wall{overflow:auto}.ref-wall-track{transform:none}.ref-card-set[aria-hidden=true]{display:none}}
 .reference-story .ref-motion-control{background:transparent!important;box-shadow:none!important;border-radius:999px!important;font-weight:500!important}
+
+/* Account invitation after choosing a kitchen. */
+body[data-view="account"]{background:#f9faf6;color:#282d24}
+body[data-view="account"] #main{padding:0;max-width:560px}
+.setup-account{min-height:100svh;display:flex;flex-direction:column;padding:24px 24px 18px;animation:setup-account-enter .35s ease-out}
+.setup-account header{display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.setup-account header>span{font-size:21px;font-weight:800;letter-spacing:-1px;color:#303b28}
+.setup-account header>span>span{color:#91bc2d}
+.setup-account .back-circle{background:#fff;border:1px solid #e8ebdf;box-shadow:none;min-width:44px;min-height:44px;font-size:22px}
+.setup-account-content{width:100%;max-width:370px;margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 0 38px}
+.setup-account-avatar{position:relative;width:138px;height:138px;border-radius:50%;background:#eaf3d5;display:grid;place-items:center;margin:0 0 27px;isolation:isolate}
+.setup-account-avatar:before{content:"";position:absolute;inset:9px;border:1px solid #d3e6a4;border-radius:50%;z-index:-1}
+.setup-account-avatar img{width:94px;height:124px;object-fit:contain;object-position:center bottom;align-self:end}
+.setup-account-avatar>span{position:absolute;right:2px;top:9px;color:#8bb72d;font-size:27px}
+.setup-account-eyebrow{font-size:10px;font-weight:700;letter-spacing:1.8px;color:#768064;margin:0 0 12px}
+.setup-account h1{font-family:inherit;font-size:30px;letter-spacing:-1.1px;font-weight:750;line-height:1.18;margin:0 0 13px}
+.setup-account-copy{font-size:15px;line-height:1.6;max-width:310px;color:#707668}
+.setup-account-recap{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:center;font-size:12px;line-height:1.6;color:#68745c;background:#f0f3e8;border-radius:999px;padding:8px 14px;margin:18px 0 27px}
+.setup-account-recap span{color:#a3b18d}
+.setup-account-actions{width:100%;display:grid;gap:11px}
+.setup-account .button{min-height:54px;border-radius:999px;font-size:16px;line-height:1.3;justify-content:center}
+.setup-account .green{background:#a3cf2a;color:#24320c;border:1px solid #a3cf2a;box-shadow:0 5px 13px #94b9421c;font-weight:700}
+.setup-account-secondary{background:#fff;color:#303a29;border:1px solid #dee5d4;box-shadow:none}
+.setup-account .setup-account-text{display:inline;padding:3px 1px;min-height:32px;border:0;background:none;box-shadow:none;color:#608320;text-decoration:underline;text-underline-offset:3px;font-size:inherit;border-radius:0;font-weight:600}
+.setup-account-legal{font-size:12px;line-height:1.7;color:#838977;max-width:295px;margin:19px 0 10px}
+.setup-account .setup-account-skip{background:transparent;border:0;box-shadow:none;color:#747c68;font-size:13px;padding:10px;min-height:44px;text-decoration:underline;text-underline-offset:3px}
+.setup-account footer{display:flex;align-items:center;justify-content:center;gap:7px;color:#939a86;font-size:11px;margin-top:auto;min-height:24px}
+.setup-account footer svg{width:14px;height:14px}
+.setup-account-service,.setup-account-error{font-size:14px;line-height:1.5;margin-top:10px}
+.setup-account-service{color:#707668}
+.setup-account-error{color:#a33429}
+.setup-account-identity{color:#6c765f;font-size:14px;overflow-wrap:anywhere}
+.setup-account-form-mode .setup-account-content{padding-top:28px}
+.setup-account-form-mode .setup-account-avatar{width:96px;height:96px;margin-bottom:18px}
+.setup-account-form-mode .setup-account-avatar img{width:68px;height:89px}
+.setup-account-form-mode .setup-account-recap{margin:13px 0 20px}
+.setup-account form{width:100%;text-align:left}
+.setup-account fieldset{padding:0;margin:0;border:0;min-width:0}
+.setup-account label{display:block;font-size:13px;font-weight:650;color:#4f5e40;margin:0 0 7px}
+.setup-account input{width:100%;min-height:50px;background:#fff;border:1px solid #dfe5d5;border-radius:14px;margin:0 0 16px;font-size:16px;padding:12px 14px}
+.setup-account-password-help{font-size:12px;color:#848c79;margin:-8px 0 15px}
+.setup-account-recovery{display:block;font-size:12px;color:#608320;min-height:32px;line-height:1.6;margin-bottom:12px;text-decoration:underline}
+.setup-account-switch{font-size:13px;color:#6c765f}
+@keyframes setup-account-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:650px){.setup-account{min-height:100svh;padding:30px 36px 22px}}
+@media(max-height:700px){.setup-account-content{padding-top:30px;padding-bottom:24px}.setup-account-avatar{width:108px;height:108px;margin-bottom:20px}.setup-account-avatar img{width:76px;height:99px}.setup-account-form-mode .setup-account-avatar{width:78px;height:78px}.setup-account-form-mode .setup-account-avatar img{width:55px;height:74px}}
+@media(prefers-reduced-motion:reduce){.setup-account{animation:none}}

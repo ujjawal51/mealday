@@ -27,6 +27,9 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build:phone
+      - name: Check committed browser assets
+        run: git diff --exit-code -- phone-preview/dist
       - name: Syntax and regression tests
         run: |
           node --check phone-preview/dist/email-recovery.js
@@ -36,3 +39,43 @@ jobs:
         env:
           MONGODB_TEST_URI: mongodb://127.0.0.1:27017
         run: node phone-preview/server/mongo.integration.mjs
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install chromium --with-deps
+      - name: Test the phone onboarding account flow
+        run: node phone-preview/server/onboarding-account.browser.mjs
+  deployment-smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: account-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the deployed Mealday bundle and database health
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {readFile} from 'node:fs/promises';
+          const html=await readFile('phone-preview/dist/index.html','utf8');
+          const entry=html.match(/src="\/(client-[a-f0-9]+\.js)"/)[1];
+          const origin='https://mealday.onrender.com';
+          let ready=false;
+          for(let attempt=0;attempt<30;attempt++){
+            try{
+              const response=await fetch(origin+'/',{signal:AbortSignal.timeout(10000)});
+              if(response.ok&&(await response.text()).includes('/'+entry)){ready=true;break;}
+            }catch{}
+            await new Promise(resolve=>setTimeout(resolve,10000));
+          }
+          assert(ready,'Render has not served this build within the deployment window.');
+          const response=await fetch(origin+'/'+entry,{signal:AbortSignal.timeout(20000)});
+          assert(response.ok);
+          assert.equal(await response.text(),await readFile('phone-preview/dist/'+entry,'utf8'));
+          const health=await fetch(origin+'/api/health',{signal:AbortSignal.timeout(20000)});
+          assert(health.ok);assert.equal((await health.json()).database,'connected');
+          console.log('DEPLOYMENT_VERIFIED '+entry+' MongoDB connected');
+          NODE
