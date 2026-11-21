@@ -13,7 +13,7 @@ export function mergeGuest(cloud,guest){
   return {state:{...guest.state,...cloud.state,favorites:[...favorites.values()],recipeJournal:{...guest.state.recipeJournal,...cloud.state.recipeJournal}},history:{version:1,events:[...events.values()]}};
 }
 export function createCloudBackup({snapshot,apply,changed}){
-  let meta=read(META,{owner:null,revision:0,dirty:false}),account=null,csrf=null,status='checking',message='Checking backup availability…',registration=false,delay,working=false,conflict=false;
+  let meta=read(META,{owner:null,revision:0,dirty:false}),account=null,csrf=null,status='checking',message='Checking backup availability…',registration=false,delay,working=false,conflict=false,initializing=0;
   function update(next,text){status=next;message=text;changed?.();}
   function cache(){save(CACHE+(meta.owner||'guest'),snapshot());save(META,meta);if(meta.owner)save('mealday.cloud.account.'+meta.owner,meta);}
   async function call(path,method='GET',body){
@@ -52,10 +52,11 @@ export function createCloudBackup({snapshot,apply,changed}){
   return {
     info:()=>({account,status,message,registration,conflict,hasGuest:!!read(CACHE+'guest')}),
     async init(){
+      initializing++;
       try{const data=await call('/api/account');if(!Object.hasOwn(data,'user'))throw Error();account=data.user;csrf=data.csrf;registration=data.allowRegistration;
         if(account){if(meta.owner!==account.id)cache();await pull();}
         else update('guest',meta.owner?'Sign in again to sync this account’s local changes.':'Guest mode · saved on this device only.');
-      }catch{update('unavailable','Cloud backup is not connected on this deployment. Your data stays on this device.');}
+      }catch{update('unavailable','Cloud backup is not connected on this deployment. Your data stays on this device.');}finally{initializing--;}
     },
     localChanged(){
       try{if(meta.owner){meta.dirty=true;cache();}else save(CACHE+'guest',snapshot());}catch{update('pending','Local storage is full. Keep this page open and retry backup.');return;}
@@ -75,6 +76,22 @@ export function createCloudBackup({snapshot,apply,changed}){
       await call('/api/auth/logout','POST',{});account=null;csrf=null;conflict=false;meta={owner:null,revision:0,dirty:false};
       const guest=read(CACHE+'guest');if(guest)apply(guest);else apply({state:{profile:{name:'',city:'Dubai',shop:'LuLu',people:2,budget:150,minutes:30,cuisine:'UAE mix',diet:'Any',days:[0,1,2,3,4],mealTypes:['dinner'],allergies:[],appliances:['Hob'],cuisines:['UAE mix'],priorities:['Everyday']},pantry:{},result:null,checked:[],favorites:[],seed:0},history:{version:1,events:[]}});
       cache();update('guest','Signed out · guest kitchen is on this device only.');
+    },
+    async deleteAccount(password,confirmation){
+      if(!account||meta.owner!==account.id)throw Error('Sign in before deleting your account.');
+      if(working||initializing)throw Error('Please wait for the current backup to finish, then try again.');
+      const owner=account.id;clearTimeout(delay);working=true;
+      try{
+        const result=await call('/api/account','DELETE',{password,confirmation});
+        if(result.deleted!==true)throw Error('Account deletion was not confirmed.');
+        account=null;csrf=null;conflict=false;meta={owner:null,revision:0,dirty:false};
+        let cleared=true;
+        for(const key of [CACHE+owner,CACHE+owner+'.conflict','mealday.cloud.account.'+owner]){try{localStorage.removeItem(key);}catch{cleared=false;}}
+        const guest=read(CACHE+'guest')||{state:{profile:{name:'',city:'Dubai',shop:'LuLu',people:2,budget:150,minutes:30,cuisine:'UAE mix',diet:'Any',days:[0,1,2,3,4],mealTypes:['dinner'],allergies:[],appliances:['Hob'],cuisines:['UAE mix'],priorities:['Everyday']},pantry:{},result:null,checked:[],favorites:[],seed:0},history:{version:1,events:[]}};
+        apply(guest);try{cache();}catch{cleared=false;}
+        update('guest',cleared?'Account deleted. You are now using your guest kitchen.':'Account deleted online. Clear this browser’s site data to remove its remaining local copies.');
+        return {localCleared:cleared};
+      }finally{working=false;if(account&&meta.dirty&&!conflict)delay=setTimeout(sync,800);}
     },
     async importGuest(){
       if(!account||conflict||working)throw Error('Sign in and resolve pending backup changes first.');
