@@ -80,6 +80,16 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         }
         if(!session)return send(401,{error:'Sign in to access your backup.'});
         if(req.method!=='GET'&&req.headers['x-csrf-token']!==session.csrf)return send(403,{error:'Session verification failed. Refresh and try again.'});
+        if(path==='/api/account'&&req.method==='DELETE'){
+          const key='delete:'+session.userId,stamp=Date.now();let rate=limits.get(key);
+          if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(key,rate);}
+          if(++rate.count>5)return send(429,{error:'Too many attempts. Try again in 15 minutes.'});
+          const value=await body();
+          if(value?.confirmation!=='DELETE'||typeof value.password!=='string'||value.password.length<1||value.password.length>128)return send(400,{error:'Enter your password and type DELETE to confirm.'});
+          if(!await passwordMatches(value.password,accountUser.password||accountUser))return send(401,{error:'Password is incorrect. Your account has not been deleted.'});
+          if(!await store.deleteAccount(session.userId,accountUser.authVersion||0))return send(409,{error:'Your account changed. Sign in again before deleting it.'});
+          return send(200,{ok:true,deleted:true},{'Set-Cookie':cookie('',0)});
+        }
         if(path==='/api/auth/logout'&&req.method==='POST'){await store.deleteSession(digest(rawCookie));return send(200,{ok:true},{'Set-Cookie':cookie('',0)});}
         if(path==='/api/kitchen'&&req.method==='GET'){
           const kitchen=await store.kitchen(session.userId);return send(200,kitchen?{revision:kitchen.revision,data:kitchen.data,updatedAt:kitchen.updatedAt}:{revision:0,data:null});

@@ -31,6 +31,24 @@ try{
  assert.equal(await store.issueEmailToken('one','verify','expired-verify',new Date(at.getTime()-1),at),true);
  assert.equal(await store.consumeEmailToken('verify','expired-verify',at),null);
  assert.equal(await store.issueEmailToken('two','verify','unrelated',expiry,at),false);
+ const {MongoClient}=await import('mongodb');const inspector=new MongoClient(process.env.MONGODB_TEST_URI);await inspector.connect();
+ try{
+  const db=inspector.db(name);
+  await store.createUser({_id:'other',email:'keep@example.com'});await store.saveKitchen('other',0,{note:'keep'});
+  await db.collection('accounts').insertMany([{userId:'one',private:'remove'},{userId:'other',private:'keep'}]);
+  await db.collection('plan_history').insertMany([{userId:'one',recipeId:'rice'},{userId:'other',recipeId:'rice'}]);
+  await store.saveSession({_id:'delete-session',userId:'one',email:'a@example.com',expiresAt:new Date(Date.now()+60000)});
+  assert.equal(await store.deleteAccount('one',999),false);assert(await store.userByEmail('a@example.com'));
+  const work=await Promise.allSettled([store.deleteAccount('one',1),store.saveKitchen('one',2,{note:'in-flight edit'}),store.saveSession({_id:'racing-session',userId:'one',email:'a@example.com',expiresAt:new Date(Date.now()+60000)})]);
+  assert.equal(work[0].status,'fulfilled');assert.equal(work[0].value,true);
+  assert.equal(await store.userByEmail('a@example.com'),null);assert.equal(await store.kitchen('one'),null);
+  for(const collection of ['sessions','accounts','plan_history'])assert.equal(await db.collection(collection).countDocuments({userId:'one'}),0);
+  assert(await store.userByEmail('keep@example.com'));assert.deepEqual((await store.kitchen('other')).data,{note:'keep'});
+  assert.equal(await db.collection('accounts').countDocuments({userId:'other'}),1);assert.equal(await db.collection('plan_history').countDocuments({userId:'other'}),1);
+  assert.equal(await db.collection('recipes').countDocuments(),420);
+  await assert.rejects(store.saveKitchen('one',0,{note:'must not resurrect'}),{status:401});
+  await assert.rejects(store.saveSession({_id:'after-delete',userId:'one',expiresAt:new Date(Date.now()+60000)}),{status:401});
+ }finally{await inspector.close();}
  console.log('Real MongoDB integration passed: unique accounts, sessions, expiry, isolation, atomic conflict checks and reconnect persistence.');
 }finally{
  await store.close();

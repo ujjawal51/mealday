@@ -10,16 +10,6 @@ jobs:
   account-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    services:
-      mongo:
-        image: mongo:8.0
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,9 +25,22 @@ jobs:
           node --check phone-preview/dist/email-recovery.js
           node --check phone-preview/dist/account-form.js
           node --test phone-preview/server/*.test.mjs
+      - name: Start a disposable MongoDB replica set
+        run: |
+          docker run --detach --name mealday-test-mongo --publish 27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
+          for attempt in $(seq 1 40); do
+            if docker exec mealday-test-mongo mongosh --quiet --eval 'db.adminCommand({ping:1})'; then break; fi
+            sleep 1
+          done
+          docker exec mealday-test-mongo mongosh --quiet --eval "rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]})"
+          for attempt in $(seq 1 40); do
+            if docker exec mealday-test-mongo mongosh --quiet --eval 'if(!db.hello().isWritablePrimary) quit(1)'; then exit 0; fi
+            sleep 1
+          done
+          exit 1
       - name: Disposable MongoDB integration
         env:
-          MONGODB_TEST_URI: mongodb://127.0.0.1:27017
+          MONGODB_TEST_URI: mongodb://127.0.0.1:27017/?replicaSet=rs0
         run: node phone-preview/server/mongo.integration.mjs
       - name: Install browser test tools
         run: |

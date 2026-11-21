@@ -12,6 +12,7 @@ class Store{
  async saveSession(s){this.sessions.set(s._id,s);}
  async session(id){return this.sessions.get(id);}
  async deleteSession(id){this.sessions.delete(id);}
+ async deleteAccount(id,version){const user=[...this.users.values()].find(u=>u._id===id);if(!user||(user.authVersion||0)!==version)return false;this.users.delete(user.email);this.kitchens.delete(id);for(const [key,value] of this.sessions)if(value.userId===id)this.sessions.delete(key);return true;}
  async kitchen(id){return this.kitchens.get(id);}
  async issueEmailToken(){return true;}
  async cancelEmailToken(){}
@@ -76,11 +77,26 @@ try{
  assert.equal(result.profile.name,'New Chef');assert.equal(result.profile.people,1);assert.equal(result.profile.shop,'LuLu');
  assert.equal(result.recipeJournal.rice.note,'Keep this cloud note');
  assert.equal(await first.page.evaluate(()=>localStorage.getItem('mealday.pending-setup.v1')),null);
+ await first.page.locator('.nav [data-view="settings"]').click();await click(first.page,'delete-account');
+ assert.equal(await first.page.locator('#dialog a[href*="github.com"]').count(),0);
+ await first.page.getByRole('button',{name:'Cancel',exact:true}).click();assert(store.users.has('existing@example.com'));
+ await click(first.page,'delete-account');
+ await first.page.locator('#delete-account-form [name="password"]').fill('wrong-password');
+ await first.page.locator('#delete-account-form [name="confirmation"]').fill('DELETE');
+ await first.page.locator('#delete-account-form button[type="submit"]').click();
+ await first.page.getByRole('alert').filter({hasText:'Password is incorrect'}).waitFor();assert(store.users.has('existing@example.com'));
+ await first.page.locator('#delete-account-form [name="password"]').fill('existing-password-123');
+ await first.page.locator('#delete-account-form button[type="submit"]').click();
+ await first.page.waitForFunction(()=>!document.querySelector('#dialog').open);
+ assert(!store.users.has('existing@example.com'));assert(!store.kitchens.has('existing'));
+ assert.equal((await (await first.page.request.get(origin+'/api/account')).json()).user,null);
+ assert.equal(await first.page.evaluate(()=>localStorage.getItem('mealday.cloud.cache.existing')),null);
+ assert(first.page.url().startsWith(origin));
  await first.context.close();
  const guest=await page();await wizard(guest.page);await click(guest.page,'setup-account-guest');
  await guest.page.waitForSelector('body[data-view="week"]',{timeout:60000});
  assert.equal(await guest.page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')).profile.name),'New Chef');
  assert.equal(await guest.page.evaluate(()=>localStorage.getItem('mealday.pending-setup.v1')),null);
  await guest.context.close();
- console.log('Browser onboarding account checks passed: full wizard, phone layout, Back, refresh, mismatch, verification, login, preserved cloud notes, selected preferences and guest plan.');
+ console.log('Browser onboarding account checks passed: full wizard, phone layout, Back, refresh, mismatch, verification, login, preserved cloud notes, selected preferences guest plan and password-confirmed account deletion without redirects.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

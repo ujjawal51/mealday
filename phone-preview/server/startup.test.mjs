@@ -78,7 +78,7 @@ test('Settings actions open real controls and saved-meal reset preserves notes a
  await click('rate-app');assert.match(dialog.innerHTML,/feedback-form/);await click('close');
  await click('request-feature');assert.match(dialog.innerHTML,/What would you like Mealday/);await click('close');
  await click('subscription');assert.match(dialog.innerHTML,/No billing is connected/);await click('close');
- await click('delete-account');assert.match(dialog.innerHTML,/no online account to delete/);await click('close');
+ await click('delete-account');assert.match(dialog.innerHTML,/No online account will be deleted/);assert.doesNotMatch(dialog.innerHTML,/github\.com|Contact support/);assert.match(dialog.innerHTML,/account-login/);await click('close');
  await click('clear-saved');assert.match(dialog.innerHTML,/confirm-saved/);await click('confirm-saved');
  const saved=JSON.parse(storage.get('mealday.android.v1'));assert.equal(saved.suggestionsReset,true);assert.deepEqual(saved.planHistory,[]);assert.equal(saved.favorites.length,0);assert.equal(saved.recipeJournal.rice.rating,5);assert.equal(saved.recipeJournal.rice.note,'Keep');
 });
