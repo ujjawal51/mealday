@@ -21,6 +21,16 @@ try{
  await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
  assert.equal((await store.kitchen('one')).revision,2);
  await store.deleteSession('hashed');assert.equal(await store.session('hashed'),null);
+ const at=new Date(),expiry=new Date(at.getTime()+60000);
+ assert.equal(await store.issueEmailToken('one','reset','hashed-reset',expiry,at),true);
+ assert.equal(await store.issueEmailToken('one','reset','second-reset',expiry,at),false);
+ const resetRaces=await Promise.all([store.consumeEmailToken('reset','hashed-reset',at,{salt:'new',hash:'hashed-password'}),store.consumeEmailToken('reset','hashed-reset',at,{salt:'other',hash:'other-hash'})]);
+ assert.equal(resetRaces.filter(Boolean).length,1);
+ assert.equal((await store.userByEmail('a@example.com')).authVersion,1);
+ assert.equal(await store.consumeEmailToken('reset','hashed-reset',at,{}),null);
+ assert.equal(await store.issueEmailToken('one','verify','expired-verify',new Date(at.getTime()-1),at),true);
+ assert.equal(await store.consumeEmailToken('verify','expired-verify',at),null);
+ assert.equal(await store.issueEmailToken('two','verify','unrelated',expiry,at),false);
  console.log('Real MongoDB integration passed: unique accounts, sessions, expiry, isolation, atomic conflict checks and reconnect persistence.');
 }finally{
  await store.close();
