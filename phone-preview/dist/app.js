@@ -1,3 +1,4 @@
+import {mountGoogleSignIn} from './google-signin.js';
 import {createOnboardingMotion} from './onboarding-motion.js';
 import {savingsComparison} from './savings.js';
 import {weeklyCalendar,kitchenBackup} from './settings-tools.js';
@@ -126,7 +127,11 @@ function render(){
   if(view==='plan')screen.innerHTML=planSettings();
   if(view==='settings')screen.innerHTML=settings();
   if(view==='history')screen.innerHTML=cookingHistoryPage();
-  if(view==='account')screen.innerHTML=onboardingAccount();
+  if(view==='account'){
+    screen.innerHTML=onboardingAccount();
+    const holder=screen.querySelector('[data-google-signin]');
+    if(holder){const chosen=structuredClone(wizardDraft);mountGoogleSignIn(holder,{onSuccess:async()=>{await cloudBackup.init();wizardDraft=chosen;await finishOnboarding();}});}
+  }
   if(view==='recipe'&&detail)renderRecipeDetail(detail);
   if(view==='welcome')previewSlideshow.start();else {previewSlideshow.stop();previewHovered=false;}
 }
@@ -449,7 +454,10 @@ document.addEventListener('click',async event=>{
   else if(action==='delete-account'){
     const c=cloudBackup.info();
     if(!c.account){openDialog('Delete my account','Sign in to the account you want to delete.','<p>You are currently using a guest kitchen. No online account will be deleted unless you sign in and confirm.</p>'+button('Log in','account-login','green wide')+button('Cancel','close','ghost wide'));return;}
-    openDialog('Delete my account','This permanently deletes your Mealday account.','<p>Your profile, saved meals, ratings, notes and cooking history will be removed from this account. You will be signed out on all devices. This cannot be undone. Downloaded backups and copies on other devices must be cleared separately.</p><p>'+esc(c.account.email)+'</p><form id="delete-account-form"><label class="field">Current password<input class="control" name="password" type="password" autocomplete="current-password" required maxlength="128"></label><a href="/forgot-password.html" target="_blank" rel="noopener">Forgot password?</a><label class="field">Type DELETE to confirm<input class="control" name="confirmation" autocomplete="off" autocapitalize="characters" spellcheck="false" pattern="DELETE" required></label><p role="alert"></p><button class="button danger wide" type="submit">Permanently delete my account</button>'+button('Cancel','close','ghost wide')+'</form>');
+    const google=c.account.authMethod==='google';
+    openDialog('Delete my account','This permanently deletes your Mealday account.','<p>Your profile, saved meals, ratings, notes and cooking history will be removed from this account. You will be signed out on all devices. This cannot be undone. Downloaded backups and copies on other devices must be cleared separately.</p><p>'+esc(c.account.email)+'</p><form id="delete-account-form">'+(google?'<div id="delete-google-confirm"></div>':'<label class="field">Current password<input class="control" name="password" type="password" autocomplete="current-password" required maxlength="128"></label>')+'<label class="field">Type DELETE to confirm<input class="control" name="confirmation" autocomplete="off" autocapitalize="characters" spellcheck="false" pattern="DELETE" required></label><p role="alert"></p><button class="button danger wide" type="submit" '+(google?'disabled':'')+'>Permanently delete my account</button>'+button('Cancel','close','ghost wide')+'</form>');
+    if(google)mountGoogleSignIn(dialog.querySelector('#delete-google-confirm'),{purpose:'delete',onSuccess:()=>{dialog.querySelector('#delete-account-form button[type="submit"]').disabled=false;}});
+
   }
   else if(action==='language'){openDialog('App language','English is the current app language.','<div class="language-active">'+icon('check')+'<span><strong>English</strong><small>Active language</small></span></div><p class="quick-help">Other languages are not available yet.</p>'+button('Done','close','green wide'));}
   else if(action==='edit-name')openDialog('Edit your name','','<form id="name-form"><label class="field">Name<input class="control" name="name" maxlength="40" required value="'+esc(state.profile.name)+'"></label><button class="button green wide">Save name</button></form>');
@@ -524,24 +532,6 @@ document.addEventListener('submit',async event=>{
     }catch(e){message.textContent=e.message;}
     finally{deletingAccount=false;submit.disabled=false;submit.textContent='Permanently delete my account';}
     return;
-  }
-  if(form.id==='setup-account-form'){
-    event.preventDefault();if(setupAccountBusy||busy)return;
-    const fields=new FormData(form),email=String(fields.get('email')||'').trim(),password=String(fields.get('password')||'');
-    if(setupAccountMode==='register'&&password!==String(fields.get('confirmPassword')||'')){error='The passwords don’t match.';render();return;}
-    setupAccountEmail=email;setupAccountBusy=true;error='';render();
-    const selected=structuredClone(wizardDraft);
-    try{
-      await cloudBackup.login(email,password,setupAccountMode==='register');
-      wizardDraft=selected;await finishOnboarding();
-    }catch(e){wizardDraft=selected;error=e.message;setView('account',false);}
-    finally{setupAccountBusy=false;if(view==='account')render();}
-    return;
-  }
-  if(form.id==='cloud-login'){
-    event.preventDefault();const data=new FormData(form),submit=form.querySelector('button[type="submit"]');submit.disabled=true;
-    try{await cloudBackup.login(String(data.get('email')),String(data.get('password')),data.get('register')==='on');dialog.close();notify('Account loaded. Check Settings for backup status.');}
-    catch(e){const error=form.querySelector('[role="alert"]');error.textContent=e.message;}finally{submit.disabled=false;}return;
   }
   if(form.id==='name-form'){
     event.preventDefault();
@@ -649,21 +639,12 @@ function onboardingAccount(){
   const c=cloudBackup.info(),p=wizardDraft||state.profile,formMode=setupAccountMode!=='choice',signup=setupAccountMode==='register';
   const disabled=setupAccountBusy||busy;
   const available=!['checking','unavailable'].includes(c.status);
-  const title=c.account?'Your kitchen, connected.':formMode?(signup?'Create your account':'Welcome back.'):'Your week starts here.';
-  const copy=c.account?'Build your next plan with the preferences you just chose.':formMode?'Your choices are saved. Let’s make this kitchen yours.':'Save your plan, favourite meals and cooking memories in one place.';
+  const title=c.account?'Your kitchen, connected.':'Your week starts here.';
+  const copy=c.account?'Build your next plan with the preferences you just chose.':'Continue with Google to save your plan, favourite meals and cooking memories.';
   let actions='';
-  if(c.account){actions='<p class="setup-account-identity">Signed in as '+esc(c.account.email)+'</p>'+button('Build my week','setup-account-continue','green wide','',(disabled?'disabled':''));}
-  else if(!formMode){
-    actions=button('Create an account','setup-account-mode','green wide','', 'data-id="register" '+(!available||!c.registration?'disabled':''))+
-      button('Log in with email','setup-account-mode','setup-account-secondary wide','', 'data-id="login" '+(!available?'disabled':''))+
-      (!available?'<p class="setup-account-service" role="status">'+(c.status==='checking'?'Checking account availability…':'Accounts are temporarily unavailable. You can still build your plan as a guest.')+'</p>':'');
-  }else{
-    actions='<form id="setup-account-form"><fieldset '+(disabled?'disabled':'')+'><label for="setup-account-email">Email address</label><input id="setup-account-email" class="control" name="email" type="email" autocomplete="email" maxlength="254" value="'+esc(setupAccountEmail)+'" required><label for="setup-account-password">Password</label><input id="setup-account-password" class="control" name="password" type="password" autocomplete="'+(signup?'new-password':'current-password')+'" minlength="'+(signup?'12':'1')+'" maxlength="128" required>'+
-      (signup?'<p class="setup-account-password-help">At least 12 characters.</p><label for="setup-account-confirm">Confirm password</label><input id="setup-account-confirm" class="control" name="confirmPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required>':'<a class="setup-account-recovery" href="/forgot-password.html" target="_blank" rel="noopener">Forgot password?</a>')+
-      '<button class="button green wide" type="submit">'+(disabled?'Please wait…':signup?'Create account':'Log in & build my week')+'</button></fieldset></form>'+
-      '<p class="setup-account-switch">'+(signup?'Already have an account? ':'New to Mealday? ')+button(signup?'Log in':'Sign up','setup-account-mode','setup-account-text','','data-id="'+(signup?'login':'register')+'" '+(disabled?'disabled':''))+'</p>'+
-      '<a class="setup-account-recovery" href="/verify-email.html" target="_blank" rel="noopener">Verify email / Resend verification</a>';
-  }
+  if(c.account){actions='<p class="setup-account-identity">Signed in as '+esc(c.account.email)+'</p>'+button('Build my week','setup-account-continue','green wide','',''+(disabled?'disabled':''));}
+  else actions='<div data-google-signin class="google-signin"></div><p class="setup-account-password-help">New to Mealday? Your first Google sign-in creates an account.</p>';
+
   return '<section class="setup-account '+(formMode?'setup-account-form-mode':'')+'"><header>'+button('←','setup-account-back','back-circle','','aria-label="Back to your preferences" '+(disabled?'disabled':''))+'<span>mealday<span>.</span></span></header><div class="setup-account-content"><div class="setup-account-avatar"><img src="/chef.png" alt="Mealday chef" width="104" height="132"><span aria-hidden="true">✦</span></div><p class="setup-account-eyebrow">YOUR KITCHEN, YOUR WAY</p><h1>'+title+'</h1><p class="setup-account-copy">'+copy+'</p><p class="setup-account-recap">'+esc(p.people)+' '+(p.people===1?'person':'people')+'<span>·</span>'+esc(p.days.length)+' cooking '+(p.days.length===1?'day':'days')+'<span>·</span>AED '+esc(money(p.budget))+'</p><div class="setup-account-actions">'+actions+'</div>'+
     (error?'<p class="setup-account-error" role="alert">'+esc(error)+'</p>':'')+
     '<p class="setup-account-legal">By creating an account, you agree to our '+button('Terms of service','terms','setup-account-text')+' and '+button('Privacy policy','privacy','setup-account-text')+'.</p>'+
@@ -1016,7 +997,7 @@ function sharePlan(){
   openDialog('Share your plan','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(text)+'</textarea>');
 }
 function showPrivacy(){
-  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Account passwords are hashed by the Mealday backend; session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>Plan sharing uses Android sharing or a copyable text view. Calendar reminders are downloaded as a file for you to open and save in your calendar. A downloaded backup contains your kitchen data; keep it private. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
+  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Google verifies sign-ins; Mealday session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>Plan sharing uses Android sharing or a copyable text view. Calendar reminders are downloaded as a file for you to open and save in your calendar. A downloaded backup contains your kitchen data; keep it private. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
 }
 function resetDialog(){
   openDialog('Reset this kitchen?','','<p class="notice">This resets your current kitchen. If it belongs to an account, the reset will sync to that account when connected. Other account and guest recovery copies on this browser are retained.</p>'+button('Cancel','close')+' '+button('Reset kitchen','confirm-reset','danger'));
@@ -1058,8 +1039,7 @@ function openCloudAccount(){
     if(c.conflict)content+='<p>Keep this device’s full kitchen, or load the cloud version. This choice applies to the full backup.</p>'+button('Keep this device','cloud-local','primary')+button('Load cloud version','cloud-remote','ghost');
     else content+=button('Sync now','cloud-retry','primary')+(c.hasGuest?button('Import guest kitchen','cloud-import','ghost'):'');
     content+=button('Sign out','cloud-logout','ghost');
-  }else if(!['unavailable','checking'].includes(c.status))content+='<form id="cloud-login"><label>Email<input class="control" type="email" name="email" autocomplete="username" required maxlength="254"></label><label>Password<input class="control" type="password" name="password" autocomplete="current-password" minlength="12" maxlength="128" required></label>'+(c.registration?'<label><input type="checkbox" name="register"> Create a new account</label>':'')+'<p role="alert"></p><button type="submit" class="button primary">Continue</button></form>';
-  else content+='<p>This preview is using device storage. Connect the Mealday backend to MongoDB to enable account login and backup.</p>'+button('Check connection again','cloud-connect','ghost');
+  }
   openDialog('Cloud backup & login','Your kitchen across devices',content);
 }
 

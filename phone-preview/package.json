@@ -12,6 +12,7 @@
     "recipes:import": "node --env-file-if-exists=.env server/import-recipes.mjs"
   },
   "dependencies": {
+    "google-auth-library": "^11.3.4",
     "mongodb": "^7.0.0"
   }
 }

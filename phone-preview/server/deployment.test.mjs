@@ -38,7 +38,7 @@ test('Gateway keeps platform credentials private, pins the backend and fails clo
 });
 test('Published-origin gateway: two phones share Mongo-store state while sessions, CSRF and identity remain isolated',async t=>{
  const store=new Store(),origin='https://mealday.example';
- const server=createServer(createApp({store,origin,production:true,allowRegistration:true,proxySecret:secret}));server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(r=>server.close(r)));
+ const server=createServer(createApp({allowPasswordAuth:true,store,origin,production:true,allowRegistration:true,proxySecret:secret}));server.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(r=>server.close(r)));
  const local='http://127.0.0.1:'+server.address().port;
  const gateway=createGateway((url,init)=>fetch(local+new URL(url).pathname,init));
  const env={MEALDAY_BACKEND_URL:'https://backend.example',MEALDAY_PROXY_SECRET:secret};

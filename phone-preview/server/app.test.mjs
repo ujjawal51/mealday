@@ -15,7 +15,7 @@ class MemoryStore {
  async saveKitchen(id,revision,data){const old=this.kitchens.get(id);if((old?.revision||0)!==revision)return null;const next={revision:revision+1,data,updatedAt:new Date().toISOString()};this.kitchens.set(id,next);return next;}
 }
 const kitchen=note=>({state:{profile:{name:note},pantry:{},favorites:[],checked:[],recipeJournal:{pasta:{rating:5,note}}},history:{version:1,events:[{id:'cook-1',recipeId:'pasta',cookedAt:'2026-11-19T00:00:00.000Z',undoneAt:null}]}});
-async function fixture(t){const store=new MemoryStore();let origin;const server=createServer((req,res)=>createAppHandler(req,res));let createAppHandler;server.listen(0,'127.0.0.1');await once(server,'listening');origin='http://127.0.0.1:'+server.address().port;createAppHandler=createApp({store,origin});t.after(()=>new Promise(resolve=>server.close(resolve)));
+async function fixture(t){const store=new MemoryStore();let origin;const server=createServer((req,res)=>createAppHandler(req,res));let createAppHandler;server.listen(0,'127.0.0.1');await once(server,'listening');origin='http://127.0.0.1:'+server.address().port;createAppHandler=createApp({allowPasswordAuth:true,store,origin});t.after(()=>new Promise(resolve=>server.close(resolve)));
  async function client(){let cookie='',csrf='';return {async call(path,method='GET',body,headers={}){const res=await fetch(origin+path,{method,headers:{Origin:origin,Cookie:cookie,'Content-Type':'application/json','X-CSRF-Token':csrf,...headers},...(body?{body:JSON.stringify(body)}:{})});if(res.headers.has('set-cookie'))cookie=res.headers.get('set-cookie').split(';')[0];const data=await res.json();if(data.csrf)csrf=data.csrf;return {status:res.status,data,res};}};}return {store,client,origin};}
 const credentials=email=>({email,password:'correct horse battery staple'});
 test('MongoDB API contract: identity, saving, isolation, conflicts and logout',async t=>{
@@ -120,8 +120,8 @@ test('Production cookies are secure and registration requires explicit enablemen
   await handler(req,{writeHead:(s,h)=>{status=s;headers=h;},end:b=>{bodyText=b;}});
   return {status,headers,data:JSON.parse(bodyText)};
  }
- assert.equal((await request(app,'/api/auth/register',credentials('secure@example.com'))).status,403);
- const enabled=createApp({store,origin,production:true,allowRegistration:true});
+ assert.equal((await request(app,'/api/auth/register',credentials('secure@example.com'))).status,410);
+ const enabled=createApp({allowPasswordAuth:true,store,origin,production:true,allowRegistration:true});
  const created=await request(enabled,'/api/auth/register',credentials('secure@example.com'));
  assert.equal(created.status,200);
  assert.match(created.headers['Set-Cookie'],/^__Host-mealday_session=/);

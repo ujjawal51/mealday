@@ -851,3 +851,5 @@ body[data-view="account"] #main{padding:0;max-width:560px}
 @media(min-width:650px){.setup-account{min-height:100svh;padding:30px 36px 22px}}
 @media(max-height:700px){.setup-account-content{padding-top:30px;padding-bottom:24px}.setup-account-avatar{width:108px;height:108px;margin-bottom:20px}.setup-account-avatar img{width:76px;height:99px}.setup-account-form-mode .setup-account-avatar{width:78px;height:78px}.setup-account-form-mode .setup-account-avatar img{width:55px;height:74px}}
 @media(prefers-reduced-motion:reduce){.setup-account{animation:none}}
+
+.google-signin{width:100%;display:grid;justify-items:center;gap:10px}.google-signin-status{font-size:14px;color:#707668;line-height:1.6;text-align:center;margin:10px 0}.google-signin-status:empty{display:none}

@@ -22,8 +22,8 @@ jobs:
         run: git diff --exit-code -- phone-preview/dist
       - name: Syntax and regression tests
         run: |
-          node --check phone-preview/dist/email-recovery.js
-          node --check phone-preview/dist/account-form.js
+          node --check phone-preview/dist/google-signin.js
+          node --check phone-preview/server/google-auth.mjs
           node --test phone-preview/server/*.test.mjs
       - name: Start a disposable MongoDB replica set
         run: |
