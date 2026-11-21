@@ -19,7 +19,7 @@ const password='correct horse battery staple';
 const kitchen=note=>({state:{profile:{name:note},pantry:{},checked:[],favorites:[],recipeJournal:{rice:{rating:5,note}}},history:{version:1,events:[]}});
 async function fixture(t){
  const store=new Store(),server=createServer();server.listen(0,'127.0.0.1');await once(server,'listening');
- const origin='http://127.0.0.1:'+server.address().port;server.on('request',createApp({store,origin}));t.after(()=>new Promise(r=>server.close(r)));
+ const origin='http://127.0.0.1:'+server.address().port;server.on('request',createApp({allowPasswordAuth:true,store,origin}));t.after(()=>new Promise(r=>server.close(r)));
  function client(){let cookie='',csrf='';return {async call(path,method='GET',body,extra={}){const res=await fetch(origin+path,{method,headers:{Origin:origin,Cookie:cookie,'Content-Type':'application/json','X-CSRF-Token':csrf,...extra},...(body?{body:JSON.stringify(body)}:{})});if(res.headers.has('set-cookie'))cookie=res.headers.get('set-cookie').split(';')[0];const data=await res.json();if(data.csrf)csrf=data.csrf;return {status:res.status,data,headers:res.headers};}};}
  return {store,origin,client};
 }

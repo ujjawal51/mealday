@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import {seedRecipes} from './recipe-catalogue.mjs';
 export async function connectStore(uri,dbName){
   const {MongoClient}=await import('mongodb');
@@ -5,8 +6,8 @@ export async function connectStore(uri,dbName){
   await client.connect();const db=client.db(dbName);await db.command({ping:1});
   const hello=await db.command({hello:1}),transactions=!!(hello.setName||hello.msg==='isdbgrid');
   try{const result=await seedRecipes(db);console.log(`Recipe catalogue: ${result.present} available, ${result.inserted} imported, ${result.existing} already present.`);}catch(error){await client.close();throw error;}
-  const users=db.collection('users'),sessions=db.collection('sessions'),kitchens=db.collection('kitchens');
-  await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0}),users.createIndex({resetEmailHash:1},{sparse:true}),users.createIndex({verifyEmailHash:1},{sparse:true})]);
+  const users=db.collection('users'),sessions=db.collection('sessions'),kitchens=db.collection('kitchens'),googleChallenges=db.collection('google_challenges');
+  await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0}),users.createIndex({googleSub:1},{unique:true,sparse:true}),googleChallenges.createIndex({expiresAt:1},{expireAfterSeconds:0})]);
   return {
     close:()=>client.close(),
     ping:()=>db.command({ping:1}),
@@ -20,26 +21,32 @@ export async function connectStore(uri,dbName){
     })):sessions.insertOne({...record,token:record._id}),
     session:id=>sessions.findOne({_id:id,expiresAt:{$gt:new Date()}}),
     deleteSession:id=>sessions.deleteOne({_id:id}),
-    async issueEmailToken(userId,purpose,hash,expiresAt,at){
-      const prefix=purpose==='reset'?'resetEmail':'verifyEmail',last=prefix+'SentAt';
-      const result=await users.updateOne({_id:userId,$or:[{[last]:{$exists:false}},{[last]:{$lte:new Date(at.getTime()-60000)}}]},{$set:{[prefix+'Hash']:hash,[prefix+'ExpiresAt']:expiresAt,[last]:at}});
-      return result.modifiedCount===1;
-    },
-    cancelEmailToken:(userId,purpose,hash)=>{
-      const prefix=purpose==='reset'?'resetEmail':'verifyEmail';
-      return users.updateOne({_id:userId,[prefix+'Hash']:hash},{$unset:{[prefix+'Hash']:'',[prefix+'ExpiresAt']:'',[prefix+'SentAt']:''}});
-    },
-    async consumeEmailToken(purpose,hash,at,password){
-      const prefix=purpose==='reset'?'resetEmail':'verifyEmail';
-      const update={$set:{emailVerifiedAt:at.toISOString()},$unset:{[prefix+'Hash']:'',[prefix+'ExpiresAt']:''}};
-      if(purpose==='reset'){
-        update.$set.password=password;update.$set.passwordChangedAt=at.toISOString();
-        update.$inc={authVersion:1};
-        Object.assign(update.$unset,{passwordHash:'',salt:'',verifyEmailHash:'',verifyEmailExpiresAt:''});
-      }
-      const user=await users.findOneAndUpdate({[prefix+'Hash']:hash,[prefix+'ExpiresAt']:{$gt:at}},update,{returnDocument:'after'});
-      if(user&&purpose==='reset')await sessions.deleteMany({userId:user._id});
-      return user;
+    issueGoogleChallenge:challenge=>googleChallenges.insertOne(challenge),
+    consumeGoogleChallenge:(hash,at)=>googleChallenges.findOneAndDelete({_id:hash,expiresAt:{$gt:at}}),
+    markGoogleReauthenticated:(id,at)=>sessions.updateOne({_id:id},{$set:{deleteVerifiedAt:at}}),
+    async googleUser({sub,email,authoritative},{allowRegistration=true}={}){
+      if(!transactions)throw Object.assign(Error('Google sign-in requires a MongoDB replica set.'),{status:503});
+      return client.withSession(session=>session.withTransaction(async()=>{
+        let user=await users.findOne({googleSub:sub},{session});
+        if(user){
+          if(user.email!==email){
+            if(await users.findOne({email},{session}))throw Object.assign(Error('This Google email is already linked to another account.'),{status:409});
+            await users.updateOne({_id:user._id},{$set:{email}},{session});user={...user,email};
+          }
+          return user;
+        }
+        user=await users.findOne({email},{session});
+        if(user){
+          if(user.googleSub||!authoritative)throw Object.assign(Error('This existing account cannot be linked automatically. Your saved data has been kept.'),{status:409});
+          const version=(user.authVersion||0)+1;
+          await users.updateOne({_id:user._id},{$set:{googleSub:sub,emailVerifiedAt:new Date().toISOString(),authVersion:version},$unset:{password:'',passwordHash:'',salt:'',verificationRequired:'',resetEmailHash:'',resetEmailExpiresAt:'',verifyEmailHash:'',verifyEmailExpiresAt:''}},{session});
+          await sessions.deleteMany({userId:user._id},{session});
+          return {...user,googleSub:sub,authVersion:version};
+        }
+        if(!allowRegistration)throw Object.assign(Error('New accounts are not enabled.'),{status:403});
+        user={_id:randomUUID(),email,googleSub:sub,emailVerifiedAt:new Date().toISOString(),createdAt:new Date().toISOString(),authVersion:0};
+        await users.insertOne(user,{session});return user;
+      }));
     },
     kitchen:userId=>kitchens.findOne({_id:userId}),
     async deleteAccount(userId,authVersion){
@@ -52,6 +59,7 @@ export async function connectStore(uri,dbName){
         await sessions.deleteMany({userId},{session});
         await db.collection('accounts').deleteMany({userId},{session});
         await db.collection('plan_history').deleteMany({userId},{session});
+        await googleChallenges.deleteMany({userId},{session});
         return true;
       }));
     },

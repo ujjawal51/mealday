@@ -22,15 +22,14 @@ try{
  assert.equal((await store.kitchen('one')).revision,2);
  await store.deleteSession('hashed');assert.equal(await store.session('hashed'),null);
  const at=new Date(),expiry=new Date(at.getTime()+60000);
- assert.equal(await store.issueEmailToken('one','reset','hashed-reset',expiry,at),true);
- assert.equal(await store.issueEmailToken('one','reset','second-reset',expiry,at),false);
- const resetRaces=await Promise.all([store.consumeEmailToken('reset','hashed-reset',at,{salt:'new',hash:'hashed-password'}),store.consumeEmailToken('reset','hashed-reset',at,{salt:'other',hash:'other-hash'})]);
- assert.equal(resetRaces.filter(Boolean).length,1);
- assert.equal((await store.userByEmail('a@example.com')).authVersion,1);
- assert.equal(await store.consumeEmailToken('reset','hashed-reset',at,{}),null);
- assert.equal(await store.issueEmailToken('one','verify','expired-verify',new Date(at.getTime()-1),at),true);
- assert.equal(await store.consumeEmailToken('verify','expired-verify',at),null);
- assert.equal(await store.issueEmailToken('two','verify','unrelated',expiry,at),false);
+ await store.issueGoogleChallenge({_id:'challenge',purpose:'signin',expiresAt:expiry});
+ assert.equal((await store.consumeGoogleChallenge('challenge',at)).purpose,'signin');assert.equal(await store.consumeGoogleChallenge('challenge',at),null);
+ await store.issueGoogleChallenge({_id:'expired-challenge',purpose:'signin',expiresAt:new Date(at.getTime()-1)});assert.equal(await store.consumeGoogleChallenge('expired-challenge',at),null);
+ const linked=await store.googleUser({sub:'google-one',email:'a@example.com',authoritative:true});assert.equal(linked._id,'one');assert.equal(linked.authVersion,1);assert.equal((await store.kitchen('one')).revision,2);
+ assert.equal((await store.googleUser({sub:'google-one',email:'a@example.com',authoritative:true}))._id,'one');
+ await assert.rejects(store.googleUser({sub:'different-sub',email:'a@example.com',authoritative:true}),{status:409});
+ await store.createUser({_id:'external',email:'external@example.com'});await assert.rejects(store.googleUser({sub:'external-sub',email:'external@example.com',authoritative:false}),{status:409});
+ const fresh=await store.googleUser({sub:'new-google',email:'new@gmail.com',authoritative:true});assert.equal(fresh.password,undefined);assert.equal(fresh.googleSub,'new-google');
  const {MongoClient}=await import('mongodb');const inspector=new MongoClient(process.env.MONGODB_TEST_URI);await inspector.connect();
  try{
   const db=inspector.db(name);
