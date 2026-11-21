@@ -15,7 +15,7 @@ async function accountService(){
   const response=await fetch('/api/account',{credentials:'same-origin',headers:{Accept:'application/json'},cache:'no-store'});
   if(!response.ok)throw Error();const data=await response.json();
   if(!Object.hasOwn(data,'user'))throw Error();
-  if(data.user){form.hidden=true;success.hidden=false;success.querySelector('h2').textContent='You’re signed in';success.querySelector('p').textContent='Continue as '+data.user.email+'.';message('Your account is connected.');return;}
+  if(data.user){form.hidden=true;success.hidden=false;success.querySelector('h2').textContent='You’re signed in';success.querySelector('p').textContent='Continue as '+data.user.email+'.';message(data.user.emailVerified?'Your email is verified.':'Your account is connected. Use Verify email below to confirm your address.');return;}
   if(signup&&!data.allowRegistration){message('New accounts are not available on this service yet. You can log in to an existing account or continue as a guest.');return;}
   ready=true;fields.disabled=false;submit.disabled=false;
   message(signup?'Create your account to save your kitchen across devices.':'Sign in to load your saved kitchen.');
@@ -34,6 +34,13 @@ form.addEventListener('submit',async event=>{
  try{
   const response=await fetch('/api/auth/'+mode,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({email,password})});
   let data;try{data=await response.json();}catch{throw Error('Account service could not respond. Please retry.');}
+  if(data.requiresVerification&&signup){
+   form.reset();form.hidden=true;success.hidden=false;
+   success.querySelector('h2').textContent='Check your inbox';
+   success.querySelector('p').textContent='Open the verification email, confirm your address, then log in. You can request a new email using Resend verification below.';
+   const next=success.querySelector('a');next.href='/login.html';next.textContent='Go to log in';
+   message('Your email needs verification.');return;
+  }
   if(!response.ok)throw Error(data.error||'Could not complete sign-in. Please try again.');
   if(!data.user?.id)throw Error('Sign-in was not confirmed. Please retry.');
   form.reset();form.hidden=true;success.hidden=false;

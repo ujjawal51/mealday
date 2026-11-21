@@ -1,0 +1,38 @@
+name: Phone account checks
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  account-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      mongo:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Syntax and regression tests
+        run: |
+          node --check phone-preview/dist/email-recovery.js
+          node --check phone-preview/dist/account-form.js
+          node --test phone-preview/server/*.test.mjs
+      - name: Disposable MongoDB integration
+        env:
+          MONGODB_TEST_URI: mongodb://127.0.0.1:27017
+        run: node phone-preview/server/mongo.integration.mjs

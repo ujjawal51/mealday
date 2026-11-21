@@ -1,3 +1,4 @@
+import {createEmailRecovery} from './email-recovery.mjs';
 import {isIP} from 'node:net';
 import {timingSafeEqual} from 'node:crypto';
 import {randomUUID} from 'node:crypto';
@@ -7,7 +8,8 @@ import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',mailer=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+  const recovery=createEmailRecovery({store,origin,mailer});
   const limits=new Map();let dummy;
   const cookieName=production?'__Host-mealday_session':'mealday_session';
   const cookie=(value,maxAge)=>`${cookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -32,9 +34,25 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           if(!String(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON required.'});
         }
         const rawCookie=String(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(cookieName+'='))?.slice(cookieName.length+1);
-        const session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
-        if(path==='/api/account'&&req.method==='GET')return send(200,{user:session?{id:session.userId,email:session.email}:null,csrf:session?.csrf||null,allowRegistration});
+        let session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
+        let accountUser=session?await store.userByEmail(session.email):null;
+        if(session&&(!accountUser||String(accountUser._id)!==String(session.userId)||(session.authVersion||0)!==(accountUser.authVersion||0))){await store.deleteSession(digest(rawCookie));session=null;accountUser=null;}
+        if(path==='/api/account'&&req.method==='GET')return send(200,{user:session?{id:session.userId,email:session.email,emailVerified:!!accountUser.emailVerifiedAt}:null,csrf:session?.csrf||null,allowRegistration,emailRecovery:recovery.enabled});
         async function body(){let chunks=[],size=0;for await(const part of req){size+=part.length;if(size>2*1024*1024)throw Object.assign(Error('Backup is too large.'),{status:413});chunks.push(part);}try{return JSON.parse(Buffer.concat(chunks).toString());}catch{throw Object.assign(Error('Invalid JSON.'),{status:400});}}
+        if(['/api/auth/forgot-password','/api/auth/request-verification','/api/auth/reset-password','/api/auth/verify-email'].includes(path)&&req.method==='POST'){
+          const forwarded=String(req.headers['x-mealday-client-ip']||'');
+          const ip=trustedProxy&&isIP(forwarded)?forwarded:req.socket.remoteAddress;
+          const key='email:'+ip,stamp=Date.now();let rate=limits.get(key);
+          if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(key,rate);}
+          if(++rate.count>10)return send(429,{error:'Too many requests. Try again in 15 minutes.'});
+          const value=await body();
+          if(!value||typeof value!=='object'||Array.isArray(value))return send(400,{error:'Invalid request.'});
+          if(path.endsWith('forgot-password')||path.endsWith('request-verification')){
+            return send(202,await recovery.request(value.email,path.endsWith('forgot-password')?'reset':'verify'));
+          }
+          const result=await recovery.consume(path.endsWith('reset-password')?'reset':'verify',value.token,value.password);
+          return send(200,result,path.endsWith('reset-password')?{'Set-Cookie':cookie('',0)}:{});
+        }
         if(['/api/auth/login','/api/auth/register'].includes(path)&&req.method==='POST'){
           const forwarded=String(req.headers['x-mealday-client-ip']||'');const ip=trustedProxy&&isIP(forwarded)?forwarded:req.socket.remoteAddress;const stamp=Date.now();let rate=limits.get(ip);
           if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(ip,rate);}
@@ -43,16 +61,22 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           const {email,password}=validateAccount(await body(),{registration:path.endsWith('register')});let user=await store.userByEmail(email);
           if(path.endsWith('register')){
             if(user)return send(409,{error:'Cannot create this account. Try signing in.'});
-            user={_id:randomUUID(),email,password:await passwordHash(password),createdAt:new Date().toISOString()};
+            user={_id:randomUUID(),email,password:await passwordHash(password),createdAt:new Date().toISOString(),verificationRequired:recovery.enabled};
             if(!await store.createUser(user))return send(409,{error:'Cannot create this account. Try signing in.'});
+            if(recovery.enabled){
+              try{await recovery.sendLink(user,'verify');}
+              catch{return send(503,{error:'Account created, but the verification email could not be delivered. Use Resend verification to try again.'});}
+              return send(403,{requiresVerification:true,email,error:'Check your inbox to verify your email, then sign in.'});
+            }
           }else{
             dummy??=await passwordHash(token());
             const matches=await passwordMatches(password,user?.password||user||dummy);
             if(!user||!matches)return send(401,{error:'Email or password is incorrect.'});
           }
+          if(user.verificationRequired&&!user.emailVerifiedAt)return send(403,{error:'Verify your email before signing in. Use Resend verification if you need a new link.',requiresVerification:true});
           if(rawCookie)await store.deleteSession(digest(rawCookie));
-          const secret=token(),csrf=token();await store.saveSession({_id:digest(secret),userId:user._id,email,csrf,expiresAt:new Date(Date.now()+7*DAY)});
-          return send(200,{user:{id:user._id,email},csrf},{'Set-Cookie':cookie(secret,7*86400)});
+          const secret=token(),csrf=token();await store.saveSession({_id:digest(secret),userId:user._id,email,csrf,authVersion:user.authVersion||0,expiresAt:new Date(Date.now()+7*DAY)});
+          return send(200,{user:{id:user._id,email,emailVerified:!!user.emailVerifiedAt},csrf},{'Set-Cookie':cookie(secret,7*86400)});
         }
         if(!session)return send(401,{error:'Sign in to access your backup.'});
         if(req.method!=='GET'&&req.headers['x-csrf-token']!==session.csrf)return send(403,{error:'Session verification failed. Refresh and try again.'});
