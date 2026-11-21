@@ -78,3 +78,7 @@ Open `/login.html` or `/signup.html` on the current app origin. Welcome and Sett
 The current phone UI uses forest-green headers, warm ivory/beige surfaces, Barlow Semi Condensed headings (self-hosted Google Fonts), readable system sans-serif body text, and five tabs: Plans, Discover, Cookbook, Grocery list and Profile. Discover has cuisine collections and direct bookmarks. Cookbook retains search/cuisine/diet filtering. Grocery extras are saved in the kitchen snapshot. Existing plan, recipe, nutrition, notes, ratings, history and account flows are retained.
 
 The welcome/grocery hero is an AI-generated illustrative food photo in `phone-preview/dist/mealday-grocery-hero.png`; it does not represent a delivery offering. Existing recipe-specific images remain illustrative. Font source: https://fonts.google.com/specimen/Barlow+Semi+Condensed (SIL Open Font License).
+
+### Cloud login and backup hosting
+
+Deploy `render.yaml` for the current phone UI and MongoDB account API on one origin. The server now validates cloud configuration, binds externally in production, and checks MongoDB on `/api/health`. See [cloud deployment and existing-Site gateway](phone-preview/hosting/README.md) for secret configuration, guest import, two-device validation and retaining the existing Sites URL. An actual cloud MongoDB connection and backend deployment are required; a static Site alone does not activate backup.

@@ -8,6 +8,7 @@ export async function connectStore(uri,dbName){
   await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0})]);
   return {
     close:()=>client.close(),
+    ping:()=>db.command({ping:1}),
     userByEmail:email=>users.findOne({email}),
     async createUser(user){try{await users.insertOne(user);return true;}catch(e){if(e.code===11000)return false;throw e;}},
     // A hashed token also satisfies the earlier root app's unique token index.

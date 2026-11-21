@@ -1,0 +1,21 @@
+# Deploy the existing phone UI and MongoDB account backend together.
+services:
+  - type: web
+    name: mealday
+    runtime: docker
+    plan: free
+    rootDir: phone-preview
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: MONGODB_DB
+        value: mealday
+      - key: MONGODB_URI
+        sync: false
+      - key: ALLOW_REGISTRATION
+        value: "true"

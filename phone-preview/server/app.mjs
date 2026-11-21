@@ -1,3 +1,5 @@
+import {isIP} from 'node:net';
+import {timingSafeEqual} from 'node:crypto';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
@@ -5,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy;
   const cookieName=production?'__Host-mealday_session':'mealday_session';
   const cookie=(value,maxAge)=>`${cookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -13,7 +15,16 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
     const send=(status,data,headers={})=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});res.end(JSON.stringify(data));};
     try{
       const path=new URL(req.url,origin).pathname;
-      if(path==='/api/health')return send(200,{ok:true,database:'connected'});
+      if(path==='/api/health'&&req.method==='GET'){
+        if(store.ping)await store.ping();
+        return send(200,{ok:true,database:'connected'});
+      }
+      let trustedProxy=false;
+      if(proxySecret){
+        const provided=Buffer.from(String(req.headers['x-mealday-proxy-key']||'')),expected=Buffer.from(proxySecret);
+        trustedProxy=provided.length===expected.length&&timingSafeEqual(provided,expected);
+        if(!trustedProxy)return send(403,{error:'Use the configured Mealday app address.'});
+      }
       if(path.startsWith('/api/')){
         if(req.headers['sec-fetch-site']==='cross-site')return send(403,{error:'Cross-site request rejected.'});
         if(!['GET','HEAD'].includes(req.method)){
@@ -25,7 +36,7 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         if(path==='/api/account'&&req.method==='GET')return send(200,{user:session?{id:session.userId,email:session.email}:null,csrf:session?.csrf||null,allowRegistration});
         async function body(){let chunks=[],size=0;for await(const part of req){size+=part.length;if(size>2*1024*1024)throw Object.assign(Error('Backup is too large.'),{status:413});chunks.push(part);}try{return JSON.parse(Buffer.concat(chunks).toString());}catch{throw Object.assign(Error('Invalid JSON.'),{status:400});}}
         if(['/api/auth/login','/api/auth/register'].includes(path)&&req.method==='POST'){
-          const ip=req.socket.remoteAddress;const stamp=Date.now();let rate=limits.get(ip);
+          const forwarded=String(req.headers['x-mealday-client-ip']||'');const ip=trustedProxy&&isIP(forwarded)?forwarded:req.socket.remoteAddress;const stamp=Date.now();let rate=limits.get(ip);
           if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(ip,rate);}
           if(++rate.count>15)return send(429,{error:'Too many attempts. Try again in 15 minutes.'});
           if(path.endsWith('register')&&!allowRegistration)return send(403,{error:'Account registration is disabled on this server.'});
