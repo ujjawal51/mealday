@@ -25,6 +25,8 @@ jobs:
           node --check phone-preview/dist/google-signin.js
           node --check phone-preview/server/google-auth.mjs
           node --test phone-preview/server/*.test.mjs
+          node phone-preview/source/nutrition.test.mjs
+          node phone-preview/scripts/audit-nutrition.mjs --check
       - name: Start a disposable MongoDB replica set
         run: |
           docker run --detach --name mealday-test-mongo --publish 27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all

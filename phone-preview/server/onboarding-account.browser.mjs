@@ -67,6 +67,23 @@ try{
  const result=await first.page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')));
  assert.equal(result.profile.name,'New Chef');assert.equal(result.profile.people,1);assert.equal(result.recipeJournal.rice.note,'Keep this cloud note');
  assert.equal(await first.page.evaluate(()=>localStorage.getItem('mealday.pending-setup.v1')),null);
+ // Exercise nutrition through the actual phone recipe library, including non-USDA sources.
+ await first.page.locator('.nav [data-view="recipes"]').click();
+ await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Regag with cheese');
+ await first.page.locator('[data-action="recipe"][data-id="draft-regag-cheese"]').click();
+ await first.page.locator('.nutrition-status.complete').waitFor();
+ await first.page.locator('.nutrition-sources summary').click();
+ assert.equal(await first.page.locator('.nutrition-sources a[href="https://www.spinneys.com/en-ae/recipes/regag/"]').count(),1);
+ assert((await first.page.locator('.nutrition-sources').innerText()).includes('1 pieces per serving'));
+ assert.equal(await first.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await click(first.page,'recipe-back');await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('khameer');
+ await first.page.locator('[data-action="recipe"][data-id="draft-khameer-labneh"]').click();
+ await first.page.locator('.nutrition-status.pending').waitFor();
+ assert.equal(await first.page.locator('.macro-value strong').allTextContents().then(x=>x.every(v=>v==='—')),true);
+ assert.match(await first.page.locator('.nutrition-explanation').innerText(),/khameer/i);
+ await first.page.locator('.nutrition-sources summary').click();
+ assert.equal(await first.page.locator('.nutrition-sources a[href="https://www.puckarabia.com/en/products/labneh/"]').count(),1);
+ await click(first.page,'recipe-back');
  await first.page.locator('.nav [data-view="settings"]').click();await click(first.page,'delete-account');
  assert.equal(await first.page.locator('#dialog input[type="password"]').count(),0);
  assert.equal(await first.page.locator('#delete-account-form button[type="submit"]').isDisabled(),true);
@@ -82,5 +99,5 @@ try{
  await signup.page.getByRole('button',{name:'Continue with Google',exact:true}).click();await signup.page.waitForSelector('body[data-view="week"]',{timeout:60000});assert(store.users.has('new@gmail.com'));await signup.context.close();
  const guest=await page();await wizard(guest.page);await click(guest.page,'setup-account-guest');await guest.page.waitForSelector('body[data-view="week"]',{timeout:60000});await guest.context.close();
  const standalone=await page();await standalone.page.goto(origin+'/signup.html');assert.equal(await standalone.page.locator('input[type="password"]').count(),0);await standalone.page.getByRole('button',{name:'Continue with Google',exact:true}).waitFor();await standalone.context.close();
- console.log('Browser Google checks passed: all filters, responsive layout, Back, refresh, same-account login and retained notes, Google signup, guest planning, and Google-confirmed deletion.');
+ console.log('Phone browser checks passed (nutrition sources, portions and missing-data guards; Google flow): all filters, responsive layout, Back, refresh, same-account login and retained notes, Google signup, guest planning, and Google-confirmed deletion.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

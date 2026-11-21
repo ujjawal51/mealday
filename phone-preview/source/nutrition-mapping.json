@@ -1,11 +1,18 @@
 {
   "source": {
-    "name": "USDA FoodData Central \u00b7 SR Legacy (April 2018)",
+    "name": "USDA, ICMR–NIN, CoFID and named food references",
     "url": "https://fdc.nal.usda.gov/download-datasets/",
     "download": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip",
-    "retrieved": "2026-11-18",
-    "basis": "Nutrients per 100 g edible portion; ingredient weights per serving. Generic USDA matches and household measures are estimates, not product-specific lab results. All listed oil is counted. Cooking losses, retention and optional unlisted ingredients are not modelled.",
-    "sha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef"
+    "retrieved": "2026-11-21",
+    "basis": "Calculated per-serving estimates from raw/cooked ingredient references, named product labels and explicitly disclosed reference recipes. All oil and whole dried lime are counted; cooking losses and retention are not modelled. Brand and piece-size assumptions are shown for each ingredient.",
+    "sha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef",
+    "version": "2026-11-21-macros-v2",
+    "legacyUSDA": {
+      "name": "USDA FoodData Central SR Legacy (April 2018)",
+      "url": "https://fdc.nal.usda.gov/download-datasets/",
+      "retrieved": "2026-11-18",
+      "sha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef"
+    }
   },
   "ingredients": {
     "dates": {
@@ -107,8 +114,12 @@
       "note": ""
     },
     "bzar": {
-      "status": "unavailable",
-      "reason": "Blend proportions and product label needed."
+      "status": "mapped",
+      "referenceId": "blend:bzar",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Reference blend by weight: cumin 15, coriander 10, fenugreek 24, fennel 15, black pepper 10, cinnamon 5, cardamom 5, red chilli 5, turmeric 6 g. Optional nutmeg/ginger omitted; turmeric 2 USDA tsp × 3 g. USDA ground cinnamon/red pepper represent ground whole spices. A calculated home-blend estimate, not a verified retail bzar product.",
+      "matchType": "recipe-reference"
     },
     "fava": {
       "status": "mapped",
@@ -132,8 +143,12 @@
       "note": "Generic dry lentils; brown variety not separately specified."
     },
     "poha": {
-      "status": "unavailable",
-      "reason": "Verified flattened-rice record needed."
+      "status": "mapped",
+      "referenceId": "ifct:A011",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "turmeric": {
       "status": "mapped",
@@ -157,8 +172,12 @@
       "note": "Generic dry mung beans used for split moong."
     },
     "garam": {
-      "status": "unavailable",
-      "reason": "Blend proportions and product label needed."
+      "status": "mapped",
+      "referenceId": "label:essential-garam",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Named spice-blend reference. Carbs = label carbohydrate 29 + fibre 40 g/100g; brand blend proportions vary.",
+      "matchType": "product-reference"
     },
     "chicken": {
       "status": "mapped",
@@ -168,8 +187,12 @@
       "note": ""
     },
     "regag": {
-      "status": "unavailable",
-      "reason": "Product nutrition label and edible piece weight needed."
+      "status": "mapped",
+      "referenceId": "recipe:spinneys-regag",
+      "unit": "pieces",
+      "unitsPerInput": 1,
+      "note": "One piece is modelled as one of the 10 servings in the plain flour/water/salt reference recipe. This is a recipe estimate, not a packaged-regag label or a measured retail piece weight.",
+      "matchType": "recipe-reference"
     },
     "cheese": {
       "status": "mapped",
@@ -183,8 +206,12 @@
       "reason": "Product nutrition label and edible piece weight needed."
     },
     "labneh": {
-      "status": "unavailable",
-      "reason": "Product nutrition label needed for strained labneh."
+      "status": "mapped",
+      "referenceId": "label:puck-labneh",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Puck plain full-fat labneh reference, not plain yogurt; brands and fat levels vary.",
+      "matchType": "product-reference"
     },
     "semolina": {
       "status": "mapped",
@@ -215,8 +242,12 @@
       "note": "Atlantic cod used for unspecified white fish."
     },
     "loomi": {
-      "status": "unavailable",
-      "reason": "Edible weight and a dried-lime nutrient record needed."
+      "status": "mapped",
+      "referenceId": "label:sadaf-loomi",
+      "unit": "pieces",
+      "gramsPerUnit": 9,
+      "note": "Sadaf whole dried-lime reference: 9 g per lime; package-rounded macros. The entire measured lime is counted even if removed after cooking, so retained nutrients can be lower.",
+      "matchType": "product-reference"
     },
     "beef": {
       "status": "mapped",
@@ -240,8 +271,12 @@
       "note": ""
     },
     "zaatar": {
-      "status": "unavailable",
-      "reason": "Blend proportions and product label needed."
+      "status": "mapped",
+      "referenceId": "label:schwartz-zaatar",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Named sesame/sumac/herb blend reference. Label carbs are retained as reported (fibre not supplied); different blends and added salt vary.",
+      "matchType": "product-reference"
     },
     "egg": {
       "status": "mapped",
@@ -304,11 +339,15 @@
       "fdcId": 173242,
       "unit": "wraps",
       "gramsPerUnit": 49.0,
-      "note": "USDA 7\u20138 inch flour tortilla, 49 g per wrap (49 g per wraps). Actual sizes vary."
+      "note": "USDA 7–8 inch flour tortilla, 49 g per wrap (49 g per wraps). Actual sizes vary."
     },
     "paneer": {
-      "status": "unavailable",
-      "reason": "Paneer product label needed; cottage cheese is not an equivalent."
+      "status": "mapped",
+      "referenceId": "label:amul-paneer",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Full-fat paneer product reference, not Western cottage cheese. Homemade moisture and other brands vary.",
+      "matchType": "product-reference"
     },
     "oats": {
       "status": "mapped",
@@ -546,16 +585,24 @@
       "note": ""
     },
     "kg-4c754c78421a": {
-      "status": "unavailable",
-      "reason": "Verified carom-seed record needed."
+      "status": "mapped",
+      "referenceId": "ifct:G029",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-2c57a5256ac6": {
       "status": "unavailable",
       "reason": "Salt/pepper proportions not specified."
     },
     "kg-0312fe1dad4d": {
-      "status": "unavailable",
-      "reason": "Verified flattened-rice record needed."
+      "status": "mapped",
+      "referenceId": "ifct:A011",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-94b7af3c833b": {
       "status": "mapped",
@@ -572,8 +619,12 @@
       "note": "USDA dishcloth gourd used for ridge gourd."
     },
     "kg-f9f4b33e519d": {
-      "status": "unavailable",
-      "reason": "Blend proportions and product label needed."
+      "status": "mapped",
+      "referenceId": "label:essential-garam",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Named spice-blend reference. Carbs = label carbohydrate 29 + fibre 40 g/100g; brand blend proportions vary.",
+      "matchType": "product-reference"
     },
     "kg-70d41c44d609": {
       "status": "mapped",
@@ -604,8 +655,12 @@
       "note": ""
     },
     "kg-dca6261b9e0c": {
-      "status": "unavailable",
-      "reason": "Product blend and nutrition label needed."
+      "status": "mapped",
+      "referenceId": "label:essential-hing",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Compounded rice/wheat-flour/gum asafoetida reference, not pure resin. Carbs include label fibre. Check your packet; other carriers differ.",
+      "matchType": "product-reference"
     },
     "kg-c502cb20969c": {
       "status": "mapped",
@@ -615,8 +670,12 @@
       "note": ""
     },
     "kg-218108f92320": {
-      "status": "unavailable",
-      "reason": "Verified curry-leaf record needed."
+      "status": "mapped",
+      "referenceId": "ifct:G010",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-4e71c29dfe58": {
       "status": "mapped",
@@ -626,12 +685,20 @@
       "note": ""
     },
     "kg-5a86174cdbcd": {
-      "status": "unavailable",
-      "reason": "Paneer product label needed."
+      "status": "mapped",
+      "referenceId": "label:amul-paneer",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Full-fat paneer product reference, not Western cottage cheese. Homemade moisture and other brands vary.",
+      "matchType": "product-reference"
     },
     "kg-f88bcad1fceb": {
-      "status": "unavailable",
-      "reason": "Verified fresh fenugreek-leaf record needed."
+      "status": "mapped",
+      "referenceId": "ifct:C020",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre. Ambiguous catalogue fenugreek resolved as fresh leaves from the source recipe: 2 cups finely chopped fenugreek, not seeds.",
+      "matchType": "generic"
     },
     "kg-79d36e231699": {
       "status": "mapped",
@@ -739,8 +806,12 @@
       "note": ""
     },
     "kg-dac3eda445b4": {
-      "status": "unavailable",
-      "reason": "Verified split chickpea record needed."
+      "status": "mapped",
+      "referenceId": "ifct:B001",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-f37b81253d0f": {
       "status": "mapped",
@@ -751,7 +822,7 @@
     },
     "kg-883fdd0e54ac": {
       "status": "unavailable",
-      "reason": "Paste proportions and product label needed."
+      "reason": "Ginger/garlic ratio and a complete per-weight product label needed. Nilon’s website lists macros but does not state their reference serving weight."
     },
     "kg-1e635f218191": {
       "status": "mapped",
@@ -796,8 +867,12 @@
       "note": ""
     },
     "kg-a8f45b69d764": {
-      "status": "unavailable",
-      "reason": "Verified finger-millet flour record needed."
+      "status": "mapped",
+      "referenceId": "ifct:A010",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre. Whole-grain flour assumed; not a refined flour or cooked porridge.",
+      "matchType": "generic"
     },
     "kg-926e5b405280": {
       "status": "mapped",
@@ -927,14 +1002,14 @@
     },
     "kg-32804a71fdd4": {
       "status": "unavailable",
-      "reason": "Verified dried fenugreek-leaf record needed."
+      "reason": "A reliable dried-leaf record is still needed. Rejected supplier sheets with fresh-leaf-like energy or values identical to fenugreek seeds."
     },
     "kg-8e31b0d7f585": {
       "status": "mapped",
       "fdcId": 170460,
       "unit": "g",
       "gramsPerUnit": 1,
-      "note": "Unsalted canned tomato pur\u00e9e used for homemade pur\u00e9e."
+      "note": "Unsalted canned tomato purée used for homemade purée."
     },
     "kg-5b1167f5a3c9": {
       "status": "mapped",
@@ -951,8 +1026,12 @@
       "note": ""
     },
     "kg-24af5169c48c": {
-      "status": "unavailable",
-      "reason": "Verified radish-leaf record needed."
+      "status": "mapped",
+      "referenceId": "ifct:C031",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-f01638fe8489": {
       "status": "unavailable",
@@ -987,8 +1066,12 @@
       "note": ""
     },
     "kg-28954b38e3ba": {
-      "status": "unavailable",
-      "reason": "Oil type not specified."
+      "status": "mapped",
+      "fdcId": 171413,
+      "unit": "ml",
+      "gramsPerUnit": 0.9129786129497609,
+      "note": "Oil type was not specified. Uses the catalogue generic olive-oil reference and USDA density; all listed oil is counted. Actual oil type can differ.",
+      "matchType": "generic-assumption"
     },
     "kg-d3198dd9b1c2": {
       "status": "mapped",
@@ -1005,8 +1088,12 @@
       "note": ""
     },
     "kg-9742b057b35f": {
-      "status": "unavailable",
-      "reason": "Verified radish-leaf record needed."
+      "status": "mapped",
+      "referenceId": "ifct:C031",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-46218774822f": {
       "status": "unavailable",
@@ -1027,8 +1114,12 @@
       "note": ""
     },
     "quality-roti": {
-      "status": "unavailable",
-      "reason": "Product nutrition label and piece weight needed."
+      "status": "mapped",
+      "referenceId": "174075",
+      "unit": "pieces",
+      "gramsPerUnit": 43,
+      "note": "USDA commercially prepared whole-wheat roti: 43 g per piece. Retail sizes and added fat vary; warm as directed, without extra oil.",
+      "matchType": "generic"
     },
     "kg-8e6f7068d070": {
       "status": "mapped",
@@ -1094,12 +1185,20 @@
       "note": ""
     },
     "kg-24cd4d166890": {
-      "status": "unavailable",
-      "reason": "Product blend and nutrition label needed."
+      "status": "mapped",
+      "referenceId": "label:essential-hing",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Compounded rice/wheat-flour/gum asafoetida reference, not pure resin. Carbs include label fibre. Check your packet; other carriers differ.",
+      "matchType": "product-reference"
     },
     "kg-2bd18a604635": {
-      "status": "unavailable",
-      "reason": "Verified pointed-gourd record needed."
+      "status": "mapped",
+      "referenceId": "ifct:D060",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-2b2dbec498bf": {
       "status": "mapped",
@@ -1151,8 +1250,12 @@
       "note": ""
     },
     "kg-46b8135ebc60": {
-      "status": "unavailable",
-      "reason": "Verified jaggery product label needed."
+      "status": "mapped",
+      "referenceId": "ifct:I001",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre.",
+      "matchType": "generic"
     },
     "kg-5e095be79e3b": {
       "status": "mapped",
@@ -1222,8 +1325,12 @@
       "note": "Generic dry mung beans."
     },
     "kg-f31a7eeef55f": {
-      "status": "unavailable",
-      "reason": "Fenugreek part not specified (seed or leaf)."
+      "status": "mapped",
+      "referenceId": "ifct:C020",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "IFCT raw edible reference; energy converted from kJ ÷ 4.184. Carbs include reported dietary fibre. Ambiguous catalogue fenugreek resolved as fresh leaves from the source recipe: 2 cups finely chopped fenugreek, not seeds.",
+      "matchType": "generic"
     },
     "kg-3c736d2aae93": {
       "status": "mapped",
@@ -1283,7 +1390,7 @@
     },
     "full-salted-fish": {
       "status": "unavailable",
-      "reason": "Desalting yield and exact fish product needed."
+      "reason": "Species plus post-desalting edible yield/nutrition are needed. Salted dry cod cannot stand in for unspecified fish after soaking."
     },
     "full-cracked-wheat": {
       "status": "mapped",
@@ -1311,8 +1418,12 @@
       "note": ""
     },
     "bakingpowder": {
-      "status": "unavailable",
-      "reason": "Baking-powder formulation not specified."
+      "status": "mapped",
+      "referenceId": "172804",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Generic double-acting straight-phosphate baking powder reference; not baking soda. Actual leavening formulations vary.",
+      "matchType": "generic"
     },
     "full-chicken-thigh": {
       "status": "mapped",
@@ -1340,12 +1451,20 @@
       "reason": "Verified jameed product label needed."
     },
     "full-freekeh": {
-      "status": "unavailable",
-      "reason": "Verified freekeh record needed."
+      "status": "mapped",
+      "referenceId": "label:edlyn-freekeh",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Cracked dry green wheat reference, not cooked freekeh or bulgur. Energy kJ ÷ 4.184. Carbs follow the label (fibre not supplied).",
+      "matchType": "product-reference"
     },
     "full-lamb-chops": {
-      "status": "unavailable",
-      "reason": "Edible boneless weight/cut needed for lamb chops."
+      "status": "mapped",
+      "referenceId": "cofid:18-497",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Raw bone-in loin-chop reference, lean and fat, weighed with bone. CoFID already adjusts edible yield; no second bone deduction. Other cuts/trimming vary.",
+      "matchType": "generic"
     },
     "full-pinenuts": {
       "status": "mapped",
@@ -1376,8 +1495,12 @@
       "note": ""
     },
     "full-mussels": {
-      "status": "unavailable",
-      "reason": "Edible meat yield needed; quantity includes shells."
+      "status": "mapped",
+      "referenceId": "cofid:16-497",
+      "unit": "g",
+      "gramsPerUnit": 0.32,
+      "note": "CoFID raw mussel flesh with published edible proportion 0.32 for live in-shell mussels. 300 g in shell is modelled as 96 g raw edible flesh; actual/discarded-shell yields vary.",
+      "matchType": "generic"
     },
     "full-beef-steak": {
       "status": "mapped",
@@ -1387,8 +1510,12 @@
       "note": "Lean top-sirloin used for unspecified steak."
     },
     "full-seabream": {
-      "status": "unavailable",
-      "reason": "Verified sea-bream record needed."
+      "status": "mapped",
+      "referenceId": "cofid:16-006",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "CoFID raw edible flesh only. Excludes bones, head, scales and skin; not a canned or cooked-fish substitute.",
+      "matchType": "generic"
     },
     "full-beef-sausage": {
       "status": "unavailable",
@@ -1490,8 +1617,12 @@
       "note": "Tuna canned in water, drained solids."
     },
     "quality-soya": {
-      "status": "unavailable",
-      "reason": "Dried soy-mince product label needed."
+      "status": "mapped",
+      "referenceId": "label:bobs-tvp",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Dry defatted soy mince product reference. Per 23 g dry serving; water added during hydration adds no macros. Label-rounded zero fat is not an analytical zero.",
+      "matchType": "product-reference"
     },
     "quality-kidney": {
       "status": "mapped",
@@ -1526,8 +1657,12 @@
       "reason": "Verified sago product label needed; tapioca is not the same ingredient."
     },
     "target-oatmilk": {
-      "status": "unavailable",
-      "reason": "Oat-drink product label needed."
+      "status": "mapped",
+      "referenceId": "label:oatly-no-sugars",
+      "unit": "ml",
+      "unitsPerInput": 1,
+      "note": "Per 100 ml directly; no invented liquid density. Named unsweetened oat-drink reference; other products vary.",
+      "matchType": "product-reference"
     },
     "target-chia": {
       "status": "mapped",
@@ -1537,8 +1672,12 @@
       "note": ""
     },
     "target-millet": {
-      "status": "unavailable",
-      "reason": "Millet-flake product label needed."
+      "status": "mapped",
+      "referenceId": "norway:05.530",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Dry common-millet flakes reference, not generic dry millet grain or cooked porridge. Follow packet cooking instructions.",
+      "matchType": "generic"
     },
     "target-sweetpotato": {
       "status": "mapped",
@@ -1580,8 +1719,12 @@
       "note": ""
     },
     "target-barleyflakes": {
-      "status": "unavailable",
-      "reason": "Barley-flake product label needed."
+      "status": "mapped",
+      "referenceId": "label:essential-barleyflakes",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Dry rolled barley flakes reference, not cooked barley; follow the cooking time on your packet.",
+      "matchType": "product-reference"
     },
     "target-lambloin": {
       "status": "mapped",
@@ -1599,7 +1742,7 @@
     },
     "target-ar-pomegranate": {
       "status": "unavailable",
-      "reason": "Pomegranate-molasses product label needed."
+      "reason": "A pure pomegranate-molasses label with all four macros AND the mass of a measured ml serving is needed; no assumed syrup density."
     },
     "target-ar-pastry": {
       "status": "mapped",
@@ -1631,8 +1774,12 @@
       "note": "Roasted chicken breast meat only."
     },
     "target-ar-herring": {
-      "status": "unavailable",
-      "reason": "Verified smoked herring product record needed."
+      "status": "mapped",
+      "referenceId": "173668",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Atlantic kippered herring reference: ready-to-eat smoked flesh, not fresh herring or pickled herring; brand and fat content vary.",
+      "matchType": "generic"
     },
     "target-ar-rocket": {
       "status": "mapped",
@@ -1642,8 +1789,12 @@
       "note": ""
     },
     "target-ar-harissa": {
-      "status": "unavailable",
-      "reason": "Harissa paste product label needed."
+      "status": "mapped",
+      "referenceId": "label:alfez-harissa",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "Vegan chilli-paste product reference, not dry harissa seasoning. Label carbs are retained as reported; oils/sugar in other brands vary.",
+      "matchType": "product-reference"
     },
     "target-ar-leeks": {
       "status": "mapped",
@@ -1653,8 +1804,12 @@
       "note": ""
     },
     "target-ar-sardines": {
-      "status": "unavailable",
-      "reason": "Verified fresh sardine record needed; canned sardines are not equivalent."
+      "status": "mapped",
+      "referenceId": "cofid:16-401",
+      "unit": "g",
+      "gramsPerUnit": 1,
+      "note": "CoFID raw edible flesh only. Excludes bones, head, scales and skin; not a canned or cooked-fish substitute.",
+      "matchType": "generic"
     },
     "target-desi-appam": {
       "status": "unavailable",
@@ -2891,6 +3046,748 @@
         "carbs": 41.2,
         "fat": 7.61
       }
+    },
+    "ifct:A011": {
+      "description": "Rice flakes, dry (poha)",
+      "per100g": {
+        "kcal": 353.7284894837476,
+        "protein": 7.44,
+        "carbs": 80.21,
+        "fat": 1.14
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "A011"
+      },
+      "rawValues": {
+        "energyKJ": 1480.0,
+        "protein": 7.44,
+        "fat": 1.14,
+        "availableCarbs": 76.75,
+        "fibre": 3.46
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:A010": {
+      "description": "Ragi, whole grain, dry",
+      "per100g": {
+        "kcal": 320.7456978967495,
+        "protein": 7.16,
+        "carbs": 78.0,
+        "fat": 1.92
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "A010"
+      },
+      "rawValues": {
+        "energyKJ": 1342.0,
+        "protein": 7.16,
+        "fat": 1.92,
+        "availableCarbs": 66.82,
+        "fibre": 11.18
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:B001": {
+      "description": "Bengal gram dal, dry",
+      "per100g": {
+        "kcal": 329.1108986615679,
+        "protein": 21.55,
+        "carbs": 61.87,
+        "fat": 5.31
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "B001"
+      },
+      "rawValues": {
+        "energyKJ": 1377.0,
+        "protein": 21.55,
+        "fat": 5.31,
+        "availableCarbs": 46.72,
+        "fibre": 15.15
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:C020": {
+      "description": "Fenugreek leaves, fresh",
+      "per100g": {
+        "kcal": 34.41682600382409,
+        "protein": 3.68,
+        "carbs": 7.07,
+        "fat": 0.83
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "C020"
+      },
+      "rawValues": {
+        "energyKJ": 144.0,
+        "protein": 3.68,
+        "fat": 0.83,
+        "availableCarbs": 2.17,
+        "fibre": 4.9
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:C031": {
+      "description": "Radish leaves, fresh",
+      "per100g": {
+        "kcal": 26.051625239005734,
+        "protein": 2.22,
+        "carbs": 4.59,
+        "fat": 0.51
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "C031"
+      },
+      "rawValues": {
+        "energyKJ": 109.0,
+        "protein": 2.22,
+        "fat": 0.51,
+        "availableCarbs": 2.77,
+        "fibre": 1.82
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:D060": {
+      "description": "Pointed gourd (parwar), raw",
+      "per100g": {
+        "kcal": 24.1395793499044,
+        "protein": 1.4,
+        "carbs": 6.15,
+        "fat": 0.3
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "D060"
+      },
+      "rawValues": {
+        "energyKJ": 101.0,
+        "protein": 1.4,
+        "fat": 0.3,
+        "availableCarbs": 3.54,
+        "fibre": 2.61
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:G010": {
+      "description": "Curry leaves, fresh",
+      "per100g": {
+        "kcal": 63.5755258126195,
+        "protein": 7.41,
+        "carbs": 21.339999999999996,
+        "fat": 1.06
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "G010"
+      },
+      "rawValues": {
+        "energyKJ": 266.0,
+        "protein": 7.41,
+        "fat": 1.06,
+        "availableCarbs": 4.51,
+        "fibre": 16.83
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:G029": {
+      "description": "Omum / ajwain seeds",
+      "per100g": {
+        "kcal": 357.3135755258126,
+        "protein": 15.89,
+        "carbs": 45.11,
+        "fat": 21.11
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "G029"
+      },
+      "rawValues": {
+        "energyKJ": 1495.0,
+        "protein": 15.89,
+        "fat": 21.11,
+        "availableCarbs": 24.53,
+        "fibre": 20.58
+      },
+      "carbohydrateDefinition": "available carbohydrate + dietary fibre"
+    },
+    "ifct:I001": {
+      "description": "Jaggery, cane",
+      "per100g": {
+        "kcal": 353.7284894837476,
+        "protein": 1.85,
+        "carbs": 84.87,
+        "fat": 0.16
+      },
+      "source": {
+        "name": "ICMR–NIN Indian Food Composition Tables 2017",
+        "url": "https://www.nin.res.in/ebooks/IFCT2017.pdf",
+        "retrieved": "2026-11-21",
+        "sha256": "7fc5a5112a57240d25bf695dca82cccd8d93ed54e8c39530e42b5ad1820d0e8c",
+        "table": "Table 1. Proximate Principles and Dietary Fibre",
+        "record": "I001"
+      },
+      "rawValues": {
+        "energyKJ": 1480.0,
+        "protein": 1.85,
+        "fat": 0.16,
+        "availableCarbs": 84.87
+      },
+      "carbohydrateDefinition": "available carbohydrate (fibre not reported)"
+    },
+    "174075": {
+      "description": "Bread, chapati or roti, whole wheat, commercially prepared, frozen",
+      "per100g": {
+        "kcal": 299,
+        "protein": 7.85,
+        "carbs": 46.1,
+        "fat": 9.2
+      },
+      "source": {
+        "name": "USDA FoodData Central SR Legacy",
+        "url": "https://fdc.nal.usda.gov/food-details/174075/nutrients",
+        "retrieved": "2026-11-21",
+        "record": "174075"
+      }
+    },
+    "173668": {
+      "description": "Fish, herring, Atlantic, kippered",
+      "per100g": {
+        "kcal": 217,
+        "protein": 24.6,
+        "carbs": 0.0,
+        "fat": 12.4
+      },
+      "source": {
+        "name": "USDA FoodData Central SR Legacy",
+        "url": "https://fdc.nal.usda.gov/food-details/173668/nutrients",
+        "retrieved": "2026-11-21",
+        "record": "173668"
+      }
+    },
+    "cofid:16-006": {
+      "description": "Bream, Sea, raw",
+      "per100g": {
+        "kcal": 96.0,
+        "protein": 17.5,
+        "carbs": 0.0,
+        "fat": 2.9
+      },
+      "source": {
+        "name": "Public Health England CoFID 2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "retrieved": "2026-11-21",
+        "download": "https://assets.publishing.service.gov.uk/media/60538b91e90e07527df82ae4/McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2021..xlsx",
+        "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "record": "16-006"
+      },
+      "rawValues": {
+        "energyKcal": "96",
+        "protein": "17.5",
+        "carbohydrate": "0.0",
+        "fat": "2.9"
+      }
+    },
+    "cofid:16-401": {
+      "description": "Sardines, flesh only, raw",
+      "per100g": {
+        "kcal": 134.0,
+        "protein": 19.8,
+        "carbs": 0.0,
+        "fat": 6.1
+      },
+      "source": {
+        "name": "Public Health England CoFID 2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "retrieved": "2026-11-21",
+        "download": "https://assets.publishing.service.gov.uk/media/60538b91e90e07527df82ae4/McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2021..xlsx",
+        "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "record": "16-401"
+      },
+      "rawValues": {
+        "energyKcal": "134",
+        "protein": "19.8",
+        "carbohydrate": "0.0",
+        "fat": "6.1"
+      }
+    },
+    "label:amul-paneer": {
+      "description": "Amul Fresh Paneer (Dudhsagar Dairy)",
+      "per100g": {
+        "kcal": 312,
+        "protein": 20,
+        "carbs": 4,
+        "fat": 24
+      },
+      "source": {
+        "name": "Dudhsagar Dairy product label",
+        "url": "https://dudhsagardairy.coop/dairy/products/amul-fresh-paneer/",
+        "retrieved": "2026-11-21"
+      }
+    },
+    "label:puck-labneh": {
+      "description": "Puck plain labneh",
+      "per100g": {
+        "kcal": 188,
+        "protein": 5,
+        "carbs": 6.6,
+        "fat": 14
+      },
+      "source": {
+        "name": "Puck / Arla product label",
+        "url": "https://www.puckarabia.com/en/products/labneh/",
+        "retrieved": "2026-11-21"
+      }
+    },
+    "label:essential-garam": {
+      "description": "Essential organic Garam Masala H803",
+      "per100g": {
+        "kcal": 325,
+        "protein": 10,
+        "carbs": 69,
+        "fat": 14
+      },
+      "source": {
+        "name": "Essential Trading specification 2025-11-06",
+        "url": "https://www.essential-trading.coop/document/3006/H803%20-%20Garam%20Masala%20%28Org%29-20251106.pdf",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "energyKcal": 325,
+        "protein": 10,
+        "availableCarbs": 29,
+        "fibre": 40,
+        "fat": 14
+      },
+      "carbohydrateDefinition": "label carbohydrate + fibre"
+    },
+    "label:oatly-no-sugars": {
+      "description": "Oatly No Sugars oat drink",
+      "basis": {
+        "amount": 100,
+        "unit": "ml"
+      },
+      "nutrients": {
+        "kcal": 44,
+        "protein": 1,
+        "carbs": 7,
+        "fat": 1.5
+      },
+      "source": {
+        "name": "Oatly product label",
+        "url": "https://www.oatly.com/en-gb/products/oat-drink/oat-drink-no-sugars-1l",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "energyKcal": 44,
+        "protein": 1,
+        "availableCarbs": 6.3,
+        "fibre": 0.7,
+        "fat": 1.5
+      },
+      "carbohydrateDefinition": "label carbohydrate + fibre"
+    },
+    "label:essential-barleyflakes": {
+      "description": "Essential organic barley flakes C025",
+      "per100g": {
+        "kcal": 335,
+        "protein": 11,
+        "carbs": 75,
+        "fat": 2.1
+      },
+      "source": {
+        "name": "Essential Trading specification 2025-12-08",
+        "url": "https://www.essential-trading.coop/document/3275/C025%20-%20Barley%20Flakes%20%28Org%29-20251208.pdf",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "energyKcal": 335,
+        "protein": 11,
+        "availableCarbs": 58,
+        "fibre": 17,
+        "fat": 2.1
+      },
+      "carbohydrateDefinition": "label carbohydrate + fibre"
+    },
+    "norway:05.530": {
+      "description": "Millet flakes, dry",
+      "per100g": {
+        "kcal": 357,
+        "protein": 10.6,
+        "carbs": 72,
+        "fat": 3.9
+      },
+      "source": {
+        "name": "Norwegian Food Composition Table",
+        "url": "https://www.matvaretabellen.no/en/millet-flakes/",
+        "retrieved": "2026-11-21",
+        "record": "05.530"
+      },
+      "rawValues": {
+        "energyKcal": 357,
+        "protein": 10.6,
+        "availableCarbs": 68,
+        "fibre": 4,
+        "fat": 3.9
+      },
+      "carbohydrateDefinition": "available carbohydrate + fibre"
+    },
+    "label:sadaf-loomi": {
+      "description": "Sadaf whole dried lime (Limoo Omani)",
+      "per100g": {
+        "kcal": 111.11111111111111,
+        "protein": 0,
+        "carbs": 44.44444444444444,
+        "fat": 0
+      },
+      "source": {
+        "name": "Sadaf package nutrition panel",
+        "url": "https://www.sadaf.com/products/sadaf-dried-lime-lemon-omani-whole",
+        "retrieved": "2026-11-21",
+        "labelImage": "https://www.sadaf.com/cdn/shop/files/sadaf-dried-lime-limoo-omani-whole-5-ozsadaf13-1300-528796.jpg?format=webp&v=1742945033&width=1600"
+      },
+      "rawValues": {
+        "serving": "1 lime (9 g)",
+        "energyKcal": 10,
+        "protein": 0,
+        "totalCarbs": 4,
+        "fat": 0
+      },
+      "rounding": "Package-rounded values, including zero protein/fat; not analytical zeroes."
+    },
+    "recipe:spinneys-regag": {
+      "description": "Plain regag, Spinneys reference recipe",
+      "basis": {
+        "amount": 1,
+        "unit": "pieces"
+      },
+      "nutrients": {
+        "kcal": 147,
+        "protein": 4,
+        "carbs": 31,
+        "fat": 1
+      },
+      "source": {
+        "name": "Spinneys recipe nutrition estimate",
+        "url": "https://www.spinneys.com/en-ae/recipes/regag/",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "serving": "1 of 10 recipe servings",
+        "energyKcal": 147,
+        "protein": 4,
+        "carbs": 31,
+        "fat": 1
+      }
+    },
+    "blend:bzar": {
+      "description": "Bzar, documented 95 g reference spice blend",
+      "per100g": {
+        "kcal": 318.8842105263158,
+        "protein": 15.537157894736843,
+        "carbs": 57.581052631578956,
+        "fat": 11.243578947368423
+      },
+      "source": {
+        "name": "Mealday calculation from USDA ingredients; blend adapted from But First Chai",
+        "url": "https://butfirstchai.com/bezar-emirati-spice-mix/",
+        "retrieved": "2026-11-21"
+      },
+      "components": [
+        {
+          "fdcId": 170923,
+          "description": "Spices, cumin seed",
+          "grams": 15,
+          "per100g": {
+            "kcal": 375,
+            "protein": 17.8,
+            "carbs": 44.2,
+            "fat": 22.3
+          }
+        },
+        {
+          "fdcId": 170922,
+          "description": "Spices, coriander seed",
+          "grams": 10,
+          "per100g": {
+            "kcal": 298,
+            "protein": 12.4,
+            "carbs": 55.0,
+            "fat": 17.8
+          }
+        },
+        {
+          "fdcId": 171324,
+          "description": "Spices, fenugreek seed",
+          "grams": 24,
+          "per100g": {
+            "kcal": 323,
+            "protein": 23.0,
+            "carbs": 58.4,
+            "fat": 6.41
+          }
+        },
+        {
+          "fdcId": 171323,
+          "description": "Spices, fennel seed",
+          "grams": 15,
+          "per100g": {
+            "kcal": 345,
+            "protein": 15.8,
+            "carbs": 52.3,
+            "fat": 14.9
+          }
+        },
+        {
+          "fdcId": 170931,
+          "description": "Spices, pepper, black",
+          "grams": 10,
+          "per100g": {
+            "kcal": 251,
+            "protein": 10.4,
+            "carbs": 64.0,
+            "fat": 3.26
+          }
+        },
+        {
+          "fdcId": 171320,
+          "description": "Spices, cinnamon, ground",
+          "grams": 5,
+          "per100g": {
+            "kcal": 247,
+            "protein": 3.99,
+            "carbs": 80.6,
+            "fat": 1.24
+          }
+        },
+        {
+          "fdcId": 170919,
+          "description": "Spices, cardamom",
+          "grams": 5,
+          "per100g": {
+            "kcal": 311,
+            "protein": 10.8,
+            "carbs": 68.5,
+            "fat": 6.7
+          }
+        },
+        {
+          "fdcId": 170932,
+          "description": "Spices, pepper, red or cayenne",
+          "grams": 5,
+          "per100g": {
+            "kcal": 318,
+            "protein": 12.0,
+            "carbs": 56.6,
+            "fat": 17.3
+          }
+        },
+        {
+          "fdcId": 172231,
+          "description": "Spices, turmeric, ground",
+          "grams": 6,
+          "per100g": {
+            "kcal": 312,
+            "protein": 9.68,
+            "carbs": 67.1,
+            "fat": 3.25
+          }
+        }
+      ],
+      "batchGrams": 95
+    },
+    "label:essential-hing": {
+      "description": "Essential compounded asafoetida H508",
+      "per100g": {
+        "kcal": 297.5,
+        "protein": 6.2,
+        "carbs": 77.6,
+        "fat": 4
+      },
+      "source": {
+        "name": "Essential Trading specification 2025-12-03",
+        "url": "https://www.essential-trading.coop/document/3125/H508%20-%20Asafoetida%20-%20Compounded%20-20251203.pdf",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "energyKcal": 297.5,
+        "protein": 6.2,
+        "availableCarbs": 59.2,
+        "fibre": 18.4,
+        "fat": 4
+      },
+      "carbohydrateDefinition": "label carbohydrate + fibre"
+    },
+    "172804": {
+      "description": "Leavening agents, baking powder, double-acting, straight phosphate",
+      "per100g": {
+        "kcal": 51.0,
+        "protein": 0.1,
+        "carbs": 24.1,
+        "fat": 0.0
+      },
+      "source": {
+        "name": "USDA FoodData Central SR Legacy",
+        "url": "https://fdc.nal.usda.gov/food-details/172804/nutrients",
+        "retrieved": "2026-11-21",
+        "record": "172804"
+      }
+    },
+    "cofid:18-497": {
+      "description": "Lamb, loin chops, raw, lean and fat, weighed with bone",
+      "per100g": {
+        "kcal": 216.0,
+        "protein": 13.7,
+        "carbs": 0.0,
+        "fat": 17.9
+      },
+      "source": {
+        "name": "Public Health England CoFID 2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "retrieved": "2026-11-21",
+        "download": "https://assets.publishing.service.gov.uk/media/60538b91e90e07527df82ae4/McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2021..xlsx",
+        "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "record": "18-497"
+      },
+      "rawValues": {
+        "energyKcal": "216",
+        "protein": "13.7",
+        "carbohydrate": "0.0",
+        "fat": "17.9"
+      }
+    },
+    "cofid:16-497": {
+      "description": "Mussels, raw",
+      "per100g": {
+        "kcal": 74.0,
+        "protein": 12.1,
+        "carbs": 2.5,
+        "fat": 1.8
+      },
+      "source": {
+        "name": "Public Health England CoFID 2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "retrieved": "2026-11-21",
+        "download": "https://assets.publishing.service.gov.uk/media/60538b91e90e07527df82ae4/McCance_Widdowsons_Composition_of_Foods_Integrated_Dataset_2021..xlsx",
+        "sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "record": "16-497"
+      },
+      "rawValues": {
+        "energyKcal": "74",
+        "protein": "12.1",
+        "carbohydrate": "2.5",
+        "fat": "1.8"
+      },
+      "edibleProportion": 0.32
+    },
+    "label:bobs-tvp": {
+      "description": "Bob's Red Mill TVP, dry",
+      "per100g": {
+        "kcal": 347.82608695652175,
+        "protein": 52.17391304347826,
+        "carbs": 39.130434782608695,
+        "fat": 0
+      },
+      "source": {
+        "name": "Bob's Red Mill package nutrition",
+        "url": "https://www.bobsredmill.com/product/tvp-textured-veg-protein",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "servingGrams": 23,
+        "energyKcal": 80,
+        "protein": 12,
+        "totalCarbs": 9,
+        "fat": 0
+      }
+    },
+    "label:schwartz-zaatar": {
+      "description": "Schwartz Zaatar seasoning",
+      "per100g": {
+        "kcal": 470,
+        "protein": 14,
+        "carbs": 26.7,
+        "fat": 31.2
+      },
+      "source": {
+        "name": "Schwartz / McCormick package label",
+        "url": "https://www.schwartz.co.uk/products/schwartz-zaatar",
+        "retrieved": "2026-11-21",
+        "labelImage": "https://www.schwartz.co.uk/cdn/shop/files/5000225063489_UK_L2-2026-08-13.jpg?v=1786715376&width=1000"
+      },
+      "carbohydrateDefinition": "label carbohydrate as reported; fibre not supplied"
+    },
+    "label:edlyn-freekeh": {
+      "description": "Greenwheat Freekeh cracked grain, dry",
+      "per100g": {
+        "kcal": 331.0229445506692,
+        "protein": 13,
+        "carbs": 54.8,
+        "fat": 1.3
+      },
+      "source": {
+        "name": "Edlyn / Greenwheat Freekeh product label",
+        "url": "https://edlyn.com.au/greenwheat-freekeh/product/cracked-grain-freekeh-2kg/",
+        "retrieved": "2026-11-21"
+      },
+      "rawValues": {
+        "energyKJ": 1385,
+        "protein": 13,
+        "carbohydrate": 54.8,
+        "fat": 1.3
+      },
+      "carbohydrateDefinition": "label carbohydrate as reported; fibre not supplied"
+    },
+    "label:alfez-harissa": {
+      "description": "Al’Fez Harissa Paste",
+      "per100g": {
+        "kcal": 138,
+        "protein": 2.7,
+        "carbs": 20,
+        "fat": 4.5
+      },
+      "source": {
+        "name": "Al’Fez product label",
+        "url": "https://www.alfezfoods.com/products/harissa-paste/",
+        "retrieved": "2026-11-21"
+      },
+      "carbohydrateDefinition": "label carbohydrate as reported; fibre not supplied"
     }
   }
 }

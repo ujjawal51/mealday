@@ -1,3 +1,4 @@
+await import('./build-nutrition.mjs');
 import {fileURLToPath} from 'node:url';
 import {build} from 'esbuild';
 import {createHash} from 'node:crypto';
