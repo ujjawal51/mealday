@@ -72,7 +72,7 @@ let cloudApplying=false;
 const cloudBackup=createCloudBackup({snapshot:()=>({state:structuredClone(state),history:structuredClone(cookingHistory)}),apply:data=>{
   cloudApplying=true;state=data.state;cookingHistory=loadHistory(data.history);persist();persistHistory();cloudApplying=false;detail=null;guidedStep=null;library.rows=[];library.count=0;
   setView(state.result?'week':'welcome',false);
-},changed:()=>{if(view==='settings')render();}});
+},changed:()=>{if(['settings','account'].includes(view))render();}});
 function persist(){try{localStorage.setItem(key,JSON.stringify(state));if(!cloudApplying)cloudBackup.localChanged();}catch{notify('Browser storage is unavailable. Changes work until this page closes.');}}
 function persistHistory(){try{localStorage.setItem(COOKING_HISTORY_KEY,JSON.stringify(cookingHistory));if(!cloudApplying)cloudBackup.localChanged();return true;}catch{notify('Cooking history could not be saved. Keep this page open and allow browser storage.');return false;}}
 function logCook(recipe){cookingHistory=recordCook(cookingHistory,recipe,new Date().toISOString(),crypto.randomUUID());persistHistory();}
@@ -108,7 +108,7 @@ function initNavigation(){
 function render(){
   onboardingMotion.cancel();
   document.body.dataset.view=view;
-  $('.nav').hidden=['welcome','setup','recipe'].includes(view);
+  $('.nav').hidden=['welcome','setup','recipe','account'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
     const active=b.dataset.view===view||(b.dataset.view==='week'&&view==='shopping')||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
     if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -126,6 +126,7 @@ function render(){
   if(view==='plan')screen.innerHTML=planSettings();
   if(view==='settings')screen.innerHTML=settings();
   if(view==='history')screen.innerHTML=cookingHistoryPage();
+  if(view==='account')screen.innerHTML=onboardingAccount();
   if(view==='recipe'&&detail)renderRecipeDetail(detail);
   if(view==='welcome')previewSlideshow.start();else {previewSlideshow.stop();previewHovered=false;}
 }
@@ -165,16 +166,17 @@ async function generate(profile=state.profile){
   if(!dialog.open)render();
   try{
     const seed=state.seed+1;
-    const onboarding=view==='setup';
+    const onboarding=view==='setup'||view==='account';
     if(onboarding)await new Promise(resolve=>setTimeout(resolve,40));
     const result=await request('/api/plan',{profile,pantry:state.pantry,seed});
     if(attempt!==requestId)return;
-    if(onboarding&&view==='setup'){
+    if(onboarding&&['setup','account'].includes(view)){
       screen.innerHTML=renderGeneration(true);
       await new Promise(resolve=>setTimeout(resolve,720));
     }
     state={...state,profile,result,seed,checked:[],suggestionsReset:false,planHistory:rememberPlan(result)};
     day=profile.days[0];persist();
+    if(onboarding)clearPendingSetup();
     if(dialog.open)dialog.close();
     setView('week');
     notify('Your '+result.meals.length+' meals are planned.');
@@ -367,7 +369,7 @@ async function applySwap(id,buttonNode){
   finally{busy=false;render();}
 }
 function setView(target,hash=true){
-  view=Object.hasOwn(labels,target)||['welcome','setup','recipe'].includes(target)?target:'week';
+  view=Object.hasOwn(labels,target)||['welcome','setup','recipe','account'].includes(target)?target:'week';
   if(hash&&location.hash!=='#'+view)history.replaceState(null,'','#'+view);
   render();
   window.scrollTo(0,0);
@@ -397,7 +399,10 @@ document.addEventListener('click',async event=>{
   const b=event.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.view){setView(b.dataset.view);$('#main').focus({preventScroll:true});return;}
   const {action,id,index}=b.dataset;
-  if(action==='cloud-account'){openCloudAccount();}
+  if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
+  else if(action==='setup-account-back'){if(setupAccountBusy)return;error='';setupAccountMode='choice';wizardStory='benefits';setView('setup',false);}
+  else if(action==='setup-account-guest'||action==='setup-account-continue'){await finishOnboarding();}
+  else if(action==='cloud-account'){openCloudAccount();}
   else if(action==='account-login'){location.href='/login.html';}
   else if(action==='account-signup'){location.href='/signup.html';}
   else if(action==='cloud-connect'){await cloudBackup.init();openCloudAccount();}
@@ -507,6 +512,19 @@ document.addEventListener('submit',async event=>{
     try{const calendar=weeklyCalendar((day+1)%7,time);downloadFile('mealday-weekly-reminder.ics',calendar,'text/calendar;charset=utf-8');state.reminder={day,time};persist();dialog.close();render();notify('Calendar file downloaded. Open it in your calendar to enable reminders.');}catch(e){notify(e.message);}return;
   }
   if(form.id==='extra-grocery-form'){event.preventDefault();const name=String(new FormData(form).get('item')||'').trim();if(!name)return;state.extraGroceries=[...(state.extraGroceries||[]),{id:crypto.randomUUID(),name,checked:false}];persist();dialog.close();render();return;}
+  if(form.id==='setup-account-form'){
+    event.preventDefault();if(setupAccountBusy||busy)return;
+    const fields=new FormData(form),email=String(fields.get('email')||'').trim(),password=String(fields.get('password')||'');
+    if(setupAccountMode==='register'&&password!==String(fields.get('confirmPassword')||'')){error='The passwords don’t match.';render();return;}
+    setupAccountEmail=email;setupAccountBusy=true;error='';render();
+    const selected=structuredClone(wizardDraft);
+    try{
+      await cloudBackup.login(email,password,setupAccountMode==='register');
+      wizardDraft=selected;await finishOnboarding();
+    }catch(e){wizardDraft=selected;error=e.message;setView('account',false);}
+    finally{setupAccountBusy=false;if(view==='account')render();}
+    return;
+  }
   if(form.id==='cloud-login'){
     event.preventDefault();const data=new FormData(form),submit=form.querySelector('button[type="submit"]');submit.disabled=true;
     try{await cloudBackup.login(String(data.get('email')),String(data.get('password')),data.get('register')==='on');dialog.close();notify('Account loaded. Check Settings for backup status.');}
@@ -591,6 +609,55 @@ const allergyOptions=[['None','🚫','None'],['Gluten','🌾','Gluten free'],['M
 const appliances=[['Microwave','microwave'],['Hob','hob'],['Air fryer','fryer'],['Oven','oven']];
 const styles=[['UAE mix','','UAE favourites'],['Emirati'],['Arab','','Arab / Middle Eastern'],['South Asian','','South Asian / Desi'],['Turkish']];
 let wizardDraft=null,step=0,editing=false,previewSlide=2;
+
+const pendingSetupKey='mealday.pending-setup.v1';
+let setupAccountMode='choice',setupAccountEmail='',setupAccountBusy=false;
+function savePendingSetup(){
+  try{localStorage.setItem(pendingSetupKey,JSON.stringify({profile:wizardDraft,at:Date.now()}));}
+  catch{notify('Keep this tab open to retain your selected preferences.');}
+}
+function clearPendingSetup(){try{localStorage.removeItem(pendingSetupKey);}catch{}}
+function pendingSetup(){
+  try{
+    const pending=JSON.parse(localStorage.getItem(pendingSetupKey)||'null'),p=pending?.profile;
+    if(!p||!Number.isFinite(pending.at)||Date.now()-pending.at>86400000||pending.at>Date.now()+60000)return null;
+    if(typeof p.name!=='string'||!Array.isArray(p.days)||!p.days.length||!Array.isArray(p.mealTypes)||!p.mealTypes.length||!Array.isArray(p.cuisines)||!p.cuisines.length||!Array.isArray(p.appliances)||!p.appliances.length)return null;
+    return p;
+  }catch{return null;}
+}
+async function finishOnboarding(){
+  if(busy||!wizardDraft)return;
+  const p=structuredClone(wizardDraft);error='';wizardStory=null;
+  setView('setup',false);
+  await generate({...p,minutes:Number(p.minutes),cuisine:p.cuisines[0]});
+  if(error){savePendingSetup();setView('account',false);}
+}
+function onboardingAccount(){
+  const c=cloudBackup.info(),p=wizardDraft||state.profile,formMode=setupAccountMode!=='choice',signup=setupAccountMode==='register';
+  const disabled=setupAccountBusy||busy;
+  const available=!['checking','unavailable'].includes(c.status);
+  const title=c.account?'Your kitchen, connected.':formMode?(signup?'Create your account':'Welcome back.'):'Your week starts here.';
+  const copy=c.account?'Build your next plan with the preferences you just chose.':formMode?'Your choices are saved. Let’s make this kitchen yours.':'Save your plan, favourite meals and cooking memories in one place.';
+  let actions='';
+  if(c.account){actions='<p class="setup-account-identity">Signed in as '+esc(c.account.email)+'</p>'+button('Build my week','setup-account-continue','green wide','',(disabled?'disabled':''));}
+  else if(!formMode){
+    actions=button('Create an account','setup-account-mode','green wide','', 'data-id="register" '+(!available||!c.registration?'disabled':''))+
+      button('Log in with email','setup-account-mode','setup-account-secondary wide','', 'data-id="login" '+(!available?'disabled':''))+
+      (!available?'<p class="setup-account-service" role="status">'+(c.status==='checking'?'Checking account availability…':'Accounts are temporarily unavailable. You can still build your plan as a guest.')+'</p>':'');
+  }else{
+    actions='<form id="setup-account-form"><fieldset '+(disabled?'disabled':'')+'><label for="setup-account-email">Email address</label><input id="setup-account-email" class="control" name="email" type="email" autocomplete="email" maxlength="254" value="'+esc(setupAccountEmail)+'" required><label for="setup-account-password">Password</label><input id="setup-account-password" class="control" name="password" type="password" autocomplete="'+(signup?'new-password':'current-password')+'" minlength="'+(signup?'12':'1')+'" maxlength="128" required>'+
+      (signup?'<p class="setup-account-password-help">At least 12 characters.</p><label for="setup-account-confirm">Confirm password</label><input id="setup-account-confirm" class="control" name="confirmPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required>':'<a class="setup-account-recovery" href="/forgot-password.html" target="_blank" rel="noopener">Forgot password?</a>')+
+      '<button class="button green wide" type="submit">'+(disabled?'Please wait…':signup?'Create account':'Log in & build my week')+'</button></fieldset></form>'+
+      '<p class="setup-account-switch">'+(signup?'Already have an account? ':'New to Mealday? ')+button(signup?'Log in':'Sign up','setup-account-mode','setup-account-text','','data-id="'+(signup?'login':'register')+'" '+(disabled?'disabled':''))+'</p>'+
+      '<a class="setup-account-recovery" href="/verify-email.html" target="_blank" rel="noopener">Verify email / Resend verification</a>';
+  }
+  return '<section class="setup-account '+(formMode?'setup-account-form-mode':'')+'"><header>'+button('←','setup-account-back','back-circle','','aria-label="Back to your preferences" '+(disabled?'disabled':''))+'<span>mealday<span>.</span></span></header><div class="setup-account-content"><div class="setup-account-avatar"><img src="/chef.png" alt="Mealday chef" width="104" height="132"><span aria-hidden="true">✦</span></div><p class="setup-account-eyebrow">YOUR KITCHEN, YOUR WAY</p><h1>'+title+'</h1><p class="setup-account-copy">'+copy+'</p><p class="setup-account-recap">'+esc(p.people)+' '+(p.people===1?'person':'people')+'<span>·</span>'+esc(p.days.length)+' cooking '+(p.days.length===1?'day':'days')+'<span>·</span>AED '+esc(money(p.budget))+'</p><div class="setup-account-actions">'+actions+'</div>'+
+    (error?'<p class="setup-account-error" role="alert">'+esc(error)+'</p>':'')+
+    '<p class="setup-account-legal">By creating an account, you agree to our '+button('Terms of service','terms','setup-account-text')+' and '+button('Privacy policy','privacy','setup-account-text')+'.</p>'+
+    (!c.account?button('Continue without an account','setup-account-guest','setup-account-skip','',''+(disabled?'disabled':'')):'')+
+    '</div><footer>'+icon('shield')+'<span>Your preferences stay with you.</span></footer></section>';
+}
+
 const ageGroups=[['under25','','24 and under'],['25-34','','25–34'],['35-44','','35–44'],['45-54','','45–54'],['55plus','','55+'],['private','','Prefer not to say']];
 const savingsChoices=[['definitely','','Definitely'],['likely','','Most likely'],['somewhat','','Somewhat'],['no','','Not really']];
 const discoveryChoices=[['instagram','social-instagram','Instagram'],['tiktok','social-tiktok','TikTok'],['youtube','social-youtube','YouTube'],['facebook','social-facebook','Facebook'],['word','💬','Word of mouth'],['google','social-play','Google Play'],['other','🌐','Somewhere else']];
@@ -686,6 +753,7 @@ screen.addEventListener('touchend',event=>{
   if(Math.abs(delta)>36)selectSlide((previewSlide+(delta<0?1:2))%3);
 },{passive:true});
 function beginWizard(edit){
+  clearPendingSetup();setupAccountMode='choice';error='';
   editing=edit;step=0;wizardStory=null;previousWizardStep=-1;error='';wizardDraft=JSON.parse(JSON.stringify(state.profile));
   if(!edit&&!state.result)wizardDraft.shop='Any supermarket';
   allergiesReviewed=false;
@@ -765,7 +833,7 @@ function renderStory(){
 async function nextStory(){
   if(busy||!wizardStory)return;
   const last=wizardStory==='benefits';wizardStory=null;
-  if(last){const p=wizardDraft;await generate({...p,minutes:Number(p.minutes),cuisine:p.cuisines[0]});}
+  if(last){if(editing||cloudBackup.info().account)await finishOnboarding();else{savePendingSetup();setupAccountMode='choice';setView('account',false);}}
   else{step++;renderWizard(false);}
 }
 function savingsResult(p){
@@ -947,6 +1015,7 @@ function resetKitchen(){
 }
 window.mealdayBack=()=>{
   if(dialog.open){dialog.close();return true;}
+  if(view==='account'){if(setupAccountBusy)return true;wizardStory='benefits';setupAccountMode='choice';setView('setup',false);return true;}
   if(view==='setup'){backWizard();return true;}
   if(view==='recipe'){leaveRecipe();return true;}
   if(view!=='week'&&view!=='welcome'){setView('week',false);return true;}
@@ -981,7 +1050,10 @@ function openCloudAccount(){
   openDialog('Cloud backup & login','Your kitchen across devices',content);
 }
 
-cloudBackup.init();
+cloudBackup.init().then(()=>{
+  const pending=pendingSetup();
+  if(pending){wizardDraft=pending;step=steps.length-1;editing=false;setView('account',false);}
+});
 window.addEventListener("online",()=>cloudBackup.refresh());
 window.addEventListener("focus",()=>{if(!dialog.open&&!['recipe','setup'].includes(view))cloudBackup.refresh();});
 setInterval(()=>{if(!document.hidden&&!dialog.open&&!detail&&view!=="setup")cloudBackup.refresh();},30000);

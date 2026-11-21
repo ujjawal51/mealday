@@ -27,6 +27,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build:phone
       - name: Syntax and regression tests
         run: |
           node --check phone-preview/dist/email-recovery.js
@@ -36,3 +37,19 @@ jobs:
         env:
           MONGODB_TEST_URI: mongodb://127.0.0.1:27017
         run: node phone-preview/server/mongo.integration.mjs
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install chromium --with-deps
+      - name: Test the phone onboarding account flow
+        run: node phone-preview/server/onboarding-account.browser.mjs
+      - name: Capture the tested browser build
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFile,readdir} from 'node:fs/promises';
+          const root='phone-preview/dist/';
+          for(const name of ['index.html',...(await readdir(root)).filter(n=>/^client-[a-f0-9]+\.js$/.test(n))]){
+            const content=await readFile(root+name,'utf8');
+            for(let i=0;i<content.length;i+=3000)console.log('MEALDAY_BUILD_CHUNK '+JSON.stringify({path:root+name,i,chunk:content.slice(i,i+3000)}));
+          }
+          NODE
