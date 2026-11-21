@@ -33,6 +33,16 @@ test('MongoDB API contract: identity, saving, isolation, conflicts and logout',a
  assert.equal((await second.call('/api/kitchen')).data.data.history.events.length,1);
  assert.equal((await second.call('/api/kitchen','PUT',{revision:1,data:kitchen('second phone')})).status,200);
  assert.equal((await a.call('/api/kitchen')).data.data.state.recipeJournal.pasta.note,'second phone');
+ const feedback=kitchen('Less salt; add lemon 🥣');feedback.state.recipeJournal.pasta.rating=3;
+ feedback.history.events[0].undoneAt='2026-11-21T06:00:00.000Z';
+ feedback.history.events.push({id:'cook-2',recipeId:'pasta',name:'Pasta',cookedAt:'2026-11-21T07:00:00.000Z',undoneAt:null});
+ feedback.state.result=null;
+ assert.equal((await second.call('/api/kitchen','PUT',{revision:2,data:feedback})).status,200);
+ assert.deepEqual((await a.call('/api/kitchen')).data.data,feedback,'Both sessions retain rating, note, repeated cooks and undo after a plan reset');
+ feedback.state.recipeJournal.pasta={rating:0,note:''};
+ assert.equal((await a.call('/api/kitchen','PUT',{revision:3,data:feedback})).status,200);
+ assert.deepEqual((await second.call('/api/kitchen')).data.data,feedback,'Clearing feedback must sync too');
+ assert.equal((await b.call('/api/kitchen')).data.data,null);
  assert.equal((await a.call('/api/auth/logout','POST',{})).status,200);assert.equal((await a.call('/api/kitchen')).status,401);
 });
 test('Origin, CSRF, bad credentials, body validation and rate limit',async t=>{

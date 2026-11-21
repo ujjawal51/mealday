@@ -25,15 +25,15 @@ export function createCloudBackup({snapshot,apply,changed}){
   async function sync(){
     clearTimeout(delay);
     if(!account||meta.owner!==account.id||conflict||working)return;
-    working=true;update('syncing','Saving your kitchen…');
+    working=true;let savedSuccessfully=false;update('syncing','Saving your kitchen…');
     try{
       const data=snapshot();const before=JSON.stringify(data);
-      const saved=await call('/api/kitchen','PUT',{revision:meta.revision,data});meta.revision=saved.revision;
+      const saved=await call('/api/kitchen','PUT',{revision:meta.revision,data});meta.revision=saved.revision;savedSuccessfully=true;
       meta.dirty=before!==JSON.stringify(snapshot());cache();update(meta.dirty?'pending':'synced',meta.dirty?'New changes waiting to sync.':'Backed up · '+new Date(saved.updatedAt).toLocaleString());
     }catch(e){
       if(e.status===409){conflict=true;update('conflict','Another device changed your backup. Choose a version before syncing.');}
       else {if(e.status===401){account=null;csrf=null;}update('pending',e.status===401?'Session expired. Sign in again; changes are saved on this device.':'Not synced. '+e.message);}
-    }finally{working=false;if(meta.dirty&&!conflict&&status!=='pending')delay=setTimeout(sync,1000);}
+    }finally{working=false;if(savedSuccessfully&&meta.dirty&&!conflict){clearTimeout(delay);delay=setTimeout(sync,800);}}
   }
   async function pull(){
     const remote=await call('/api/kitchen');
