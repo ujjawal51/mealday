@@ -1,0 +1,4030 @@
+{
+  "scope": "Structural audit is not physical cooking or taste validation. Two successful documented cooks of the current recipe are required for kitchen-tested status.",
+  "total": 402,
+  "kitchenTested": 0,
+  "pending": 402,
+  "deskReviewed": 212,
+  "structuralBlockers": 0,
+  "recipes": [
+    {
+      "id": "uae-date-plate",
+      "name": "Dates, yogurt & Arabic bread plate",
+      "version": "5ec7743c6197be43935f29e304874e56e149524973ae87521da9b1d98cd4fedc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 5,
+      "structuralIssues": []
+    },
+    {
+      "id": "arab-adas-complete",
+      "name": "Shorbat adas — red lentil soup + Rice + Cucumber",
+      "version": "979534a6e07577544ab9649d20d4547f1b5a99f4cffa2e5439a0beec90b87401",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-chaat-complete",
+      "name": "Chana chaat lunchbox + Rice + Cucumber",
+      "version": "222d736942a33da84523123db964df5ab0db6d43081ff279c4d7d4764fbbe751",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "uae-salona",
+      "name": "Vegetable salona-style stew with rice",
+      "version": "01e286c062610d2f5f4d5e28e6a850f5f793ff4ecbe3782435b708d731df9f12",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "arab-ful",
+      "name": "Ful medames with Arabic bread",
+      "version": "fa736dee373c2b490580e4ccae8d69f2dbfcfbeb7ef2f508ba24cbd6da50060a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "arab-hummus",
+      "name": "Hummus, cucumber & pita plate",
+      "version": "baebcea607902dcfb39a493ced329f669ba75aa301be3951ecf8f58a758a0dd5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 10,
+      "structuralIssues": []
+    },
+    {
+      "id": "arab-mujadara",
+      "name": "Mujadara — lentils, rice & onions",
+      "version": "d383ac0d642b86df85906ebb36febea9d4f9a1b481e0451b3b336dfcdc0b8e22",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-poha",
+      "name": "Vegetable poha",
+      "version": "83580d281239bd9e484fd024b76669e625ddf93fba7f7e43dab7119b97936cb8",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-chilla",
+      "name": "Besan chilla with cucumber",
+      "version": "6a44100fd611d1adee3622a39ae423b9101cdaca540eaecd157be111d154676d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-khichdi",
+      "name": "Moong dal vegetable khichdi",
+      "version": "244457911a9cefc7c5a484b5bfb3b5e635666af1eeb49696a56564ea6fe728eb",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-chana",
+      "name": "Chana masala with Arabic bread",
+      "version": "8dcbc8f47a668f73173ab81c90ea33f3057305ca5b7c2c9276ddec1b5012d720",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-chicken",
+      "name": "Simple chicken curry & rice",
+      "version": "91cc2d265c2d668c1cb585cc7ec432bdd0cfb63ab386e5c4a3107afa76112788",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-date-tahini-bread",
+      "name": "Date & tahini Arabic bread",
+      "version": "5b61555135ccd7a582d49355ccba8e58a410eca690e60761624fa8c94e34cac0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 8,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-regag-cheese",
+      "name": "Regag with cheese & tomato",
+      "version": "b17b149342e0b33e7bd8887c5a3cdc3f21dced115c0106193e1f2f1ac7143017",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 10,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-khameer-labneh",
+      "name": "Khameer with labneh & cucumber",
+      "version": "b272dbfb77f8f75d95333047cc5505ddbe4ba5c78f3c9db8c2259af784818acf",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 8,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-khabeesa",
+      "name": "Quick khabeesa-style semolina",
+      "version": "2fdea13664a9ed35863cde7f39e23480c034e3b5622b96c5a5c90ba37da7bd00",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-fish-rice-loomi",
+      "name": "Loomi fish & rice skillet",
+      "version": "bdcb84110363e932e6d2ae55f8d24cbbb95c28a10be75ff77c7458159f254779",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-chickpea-machboos",
+      "name": "Chickpea machboos-style rice",
+      "version": "2eed0e0c0f2404bc5940aa628dbfe9c7373180b24cd6c74c81bd152e6429597c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-chicken-thareed",
+      "name": "Chicken thareed-style bowl",
+      "version": "4e65880df5343528c7386d8464605b27bf5ded72e36841a2d169e43ebf5694a0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-beef-bzar",
+      "name": "Bzar beef & courgette rice bowl",
+      "version": "f4a10e966b61e1c81a4073471d07fbb77ef2e16bf9bbfae00c201d5a502a1fc4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-spinach-chickpea-stew",
+      "name": "Emirati-inspired spinach & chickpea stew",
+      "version": "620de64defbb15edb6029525cd86db921e07e268d64f3933f84707e3fa951439",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-pumpkinless-madrouba",
+      "name": "Chicken & rice madrouba-style pot",
+      "version": "4f4d78159dcdc0cdb5b25756401a8ba262f93d38f95f339ef6006e9ff4f560eb",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-carrot-lentil-loomi",
+      "name": "Loomi lentil & carrot rice",
+      "version": "8d72ba39d91509f1445198f1734d8af398fee62d9ad1a9482eb51c6e1b4b7ed6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-labneh-pita",
+      "name": "Labneh, tomato & pita breakfast",
+      "version": "2abf5d6a0c8b03ea0e0244b570d4446a7170ac732947d1a5085e4002aaf6b313",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 8,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-zaatar-pita",
+      "name": "Zaatar pita with cucumber",
+      "version": "2a98b712f0b4b7bdc2681ac6c42fa6bfd19cf70953464454ae8ddc7cedb59a08",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 12,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-feta-spinach-eggs",
+      "name": "Spinach & cheese eggs",
+      "version": "c13189b2b8bc019fe31dd9648ce41427435fa62a4ab6aeb0b76edebbad14831d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-chickpea-fatteh",
+      "name": "Chickpea yogurt fatteh-style bowl",
+      "version": "e332b8dc7e729bb3e591f46ed36b007a9f8142a893a5b104736d2231eb70f844",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-tabbouleh-complete",
+      "name": "Parsley & bulgur tabbouleh + Red Lentil Dal + Cucumber",
+      "version": "bc23786617b0b09213bd2a9b15a4343e9e5e8518da78045092470c1d5ccbb7d0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-fattoush-complete",
+      "name": "Fattoush-style crispy pita salad + Red Lentil Dal + Cucumber",
+      "version": "7f546244b56136ce7f944da3058d2ef79d1a32f73121a0f7fa64cfbc08798245",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-tahini-fish",
+      "name": "Tahini lemon fish with rice",
+      "version": "9aa79260123cd8a7dd0346bad0b4f507e79a0494bb49e5d6ae9f483a16ebe37b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-aubergine-chickpeas-complete",
+      "name": "Aubergine & chickpea tomato skillet + Rice + Cucumber",
+      "version": "aaa2ec6a4de2623f6369fe2e97cb2e2bace46776ff3b5e47b1801e54453be1e6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-couscous-chicken",
+      "name": "Chicken & vegetable couscous",
+      "version": "fbf0d78cfcf380c41413d562c092a232698f89a1f9341361ac83eca7e207dba9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-bulgur-pilaf-complete",
+      "name": "Tomato bulgur pilaf + Red Lentil Dal + Cucumber",
+      "version": "67db844dbf58eb706e9f3407b5e066be0881ddb54a79f8f743dd63c10c7f151a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-lentil-chard-complete",
+      "name": "Spinach & lentil lemon soup + Rice + Cucumber",
+      "version": "1f5519d82cbe51e0aae514634fcbca8cb4c39b7451ed66d4c665993a0f8cf0b5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-hummus-chicken-bowl-complete",
+      "name": "Warm chicken & hummus bowl + Rice + Cucumber",
+      "version": "bf5d13f682b2d080de074bcb9b2b70679f8eeb2a5d5d19d20483936693dc56f6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-ful-salad-complete",
+      "name": "Fava bean, tomato & parsley salad + Rice + Cucumber",
+      "version": "c4a78e4b9fc2c54af95173df6f366594db7aa8ffcc1906f8117b440c01b25ecc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-suji-upma",
+      "name": "Vegetable suji upma",
+      "version": "49e133727b2c27bba530252a400b6012c51c00075a2ef73b23c32495b090a550",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-rice-dosa",
+      "name": "Quick rice-flour dosa-style pancakes",
+      "version": "121f5f5e05e8850cfbeb16df781457ee5d6bdb420c60186c60735b5bfff548da",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-aloo-roti-wrap",
+      "name": "Aloo breakfast wrap",
+      "version": "498160004397fbc221de9534ed225b66def4b2800cd65d5971279cbc6884bd03",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-paneer-breakfast",
+      "name": "Paneer bhurji breakfast wrap",
+      "version": "77128e2aa8171d4e9f6d72556e224daa9442c2378229d33de42be31076a59fb6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-oats-chilla",
+      "name": "Oats & besan chilla",
+      "version": "a9ac464d27f82e755adeaeffab22f8206fa3c1afaa1243c81f42ca52c751806d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-dal-tadka",
+      "name": "Red dal tadka with rice",
+      "version": "d6a19b352dc73090dac16fc6558bffaa50a9eeccb921ec581b6aceca7014129e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-palak-paneer",
+      "name": "Simple palak paneer with rice",
+      "version": "38be71ebd7387765453201d3eef295a98c4091bb8a1f2d1890af4e32cc14a551",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-aloo-gobi-complete",
+      "name": "Aloo & courgette sabzi with pita + Red Lentil Dal + Cucumber",
+      "version": "fb243056f5c40f293d2428ca59512209cd1128bf5059e9cac43f9cce0147055f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-matar-rice",
+      "name": "Peas & cumin rice with yogurt",
+      "version": "fa9839f920598eacb05b580b1f198554a8886920bd97e683e132d11c63766a82",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-fish-masala",
+      "name": "Tomato fish masala & rice",
+      "version": "ab8a98728f2aab95c7565606fd6da78214cace7ab80f0431d0c182ab49ed3f91",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-chicken-keema",
+      "name": "Chopped chicken & peas curry",
+      "version": "e37e6ddb74fbfa83eab1147831553491c44918e263bce4d45538a5452b39fd84",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-cucumber-raita-chana-complete",
+      "name": "Chana & cucumber raita bowl + Rice + Cucumber",
+      "version": "bdfd874414c35f28397a73ac26af83b7d6625dc2758f940f8b0c7572095a4c66",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-dango",
+      "name": "Dango with regag",
+      "version": "3b2f0f9e58f1a53c31ca96d2ddf6b64c70ab3db9c0d50afc377e296e6f04c9ce",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-bajella",
+      "name": "Bajella with regag",
+      "version": "37fd9da6af65e99f9569d547755d06a92f47ced843f78570525991a7caf1c344",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-beid-tomat",
+      "name": "Beid wa tomat with regag",
+      "version": "2874929c513856f3560124aee34d606e0c6c95b9bf3ae54954d0711914ef533e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-fresh-rigag",
+      "name": "Fresh rigag with labneh",
+      "version": "48c143721363aedc2083693a6b16abcfb958de949c26ec3df0550a3df6c3bf33",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-chicken-margouga",
+      "name": "Chicken margouga — home-style",
+      "version": "913d30cac43609fe862a0d1a16c15e9c5fe67f1c841304c904bc13b9de5509a1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-muhammar-fish",
+      "name": "Muhammar rice with pan-cooked fish",
+      "version": "d96667da4d5bb56f34ad043174a803d1e22dc31050a1939dd5a954d91c50b67a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-fish-salona",
+      "name": "Fish salona with rice",
+      "version": "8ef931bf0d69aac30a58f385163ff7dee6c62295a88023ff71183dd3ad9f16ba",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-299",
+      "name": "Tofu Bhurji Recipe - Spicy Scrambled Tofu",
+      "version": "9da4c8d3a5eb5b9ad2cd06c685595c0d0dfca97e6d7fc40174775fdbf1f0990d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-457",
+      "name": "Spinach Thalipeeth",
+      "version": "f3c68991bed1aa60f53b39ec01fbf57d00a98bee8c4bb09bc1d1fb0a77c9f65a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-641",
+      "name": "Ari Pathiri | Malabar Rice Flatbread",
+      "version": "81dd6ec167a26cb9d9c56d93779923dfb6a724530ee0476c14388da91fa1ce6e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-722",
+      "name": "Masala Palak Bhurji",
+      "version": "c71c011948118402febb2a3ef686b62919df85983eae8676c6e01cf24ec518cc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1554",
+      "name": "Egg Stuffed Paratha",
+      "version": "1fa17b531eabddcf393117a6ce04f9005910a8d7b378872dfb8d56b262ae43ad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1567",
+      "name": "Karnataka Style Sabsige Soppu Akki Rotti (Dill leaves and flattened Rice Bread Recipe)",
+      "version": "ba9817cfe5e3fb3f424f68d8170b5906bbb3373ef119838128b1c4dc5e372d92",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1659",
+      "name": "Ghee Tooria Per Eda Recipe - Parsi Style Ridge Gourd With Fried Eggs",
+      "version": "6a29f13390fea6bbd9f1d28b0024e62c98f0b7521c647a393c276be39af9e736",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1771",
+      "name": "Tomato Poha With Peas",
+      "version": "e7ca04c6ca6d38734783e2651c80984dc2cc0f86b3f670cf4c1740eb84af5f27",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1886",
+      "name": "Paneer Methi Paratha",
+      "version": "5b008c056bcf23009c8ee1dbceed4e85a660bcee95f9a71f3beb1527f3852caa",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1991",
+      "name": "Lauki Paratha Recipe - Bottle Gourd Flatbread",
+      "version": "d97e6d8afde685cf3ab9e215f2cc290ec1f8e91fc8862273f08827d5e6cd1796",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2187",
+      "name": "North Arcot Special Thavalai Dosai",
+      "version": "135e460e53c648b17ac0a8bb55fb9e2a066e84f111495c7e716cb9051ad435a9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2799",
+      "name": "Onion Rava Dosa Recipe - Spiced Semolina Crepe",
+      "version": "72d428527bdc26633ccbf2dded695fca5d75c99216ddfc33d79f6442e6115e97",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3191",
+      "name": "Carrot Methi Jowar Thepla",
+      "version": "8ca430264b8f2036c3776db1b65c2ebedf3a744ecade004fb39860a016ca2a4c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3273",
+      "name": "Andhra Style Sarva Pindi/Gine Pindi Recipe (Rice Flour and Chana Dal Flatbread Recipe)",
+      "version": "5c9d99d48b100c6beccfae0ea9bba5d92ab423d80198be08c5754346b9802a75",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3334",
+      "name": "Spicy Quinoa Upma",
+      "version": "4f48a32b631335689dd0a53dedc2687ad6ecae0d5591b30fcd5c7817c3557f91",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4038",
+      "name": "Cabbage Bhurji",
+      "version": "5bd4a0658ff73e1290bab5e364d6e5f7d34dc328cf960a4ba6f75003053d5909",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4493",
+      "name": "Aval Upma Recipe - South Indian Style Poha",
+      "version": "934bdb2c10339db4ea63a911912628ed55f6fd0be367511eb55c65da821f0ae4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4919",
+      "name": "Ajwain Puri Recipe - Puri Flavoured With Carom Seeds",
+      "version": "e165b101b58edfbe1d687cdb46fa138cf326fae2f2a7cbb69c44aba84afd1246",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7938",
+      "name": "Methi Jowar Ragi Thalipeeth Recipe - Healthy Diabetic Friendly",
+      "version": "694b21b88547b9d2ae33ea6df543b0d448e29a69a4556a9fb80c4c27fdcfcc0e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8187",
+      "name": "Ragi Kanji Recipe - Salt Version",
+      "version": "bf2117f0e0ea6c71afe929b97c641383253b9c347b6bea95a406045a5de392c0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-9318",
+      "name": "Pudina Shavige Recipe - Pudina Semiya Upma",
+      "version": "ea3fab55be3dc270221752703915b2ff672046f0273f94fd1cddedd2c02f81af",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-11264",
+      "name": "Scrambled Eggs With Ridge Gourd Sabzi",
+      "version": "19c230a819af7eddf142b9a7b0676fb1dd7ed4a9a30d5f7508668479b4aac1db",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-12559",
+      "name": "Carrot and Cucumber Thalipeeth",
+      "version": "a3a96a142dd28fd4595f02c372a3b2d83d434ff1ad2701e5d39bd730251ac7fc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-88-complete",
+      "name": "Crunchy Ginger Capsicum Rice + Red Lentil Dal + Cucumber",
+      "version": "7cccdfd5d7f077024762ca444e5002e0617e741348c544d800f2c602b70ab45c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-111-complete",
+      "name": "North Indian Style Mushroom Matar Masala + Red Lentil Dal + Rice + Cucumber",
+      "version": "957aa51144dd8207d080a792784765496dbc5038ec296a732f99b3f64939fd1e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-156-complete",
+      "name": "Khara Obbattu Recipe (Bread Stuffed With Spicy Potato Mixture Recipe) + Red Lentil Dal + Cucumber",
+      "version": "c968b92a16eb19705ace819ff81eb059ea99c21569821a1ed9f2582e8187e79e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 110,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-307",
+      "name": "Rajasthani Gatte Ki Sabzi Recipe With Onion & Garlic",
+      "version": "9e6940f583e322034f194daefc734f0302d2637f91fc9bfd8b4934e61ef94c5c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-312",
+      "name": "Veg Mughlai Paratha",
+      "version": "54ea054206e19900eb1963458a9321f714cdd47589f455f0d991b503aa8cbd1c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-552-complete",
+      "name": "Shepuchi Bhaji Recipe (Stir Fried Maharashtrian Suva/Dill Greens) + Red Lentil Dal + Rice + Cucumber",
+      "version": "d2f163d76c794ffe31838fb509eef4d31bc3ae465ef9d8b7e61e69ff6046a03a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-576-complete",
+      "name": "Marwadi Gatte Ki Kadhi Recipe - Gram Flour Dumpling In Yogurt Curry + Rice + Cucumber",
+      "version": "d15c9c665691331a94d0dd7733a15fe0df09774b2b9a7f4d33bb52921e0f8691",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-807-complete",
+      "name": "Bihari Aloo Bhujiya + Red Lentil Dal + Rice + Cucumber",
+      "version": "829c0fd0a12645b54705d02536512a606c461b1de2a54f36137a4d509c935ad1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1189-complete",
+      "name": "Rajasthani Gatte Ka Pulao + Red Lentil Dal + Cucumber",
+      "version": "635dd7c52138a79bc6b2709ad3d08c448f043b55a181240264ae37c8882c8b83",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 105,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1295-complete",
+      "name": "Jowar Atta Roti Recipe - Sorghum Wheat Phulka + Red Lentil Dal + Cucumber",
+      "version": "03a517623d58ee43347026bfe5772ce32c2dbb47b62bd5afb7788b1abede43cc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1437-complete",
+      "name": "Masala Akki Roti Recipe - Spicy Rice Flour Flatbread + Red Lentil Dal + Cucumber",
+      "version": "c458488b30d5653738c20f829c96d40b1520b17a8934d1fb68eab4af980596f6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1474-complete",
+      "name": "Jeera Rice Recipe - Cumin And Ghee Flavored Rice + Red Lentil Dal + Cucumber",
+      "version": "1df33daed695844ccf22a336a9e0eab7936a2216a5a7ccd166d90ecdf9a851a9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1591-complete",
+      "name": "Carrot Lemon Rice + Red Lentil Dal + Cucumber",
+      "version": "04f83dcb67962f1b803f11ed8441faf804fdda6b3390805182ce129aaffac422",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1633-complete",
+      "name": "Red Lentil Curry Without Coconut + Rice + Cucumber",
+      "version": "281b7035f2c9a97a3387f7a23477e156f5c84c7e829d12c76991ccd986489d3e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1756-complete",
+      "name": "Spicy Haryana Style Egg Curry + Rice + Cucumber",
+      "version": "843220e3dda2ec0de7ff741907c6927f4c06294e35dc9736fa281035c5c0ac1f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-1846-complete",
+      "name": "Kadai Egg Masala + Rice + Cucumber",
+      "version": "28ed00ed04454d0bb08dc144b750bc471b1038b88920e15938b889f3e708798c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2209-complete",
+      "name": "Mooli Bhurji + Red Lentil Dal + Rice + Cucumber",
+      "version": "699649f408fd67e7cbe9d9d574eb2e768b8d4bd82dafbb9107ec3b80ff3b5ec8",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2311-complete",
+      "name": "Carrot & Green Bean Thoran + Red Lentil Dal + Rice + Cucumber",
+      "version": "88e281ca0a2c37b2683f9ef38de89f6ee3268ca43853fb142cb533ee3cb21a73",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 105,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2404-complete",
+      "name": "Radish & Radish-Leaf Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "532f43ad05fae47212fe59851b8d5350caa6a67d4f8bf651df6c81f0ff32dbaf",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2535-complete",
+      "name": "Cabbage Yogurt Curry + Rice + Cucumber",
+      "version": "a13e035e3ea5bb860f46ed3af5a4c4269e4b21d920cbe76def44fb7365b6eb8e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2592-complete",
+      "name": "Oats, Peas & Tofu Stuffed Paratha + Red Lentil Dal + Cucumber",
+      "version": "d86ff130b2ef69ace9b42907dcc32fca71f4bf662a2433ab3e3f24b49984d836",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2628-complete",
+      "name": "Rajasthani Kadhi + Rice + Cucumber",
+      "version": "03e323a8b40e6dba5a7b367696fec0c9f8d7c15fe87af44cfcb106f3ca773d56",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2689-complete",
+      "name": "Dubki Wale Aloo Recipe - Potatoes In A Spicy North Indian Gravy + Red Lentil Dal + Rice + Cucumber",
+      "version": "2ec5219664c5c3a409186bcd087e3f2dd996b48aada84fc4791fd2202824e689",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2710-complete",
+      "name": "Maharastrian Batatyachi Bhaji Recipe-Quick and Simple Aloo Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "f2f47b29150e031042a9cef79bfa4a63ef671a4d310fa0bff4c5f3f6d16cb0fc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2713-complete",
+      "name": "Gopalkala Recipe - Janmashtami Special) + Red Lentil Dal + Cucumber",
+      "version": "75f46389377e8f64cbd5197f266807b324851443b9271e33fad1df69cbea8327",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2897-complete",
+      "name": "Semiya Biryani + Red Lentil Dal + Cucumber",
+      "version": "59df8e84dff1dc491204dd0dcd027471646e964d166e4dd6e67a57ae88e2b5d1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-2934-complete",
+      "name": "Kerala Style Tomato Fry + Red Lentil Dal + Rice + Cucumber",
+      "version": "4e1d8aa1ca0033f7f091815e44f3ead4bda4e257b6a34312a91d807db04d6cad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3050-complete",
+      "name": "Palak Baingan Ki Sabzi - Recipe in Hindi + Red Lentil Dal + Roti + Cucumber",
+      "version": "83953a3af59ac4c05c41b1e98048213bbe5bb0f7c57b6988498ef90586ea98f7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3106-complete",
+      "name": "Parwal Masala Recipe - No Onion No Garlic + Red Lentil Dal + Rice + Cucumber",
+      "version": "76baa4abf9e6e45299be548618672536bc027149bf611510cc4e5c2712f0c1e3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3214-complete",
+      "name": "Aloo Bhindi Stir-Fry + Red Lentil Dal + Roti + Cucumber",
+      "version": "c0441b95dfae5785571c5441980cd95989e6d6266760722e29566e21208416db",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3215-complete",
+      "name": "Soft & Delicious Ragi Mudde Recipe - Karnataka Style Ragi Balls + Red Lentil Dal + Cucumber",
+      "version": "0fe6aa723eaed99d2112a8c591fa111d9929b0abada9a8317b024713b1874157",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3316-complete",
+      "name": "Bihari Style Baingan Chokha + Red Lentil Dal + Rice + Cucumber",
+      "version": "7149f79cc03e62e4e3480098e304f34dabca611e49e722078af4dd14dd1b4709",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 105,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3425-complete",
+      "name": "Jeera Aloo Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "94435e29a593e249f439424647ff74ef04cce4277ce428682a8cc387f3c6e910",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3467-complete",
+      "name": "Kongunadu Urulai Kurma Recipe (Curried Potatoes from Kongunadu) + Red Lentil Dal + Rice + Cucumber",
+      "version": "4dfec7645cdb42b726891bb79de891b4a5cf363b3d3666026284e2d1bbf8736b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 110,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3573-complete",
+      "name": "Mulyachi Bhaji Recipe - Goan Style Mooli Ki Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "4096bc6a787a32f491fcddae5d418bd0c52bae035210e4ce0be3ca10ff64fc45",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-3691-complete",
+      "name": "Carrot Cauliflower Peas Sabzi Recipe - Gajar Gobi Matar Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "2c0c49c468b8d8a5b32226957b35327957d29d0edc727fde63e096ca7458348f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4290-complete",
+      "name": "Matar Chi Usal Recipe - Green Peas In A Onion Tomato Gravy + Red Lentil Dal + Rice + Cucumber",
+      "version": "83ed069d384fde261f9105e5612adf74c6d71dff27a0f61f4f9193b2fe0ba0ab",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 130,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4381-complete",
+      "name": "Mushroom Do Pyaza + Red Lentil Dal + Rice + Cucumber",
+      "version": "fca0a5c07e7c0e08c07f0c8a6af3d8e0175b3c83daeec8dffc55d6be25a98b01",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-4811-complete",
+      "name": "Maharashtrian Style Dudhi Kajuchi Sonari Amti Recipe - Bottle Gourd And Cashew Nut Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "036ae4d0e78f5d0666f333b5801e502f3cde7a95e772eaaf5cd74790fde8fdce",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5192-complete",
+      "name": "Sesame Peanut Potato Mix + Red Lentil Dal + Rice + Cucumber",
+      "version": "3d446b43acdd5461d1c55b7f98dabddc45eeee1691431581efdfb0dd12b15548",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5297-complete",
+      "name": "Muga Ambat + Rice + Cucumber",
+      "version": "6403300c9c4965935646332a64d9033588a6eb8f86f3f4618716972476fd1fcd",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5484-complete",
+      "name": "Spicy Goan Style Mushrooms + Red Lentil Dal + Cucumber",
+      "version": "2e1a9f727086132e32c9bc1bd36edb7ad6f4bfb11ef827b9e1baf1af7ec26b99",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5553",
+      "name": "Tofu & Capsicum Paratha Recipe (Stuffed Tofu Flatbread)",
+      "version": "b416fb6210b1b8980ca2a3a16257e5fc69ac6087dbe16a3e2cc90c32ea7289da",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5768-complete",
+      "name": "Kodava Kummu Curry Recipe- Coorg Style Mushroom Curry + Red Lentil Dal + Rice + Cucumber",
+      "version": "d85a304b902881cefa412a8d2ae138c2ed1874ddf5cd3d811676a74db847a43c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-5820-complete",
+      "name": "Punjabi Bhindi Kadhi Recipe - Roasted Okra In Yogurt Curry + Roti + Cucumber",
+      "version": "5ab81cd7a99037ca60caa7e7c81e651994e06e0fd7dc2f3a9b1dfeef5afbf9df",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-6066-complete",
+      "name": "Radish Greens Poriyal Recipe (South Indian Style Radish Greens Stir Fry) + Red Lentil Dal + Rice + Cucumber",
+      "version": "a7894829caac49ef55a20c8ae32ec2cbb36c3fb5c978082576815d0e7d6c4ab3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7122-complete",
+      "name": "Jolada Ganji Recipe (Jowar Savoury Porridge) + Red Lentil Dal + Cucumber",
+      "version": "dff94511c2e7b8ab2b810162528fddc962ad5ac05860cbef7a2732ce15b9b849",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7131-complete",
+      "name": "Menthya Jolada Mudde Recipe - Methi & Jowar Balls + Red Lentil Dal + Cucumber",
+      "version": "24ec5802335b72a536bebced3fd5091bb5747c03af9849c9e6ecf8217ad6698c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7381",
+      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread)",
+      "version": "e571402af50d07eee3c53386f0c552328a60acee3fc5d4e31daa2d83a9c56540",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7427-complete",
+      "name": "Ukad Recipe (Maharashtrian Rice Flour Porridge) + Red Lentil Dal + Cucumber",
+      "version": "c9520221bfe6c44b731b0ca5377167488dd74af1f3e122e3028dd6e6f173982f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7562-complete",
+      "name": "Spicy & Masaledar Aloo Gobi & Beans Tawa Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "672850ca405d2b4aa3d8faf86ad2e9e89dae32ae8e083ebbccfb7fdfc6ba1555",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-7856-complete",
+      "name": "Kasuri Methi Paneer Sabzi + Roti + Cucumber",
+      "version": "96b528272ef916c7d49d33f7da65e9eea62bee28f040b1bd695df9be30cab64c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8027-complete",
+      "name": "Green Beans Fry + Red Lentil Dal + Rice + Cucumber",
+      "version": "25d236eff6c0bac6fb5718d53709b5856eb0011c7a6c8c6cf7fc7c5eef6ca72f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8115-complete",
+      "name": "Moong Dal Methi Ki Sabzi + Red Lentil Dal + Roti + Cucumber",
+      "version": "9499be2d847a7b65193b41e11e735fa312a71a271f1a9496486198b4fd234eb1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8424-complete",
+      "name": "Spiced Khooba Roti (Rajasthani Pinched Flatbread Recipe) + Red Lentil Dal + Cucumber",
+      "version": "237d69708214502c770fe7ad34a564e7bf6de22ccde47c8364c02f117040fe6a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8481-complete",
+      "name": "Stuffed Ridge Gourd + Red Lentil Dal + Rice + Cucumber",
+      "version": "1fa9263687fb49ce00092e5143d26c186327280047efebb7c6e59b9f11001355",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8780-complete",
+      "name": "Mooli Jowar Ki Roti Recipe - Mullangi Kambu Chapathi + Red Lentil Dal + Cucumber",
+      "version": "96f276696deb2db6aefa00eb59909fee7036fc928f08051f395abf9fcc02ff59",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-8930-complete",
+      "name": "Cauliflower And Red Bell Pepper Stir Fry + Red Lentil Dal + Rice + Cucumber",
+      "version": "1128749a958290eda0d85ba6135fdca7f968aa240b56db0fde59f6ee3e7a909e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-10015",
+      "name": "Bhaat Na Rasawala Muthia Dhokla | Gujarati Rasiya Dhokla",
+      "version": "387323d558890ecf8af8a421305a76a509fe914814a41f68e16ed069ba621201",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-10044-complete",
+      "name": "Bandhakopir Ghonto Recipe (Bengali Style Cabbage Fry) + Red Lentil Dal + Rice + Cucumber",
+      "version": "e6c6669d34173672c9ec7353b0ed8d46b98e454def03581c9141b7c607c6fdaa",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-12374-complete",
+      "name": "Gujarati Whole-Moong Tadka + Rice + Cucumber",
+      "version": "f3130f97686b9b6d06e5d31e78fca10182bd81b7dd126a3967d4ee182ede8a10",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 445,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-12788-complete",
+      "name": "Cabbage And Carrot Thoran + Red Lentil Dal + Rice + Cucumber",
+      "version": "19996c6fddc28bef5f5c901aad84d7e826a844f148ee436dc0b0cdd8a2d11325",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-13445-complete",
+      "name": "Jolada Roti Recipe - Jowar Bhakri + Red Lentil Dal + Cucumber",
+      "version": "d2c166d70bf6b1760329654ab0d19e38137e5b8e4d7a6f32d1751961d0a3072f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 85,
+      "structuralIssues": []
+    },
+    {
+      "id": "kaggle-13487-complete",
+      "name": "Amritsari Sookhi Dal + Red Lentil Dal + Rice + Cucumber",
+      "version": "5fdeed9f66d4beeb36a5429064cc44b2d8b6e0a574e0861f6fe05684a242914f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 105,
+      "structuralIssues": []
+    },
+    {
+      "id": "uae-machboos",
+      "name": "Chicken Machboos",
+      "version": "347d42d5c4a918a09ed27788e83c10274a7c6b62e53f166cdb88ad8905375206",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-machboos",
+      "name": "Lamb Machboos",
+      "version": "e5f873c00f95b4add0e62fc1b4a53584f404f562482162613475ae7e97da8c33",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 140,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-fish-machboos",
+      "name": "Fish Machboos",
+      "version": "b7452996747ec1073ce18c15e8a8cae6c1f0c42b073dfa63ee3168566f257c74",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-chicken-harees",
+      "name": "Chicken Harees",
+      "version": "86850af947aadb04388885273565af2d49e48dedb73c0996f0114f79c148c4b2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 750,
+      "structuralIssues": []
+    },
+    {
+      "id": "emirati-lamb-thareed",
+      "name": "Lamb Thareed",
+      "version": "c4d6dd7dda3277771a6b1008ca6db9c0aa316f623953454087d35e8183078035",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 135,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-khuzi",
+      "name": "Home-Style Lamb Khuzi",
+      "version": "3aa26fb5120ff30a3b6fb29d1a09746c59c7e8d8567a6478908b55000cfe67a3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 215,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-samak-mashwi-complete",
+      "name": "Samak Mashwi + Rice + Cucumber",
+      "version": "c5ef690b7bfc20c6d617086c5e7006d74780ad3a4bb047ab71f276ae748c4f55",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-fish-madrooba",
+      "name": "Salted-Fish Madrooba",
+      "version": "572c2ce7cc25973d4fb4bb70ca03195c349ee921496dad2dc101bbe735db49f6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 790,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-chicken-salona-complete",
+      "name": "Chicken Saloona + Rice + Cucumber",
+      "version": "feac63c0e7bba9159057c80f4efa51e4c46d16d9e4375ae7aaa6c7ed0a4c7627",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-saloona-complete",
+      "name": "Lamb Saloona + Rice + Cucumber",
+      "version": "1035a56eb14e541b13d1c6d6ebb2ef9d4c5f69ec7022d69a2c19585fe432edc7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 160,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-jareesh",
+      "name": "Chicken Jareesh",
+      "version": "e40291db0264bc581f92477b67276d713bec12f0839ddf2d0bda55b16830fcdc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 190,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-camel-stew-complete",
+      "name": "Camel Meat Stew + Rice + Cucumber",
+      "version": "ca998e27f3fc6582dacc17fcd5b88ec5473204921b6a1f4ea4b38ce89f1b7960",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 215,
+      "structuralIssues": []
+    },
+    {
+      "id": "uae-balaleet",
+      "name": "Balaleet with Omelette",
+      "version": "eb2ea394f5d40dac631cdd29e58030c0e77e5455d3dc319b567af6a5c0115a78",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-regag-egg",
+      "name": "Regag with Egg & Cheese",
+      "version": "c1917d94dd3a14345a5fb725ac1c83ebeaa3ea3a571f993292e810b2bf7e795f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 18,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-saloona-complete",
+      "name": "Egg & Potato Saloona + Rice + Cucumber",
+      "version": "cc23722abeb821c47a8f2d62c4d9f422cc10275b5688adb5b35d38bc95839889",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-egg-tomato-loomi",
+      "name": "Loomi Shakshuka with Regag",
+      "version": "78d59801d8188302cb48bfa89fdf3031407bfd140ec82458d83367ce7d999a6d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-vegetable-thareed",
+      "name": "Vegetable Thareed with Egg",
+      "version": "3f1b487e88fa92fea7ea088a988d663a146c45ed2206aa10647c2b5fa1b0a944",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-potato-hash",
+      "name": "Emirati-Style Egg & Potato Hash",
+      "version": "3143a9efea8b77cbadb09c97bb26be0d1fe5e61b769c30b3deb440b7414d04ad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-potato-hash-complete",
+      "name": "Emirati-Style Egg & Potato Hash + Rice + Cucumber",
+      "version": "40d9b5303a08f7a483f4bb2891da0ab0767aa7cee50fb53cdf28b7d4465ecf47",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "uae-chebab",
+      "name": "Chebab with Egg",
+      "version": "4c93e4d50ff48ea0c475ff7c5db9d01fd69cda9807a9489b24914af37b4d3653",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-vegetable-machboos-egg",
+      "name": "Vegetable Machboos with Egg",
+      "version": "420d9c7ccf5a3614c1f760c486f0a669b0c7e0850505d74a0424f33a64b38975",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-dango-egg",
+      "name": "Dango with Egg",
+      "version": "b79a423c934ab9e1db63595e6564f7e806567fd6b3e17a1949b70ac1406f7ce5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-dango-egg-complete",
+      "name": "Dango with Egg + Rice + Cucumber",
+      "version": "72300438e70033058e3bfce05946fd2250279fd66169831fa650ed3d1da3a5ec",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-bajella-egg",
+      "name": "Bajella with Egg",
+      "version": "1248f1e005a3394cb735a44afe186d1c3ad32c04af0afc7c97aa081bf1e82fa7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-bajella-egg-complete",
+      "name": "Bajella with Egg + Rice + Cucumber",
+      "version": "525f8cb3076a51296656f7a32a10def8e7a00752dc8f2bfbb8e683d4cb76310b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-kabsa",
+      "name": "Chicken Kabsa",
+      "version": "beb84cc16e54695ef0ba90973a2cbe53a4f628c5241c0b1380687ac934186088",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-beef-shawarma",
+      "name": "Beef Shawarma Rice",
+      "version": "90b47532baafa330a5ec935e996d1d276fc7ae69f39871eeb3ad0f10569b41e3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-shawarma-chicken",
+      "name": "Chicken Shawarma Wrap",
+      "version": "7fb41c64db16599284b6e45e05729feb2e086464762b3c2395a77decd2172614",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-kofta-beef",
+      "name": "Pan-Kofta Pita Plate",
+      "version": "d152a0f7748b40ed075ca61923a68fa5b814acda341a9bc7cd6c737206657946",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-shish-tawook",
+      "name": "Shish Tawook Rice",
+      "version": "888e112244b0d6c92ee649990a7461ce2a889d01718e0794391cf5766f35df79",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-mansaf",
+      "name": "Home-Style Lamb Mansaf",
+      "version": "10381500842e158a4cb9b1f1a9cfcb1223042b370b0b7a1e5c1579146e32240d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 210,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-maqluba",
+      "name": "Chicken Maqluba",
+      "version": "cc3aac572f3d3102b7b1bb29f05741b555f3aa5415490c89ff4dd0da17f7f7cd",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-baked-kibbeh",
+      "name": "Baked Beef Kibbeh",
+      "version": "5fa7f81acdac020b83bc11c3f1bf0b13616d159ef5ee43ff08eb020f9f705943",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 95,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-dawood-basha",
+      "name": "Dawood Basha Rice",
+      "version": "9287b22a03604361f29143b33cb2239d4e12c29e38f6141b75d9c01bdcb5a49e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-loubieh-lamb-complete",
+      "name": "Loubieh bil Lahme + Rice + Cucumber",
+      "version": "590ea096ee8ff8d8c65569a6a9838ad505c07e00f73b62a48a7472b8b3c50f0f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 145,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-freekeh-chicken",
+      "name": "Freekeh with Chicken",
+      "version": "0d128dd1a2ca20353c33c7efaf606856dedb0e36cc0443312d3c3b495029434e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-chops-complete",
+      "name": "Garlic Lamb Chops + Rice + Cucumber",
+      "version": "f4c6216a677da989e9e33ed4c9a32fbe4ddf31897dc67f09862c4d0f8c6aedc6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "arab-shakshuka",
+      "name": "Classic Shakshuka with Pita",
+      "version": "2788426bcbdc456c1559f3549390de5628f55e3872feeaa8bdd5e2453c85f3f6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-green-shakshuka",
+      "name": "Green Shakshuka",
+      "version": "7bfb6d62aa78888cff15090f3559b4cc9c7a245a64a16ccc227c6b19a44281b3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-green-shakshuka-complete",
+      "name": "Green Shakshuka + Rice + Cucumber",
+      "version": "8b64bdef8990037400d6fe6e25ecad0798adfe2f717a5712914ee20054a5ba7e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-ful-egg",
+      "name": "Ful Medames with Egg",
+      "version": "0b0ebb7cb430d3285ca3515bc33344285553c8b29f9c18c64e18d2aa0741b08a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-ful-egg-complete",
+      "name": "Ful Medames with Egg + Rice + Cucumber",
+      "version": "cd0bdd7c49c4bca3897f2ed31477b6aad21e1f2ca9f155f9da6d0ee4d2b5f2ca",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-fatteh",
+      "name": "Egg Fatteh",
+      "version": "7bf7ced74666f2ed237f8fc40ebe33f909cc10f74b0bd1767b9112cf7ec0d70a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-mujadara-egg",
+      "name": "Mujadara with Fried Egg",
+      "version": "c4468dfd23fd1ba183c16177795a9cccefa66a4a0270606242eb66e107f42236",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-sabich",
+      "name": "Sabich Pita",
+      "version": "bb7474e37aec091969ad641d1136ad5a701a0c7fe499f0ab0a9b1b634cac45b7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-labneh-eggs",
+      "name": "Labneh & Eggs Pita Plate",
+      "version": "7dcc087e9000cb1c13309983afaf990508c9b659d0f11aff73b8a3c04181971c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-vegetable-kofta-egg-complete",
+      "name": "Vegetable Kofta with Egg + Rice + Cucumber",
+      "version": "20119b1c16ae8d7df777b6ba48efc3ac5c966a2d2d911634dc36ddd362b5c3c1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-menemen",
+      "name": "Menemen — Turkish-Style Eggs",
+      "version": "179d647502007a2dd8341e3f988da42ba65a6bd1bbfcaedaa6ce64a22995512a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-zaatar-eggs",
+      "name": "Zaatar Eggs with Pita",
+      "version": "f50e59ba4390a796d84f716fdfd0ca05ca5393a0dfbe83637a817479322d614e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lemon-cumin-fish-rice",
+      "name": "Lemon-Cumin Fish Rice",
+      "version": "67d4a030ecd52a3e51c6613de6679ff609954fbcb3d10fd3863002e55f1b65b2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-thyme-fish-couscous",
+      "name": "Thyme Fish & Vegetable Couscous",
+      "version": "81b0329574e76c5268fa9b70358606775923cecdc1e01fbe5a11dc647e1c3b26",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-mackerel-lemon-complete",
+      "name": "Lemon Grilled Mackerel + Rice + Cucumber",
+      "version": "7cc593997ea64581ff34745bbd6adedf370f2a4a463e659e0ab7a1703fb7876d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-liver-onions-complete",
+      "name": "Beef Liver with Onions + Rice + Cucumber",
+      "version": "c0980cf77e845428b19d57e231dfc17169e88a973c050f6c985d4f2b9efd1d33",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-mussels-garlic-complete",
+      "name": "Garlic Mussels + Rice + Cucumber",
+      "version": "f67fbd6ff1576d686b4981ae25e2aaf13b21501f0b8b4593b2752382280b7883",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-steak-potatoes-complete",
+      "name": "Steak & Roast Potatoes + Rice + Cucumber",
+      "version": "408c2c61fa18a7b0aa6db312836a0d8fb13eee82b31e376cb00857a4c9a67156",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-hawawshi",
+      "name": "Beef Hawawshi",
+      "version": "f7c8fc1bcb11dcd72f29ab49a89a4306683d9914582e2081fec075bb272e5c4b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-sea-bream-vegetables-complete",
+      "name": "Sea Bream with Vegetables + Rice + Cucumber",
+      "version": "8ad63c19293c03866528124d2fcd16eb6f1b35ddaf419e568e574b2432e68abc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-sausage-potatoes-complete",
+      "name": "Halal Beef Sausage & Potatoes + Rice + Cucumber",
+      "version": "f77caef3f0c37da529bd03c80164a3c52e2c3f46840c5a54ebc576d87551c6ad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-kofta-mushroom-complete",
+      "name": "Kofta with Mushroom Yogurt Sauce + Rice + Cucumber",
+      "version": "af3ee374ca94b5e93b68f80834b8e5941062fdff4cbd6b661cda9ce38020ace4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-okra-beef-complete",
+      "name": "Okra & Beef Stew + Rice + Cucumber",
+      "version": "d531d8d70f46ff609b8375e9b0106e46f3fb69e112be4959c5b7a71494e93ca1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 155,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-beef-kabsa",
+      "name": "Beef Kabsa Rice",
+      "version": "3b30f8cdb2c68e314103abdb80c4b7e0407904712d5a6087e2f3a87269b35d9b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 150,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-cheese-olive-toast",
+      "name": "Cheese & Olive Toast",
+      "version": "85a7c6ebdab1009609d020e675698c581298b85b964caf4411eafcd0dd93c246",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 10,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-zaatar-olive-toast",
+      "name": "Zaatar Olive-Oil Toast",
+      "version": "b9cafcdd4e0fd7774055078566411ee88a4af0b9867f148c082ab666141a5377",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 10,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-qishta-honey-toast",
+      "name": "Qishta Honey & Almond Toast",
+      "version": "13c34277095d5f1c2a05c4e2e58b80ac4f7c39e504de32a45b115918a38416a6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 10,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-whole-wheat-pancakes",
+      "name": "Whole-Wheat Pancakes",
+      "version": "80825ac3bc73a684da373f32a8c5dd48aad8da5b61146ce3a387fb03e6223b8b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-biryani",
+      "name": "Chicken Biryani",
+      "version": "989a63305c3dac9a8f3cd159ce5591b1e04930c4685347d2bd23233fd229d608",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 120,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-mutton-biryani",
+      "name": "Mutton Biryani",
+      "version": "af61680b16ca39b8f4ab499f658e25f8c155276ae011fed25c875cf2a4fc8461",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 220,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-karahi-complete",
+      "name": "Chicken Karahi + Rice + Cucumber",
+      "version": "aafe7d396ddeb5f9b19996e0b7b1f7a616924b93a2c4ef098cbb3bafc208810e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-mutton-karahi",
+      "name": "Mutton Karahi",
+      "version": "6dae57200d8ddbf43812149d27530f1e32ff3288b764441d067295a7dc535d07",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 130,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-butter-chicken",
+      "name": "Butter Chicken Rice",
+      "version": "2ded3ad3aaa83a0dce284ce35272bd5c2dd7c9f3ba94b969672bd6b2050e0a29",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-nihari",
+      "name": "Beef Nihari",
+      "version": "786b7af67e78d421f36c6702d86ecae28b12b144f2cc908e97f0bb0f2a6317b2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 270,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-nihari-complete",
+      "name": "Beef Nihari + Rice + Cucumber",
+      "version": "10917e938e27ed88cb8d4cc08d2c92e29ab8ddb672d3084e4728a10733e81845",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 295,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-haleem",
+      "name": "Chicken Haleem",
+      "version": "c8ff28f646441cc2817f20401365ab00fa3acfe3f275160a00de7955971d9969",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 690,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-seekh-kebab-complete",
+      "name": "Beef Seekh Kebab + Rice + Cucumber",
+      "version": "8670e315b30141bfe7c59d68b7d199f24762031ac916b9beff5118b06b1dd6ce",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 90,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-tikka",
+      "name": "Chicken Tikka Rice",
+      "version": "6230b37bed58a4eeb894ed161d9165d5b5b26c6d9027632e5535d76862c5ce9e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 110,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-lamb-keema-complete",
+      "name": "Lamb Keema with Peas + Rice + Cucumber",
+      "version": "33fe0021015329aa0b1722b8f70e0555f480defd73e4f2fc16eec7570ca04c4a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-rogan-josh-complete",
+      "name": "Lamb Rogan Josh + Rice + Cucumber",
+      "version": "537f6fb4db9bbd986769558f94ceb728b5fe7a379a4b73e11f4ef7bf2d4adbe1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 175,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-coconut-fish-curry-complete",
+      "name": "South Indian Coconut Fish Curry + Rice + Cucumber",
+      "version": "f0e4ac821a7582c566f123a4a3d2ca1ae939a0f5365a8347b9d61c57a779fbde",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-chicken-65-complete",
+      "name": "Chicken 65 + Rice + Cucumber",
+      "version": "90f1882e889395ce96b7c44a48a89cbc07f24111d5f4f7a8c58fd0bc8d3bdbd5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-anda-masala",
+      "name": "Anda Masala Rice",
+      "version": "8f66786057de903795d4feedaf5110c9bdc4201644a0baaac9bdaabfca502742",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "desi-bhurji",
+      "name": "Egg Bhurji Wrap",
+      "version": "b994535849d5a4b4e9dee32ef15967d1344f92eff79098c6c7b9babd9d50fdac",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "draft-masala-omelette",
+      "name": "Masala Omelette Toast",
+      "version": "e9c28537406c515e464510177d742930f954bc35b1f8437f79990583073f8b40",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-anda-paratha",
+      "name": "Anda Paratha",
+      "version": "df8c204f10a093567e93627222e77c7f2dcb636cdee6fca2d496357f6de2db39",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-fried-rice",
+      "name": "Egg Vegetable Fried Rice",
+      "version": "51ec9ccc6718d83b793d1c2ed322fc55589f1924718c288cc098136397b0a7e0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-biryani",
+      "name": "Egg Biryani",
+      "version": "a707bcd7788bbccda28cc03a10cb45b32857bde836ac8d29be7cbda2e510f169",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-drop-curry-complete",
+      "name": "Coconut Egg-Drop Curry + Rice + Cucumber",
+      "version": "7e94a75416ebca705918f9e59ed31aa24773609e05516425a03fa1dea008253a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-aloo-egg-curry-complete",
+      "name": "Aloo Egg Curry + Rice + Cucumber",
+      "version": "901138d8e39e0fb638b3fa2840068658541c31ba22839f7e25b05a95b7492168",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-keema-complete",
+      "name": "Egg Keema + Rice + Cucumber",
+      "version": "29afa536f872a451cd81ae5acc0238821e8b85cc7dec7c2524279911e64833e8",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-masala-dry",
+      "name": "Boiled Egg Masala Dry",
+      "version": "df76b2e833f2f33e07196f0fc409890a4bbb9e58e71c519936f9749c2c3fc36b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "mealday-egg-masala-dry-complete",
+      "name": "Boiled Egg Masala Dry + Rice + Cucumber",
+      "version": "2d7fb7fbea4cad8e3be1edbe7e19d3df7011042efd4ff326086e5b71494e2dc1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": false,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-courgette-dango",
+      "name": "Loomi Courgette Dango Rice",
+      "version": "aa00dd93f68a61cc41014f780d74fdbd00a928b570ab526b78a05ac60b8c3de8",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-savoury-oats",
+      "name": "Savoury Loomi Oats with Tomato",
+      "version": "5e42103d2ad1671896c3e98c2945276de555856ba2eced7d3edc87e54f18e9ee",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-bajella-pepper",
+      "name": "Pepper Bajella Rice Plate",
+      "version": "41e9c9e23bb9b92d2635655a86e08b797f063bbaa1677fe619c6192423709cb0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-carrot-lentil",
+      "name": "Carrot Lentil Regag Supper",
+      "version": "0cf13e51a7bdfccebd1388aeb5a1b47e0ba9ccd5faffa76eb5535716aa47faec",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-lentil-spinach",
+      "name": "Loomi Spinach Lentils with Rice",
+      "version": "aebeaa85cf5a82acc2fc6abe534faaca55d188eddf383f1cfdc3b4d093e6c154",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-potato-dango",
+      "name": "Potato Dango Regag Bowl",
+      "version": "52c505b93e674f13bb796d3baf098e1af3bfb8fdae50da9f5255960fe8d72a50",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-tomato-fava",
+      "name": "Tomato Fava Loomi Stew",
+      "version": "313d790c6dcc9f9d7149186e493f7a6fadda9885c83a67bf5c298df4c058164c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-lentil-oat",
+      "name": "Savoury Lentil Breakfast Bowl",
+      "version": "f9bb4cae1938b28aab751e5706fae9b1c2d510cf2268bd70b0738bc82fa6a365",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-chickpea-potato",
+      "name": "Cumin Potato Chickpea Supper",
+      "version": "f877644d04af5267e972564a04ae13b5289a3d1f12f3d6222b22c736d11069ce",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-tomato-fava",
+      "name": "Tomato Fava Bulgur Pot",
+      "version": "ceef82a708e33ce8422f161c4e344c95cbbc929be0b85890c023e9a0a027722e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-chana-pepper",
+      "name": "Pepper Chana Breakfast Toast",
+      "version": "6a5f379c68694069b9b36aabb4d5d691c2c8f1d2232503f61303e779a0eac2c9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-spinach-oats",
+      "name": "Palak Masala Oats",
+      "version": "ab9273f32a6db97146d4c76cad2ff502fc3f7692f62614d1a0c3720e1248b1b0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-0",
+      "name": "Loomi Chicken Tomato Regag",
+      "version": "e22c4e8cddb0c58e26cdcb64da8d8fdc32474f0a22852f6e576df372c1f9a0ec",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-1",
+      "name": "Spinach Chicken Regag Skillet",
+      "version": "afd3e5df7098982f4692f2812a44cec4a940b9f4262a6ced2474fcda3c10fa1c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-2",
+      "name": "Beef Pepper Regag Plate",
+      "version": "afb99334307bef2a23405a9b9233c804fbf5a2c576fdcbd16efbc09e23c1f308",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-3",
+      "name": "Beef Potato Breakfast Hash",
+      "version": "7f0b6697f5d81a3b29060566afbc0df5268a00dabd8fb70d03a0ed907015050d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-6",
+      "name": "Carrot Chicken Regag Bowl",
+      "version": "05b8b09ad14d93359bd80359a7671d64180d710b0f154ce244ffd6e3705a1603",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-0",
+      "name": "Chicken Tomato Breakfast Pita",
+      "version": "3bf86880844ea03b1c5ae9240748ce0ff2f7d9f78b2fe3bff01e5d2fe99648bb",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-1",
+      "name": "Spinach Chicken Pita Plate",
+      "version": "ee28275554a6d132254d1a780c0e36e0795726acf65e40fce5d27eab1c3c70ac",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-2",
+      "name": "Cumin Beef Pepper Toast",
+      "version": "0ce65f88fbfc86fae06467e24abe6c2d1bb68764336d19eb1ef384aa6cac1aa6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-3",
+      "name": "Potato Mince Pita Hash",
+      "version": "253c3fd272b194af03ca8a5149bc632167e2ae2b58c94bb5bae63a1d9e51653e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-6",
+      "name": "Carrot Chicken Cumin Pita",
+      "version": "c3d49f39743a54ac8580faea1715bb2e7b81a5a2fe30fff51c51e674b9afde9d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-2",
+      "name": "Beef Pepper Masala Toast",
+      "version": "4584869892eb5c06930e04dc0458a0c06dd8a846d7210f73886405c2f2387fd2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-3",
+      "name": "Keema Aloo Breakfast Toast",
+      "version": "5db017ece63281d88496008503d6c17579608875003c8920609fad23b75133ba",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-4",
+      "name": "Fish Courgette Masala Toast",
+      "version": "cc2c64cab1d50c66e26819ed25d8fcc266c9d63d892010d34ee3b08126e141d7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-5",
+      "name": "Tuna Chana Breakfast Toast",
+      "version": "4b0ffe2d0fa3f6c61a0ce838069e49bad6463056b65cc35087060f26a0d46d72",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-0",
+      "name": "Cucumber Tomato Dango Regag Plate",
+      "version": "cd3e1f8f69dac256248397fd44a4382fc6766511480435567f2fad7dd1a3508d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-6",
+      "name": "Carrot Chicken Bhuna Toast",
+      "version": "71bcb97d649819935766c3f25823db9b246c3da32c9806014dc792ae73cea215",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-0",
+      "name": "Chicken Tomato Masala Toast",
+      "version": "2634e9858f4c7429f3fbc6b54fddba5af551320024e709017803e1926cf2d0b2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-protein-1",
+      "name": "Palak Chicken Breakfast Toast",
+      "version": "dc0229a747ea2f3ef89cce08eb39e5b1eaa7d99eda6f59e65b2ca76c4962c4f2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-0",
+      "name": "Cucumber Tomato Chickpea Pita Salad",
+      "version": "8b64c6f744bedfaa05a9ba931383f784ff3ee69b4d49c7000ade2cc50f6d263a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-1",
+      "name": "Carrot Pepper Ful Pita Plate",
+      "version": "c1b8c0cc241fb14b67f0f4c41398109ab97faea3675298032a36c344517a4ad7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-2",
+      "name": "Pepper Chickpea Lemon Pita",
+      "version": "158b06baf164a635931cbdd6b5e64be6c11b06ceb0d58275e1985174045deaea",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-3",
+      "name": "Tomato Cucumber Ful Salad Plate",
+      "version": "7861e1d933ba546600ca276308f5b3e0a23a9a3c285520e6b485807913eda681",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-4",
+      "name": "Carrot Chana Chaat Toast",
+      "version": "9bc430fa9158c5218c50ee267f7ad87aa330a35a261acfeb94b978ea96a81103",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-5",
+      "name": "Pepper Tomato Fava Masala Toast",
+      "version": "0712828231c6c53e82a41f6d8e306019c0d0026ab8a10fcb0f94ffa0737e79dc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-6",
+      "name": "Cucumber Carrot Chana Toast",
+      "version": "55978fc644dc4166bd6e627934a8276c68e448065266eaebea9be12bd8a854c4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-chickpea-pepper",
+      "name": "Pepper Chickpea Couscous",
+      "version": "d0eed982702ccd6db06db25feefade0d2389768e158dc3067722952b05026055",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-chickpea-spinach",
+      "name": "Lemon Spinach Chickpea Breakfast",
+      "version": "eb75da22c35855251170c830daf9f481c07ad983fc3751f2ddbda6d699934d49",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-4",
+      "name": "Carrot Tomato Chickpea Pita",
+      "version": "3e80f36448513a24cbe7ab19a39553666b3e301ec85c80979afa42a3aefc7e85",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-5",
+      "name": "Pepper Tomato Ful Bread Plate",
+      "version": "e762849723695d7a7fda52d9dec4781d925cc1c08954a835f48c00210d7643d4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-cold-6",
+      "name": "Crunchy Chickpea Carrot Pita Salad",
+      "version": "ac45b53a925e600dda20ee61318fe133166e4dada270db59ca8751bd0ec4ef6d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-fava-spinach",
+      "name": "Spinach Fava Rice Skillet",
+      "version": "dfcd2f4bf334ca0a3100ce04598cf834a5121ecd96ba9fd31b314d7bb19e7880",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-ful-carrot",
+      "name": "Warm Carrot Ful Toast",
+      "version": "ee8778b555c17a484c94b94a00ae9b2bc10ec0dc9e73db32847341b2e0c5ed8d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-ful-pepper",
+      "name": "Cumin Pepper Ful Breakfast",
+      "version": "1e3ee5b4866e5d7098ed6b3609f5d7c84ccb9eac7e949f4ad03a3cc6c3df70eb",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-lentil-carrot",
+      "name": "Carrot Lentil Pita Plate",
+      "version": "ef44d27be792eeee13781004316703f7552b4c90e80df9757053d2cf8e837e16",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-lentil-courgette",
+      "name": "Courgette Lentil Bulgur Bowl",
+      "version": "deaa0eefebfbeb4f2c6541ae4650987229c914be806688096f301281a67b2f07",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-4",
+      "name": "Fish Courgette Pita Plate",
+      "version": "4408e9ab94c93a5c0853a7a7beadff74aedab3e45d644ada2d6f65085277c0fd",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-ar-protein-5",
+      "name": "Tuna Chickpea Breakfast Toast",
+      "version": "db6aff9c61561aebf4e9158deafbbb144232814c0cd28e344cf9b2299cd72758",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-0",
+      "name": "Kachumber Chana Bread Plate",
+      "version": "141ed49d73ced21bd7b0321e8352f85c1fa080ef5eeefa5c012f340f3abfeba3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-1",
+      "name": "Cumin Fava Kachumber Toast",
+      "version": "a9863be661310a66809dab38c748bab4d46279d7afffb068bcf8e051495b6378",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-2",
+      "name": "Pepper Chana Chaat Toast",
+      "version": "6b507c548528daea1737e81fdf57f07a9db035d8275e2305531cebd69adf9345",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-cold-3",
+      "name": "Tomato Fava Chaat Bread Plate",
+      "version": "49da4487487b87c0696c1c673083b8dbfa5b491edee0a798ecb36ffe1771dfe1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-desi-lentil-tomato",
+      "name": "Tomato Dal Breakfast Bowl",
+      "version": "61c9e1229e0821ca5bf5385d912b6b5c9bfeca771af6d8318be4832e350f555b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-bajella-potato",
+      "name": "Potato Bajella Breakfast Pan",
+      "version": "8b5cf2950413f2f7b368a0d2fb06993fc93479224c11ddda1521d150ab7afe4b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-bajella-spinach",
+      "name": "Bajella Spinach Regag Plate",
+      "version": "4f2d0e6ad25c1418c0aefca931ae8f2d0edb657f53c34305593f7afd546d3865",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-1",
+      "name": "Carrot Pepper Bajella Regag",
+      "version": "872723ad49398d73993c6c4a2411b980573d266eff8ec7add960f130b8f15c06",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-2",
+      "name": "Pepper Dango Cold Regag Plate",
+      "version": "925ab9dea23614708994dc3b59275c73ac821ef24cb8b1691c077e4f3f5f0879",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-3",
+      "name": "Tomato Cucumber Bajella Plate",
+      "version": "f1c9cad9959eafeb8ba29b5c5282ed2f7358787352fdd5c28f133f18b2c36981",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-4",
+      "name": "Carrot Tomato Dango Salad Plate",
+      "version": "cc0d26c86eec96ecdadbb63c70865ffd828b320aadd21aa6b9c570dd5c311a4a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-5",
+      "name": "Pepper Tomato Bajella Regag Plate",
+      "version": "c20762084cd9dad930ba69baf41eccaf58b1c41d6c559a89a41723dfed22b4ba",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-cold-6",
+      "name": "Crunchy Cucumber Carrot Dango Regag",
+      "version": "82f99ae3e5998239e7ec295d4af660be6f75858f4a54e45009465b2e5deefd2d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-dango-carrot",
+      "name": "Carrot Dango with Regag",
+      "version": "bbfa6c2b8a7f466742aaba34c2df291efeda9e6852dcba0f454fd715dbe55f25",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-dango-pepper",
+      "name": "Dango Pepper Breakfast Pan",
+      "version": "c754f9d8956dce6b318baa9a1522be1ed15ee675c26521cce525407006f1d4ad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-4",
+      "name": "Loomi Fish Courgette Regag",
+      "version": "f481f0704c5e88f789f34ff0b3d0186f5226dbd08eb65af02d4b4abc1518e128",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "coverage-em-protein-5",
+      "name": "Tuna Dango Breakfast Plate",
+      "version": "32489f60757c1acd532815775faee75a002a8cd3cc7e5349cf738fdcf01c1bb2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-aloo-matar-chana",
+      "name": "Aloo Matar Chana with Roti",
+      "version": "a262eb38c3f50e12eef1034845dbdb804b1699393468de9be9e4f33bff7e7f71",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-palak-paneer",
+      "name": "Palak Paneer Roti Plate",
+      "version": "790b550e40fb995abbe95300b59d51d2080d5a12d9dcccb04e4173cda539182a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-pithla",
+      "name": "Besan Pithla with Roti & Cucumber",
+      "version": "285a471cd622989a84268a5733c1ef47ed5d3ab2d1e5ce7b8a5c81dda99722ca",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-soya-keema",
+      "name": "Soya Keema & Roti",
+      "version": "c3d23cd39f977bdc1a46046003bcd29277119bdf1a59732f23ddbfb9b762e3ad",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-mushroom-chana",
+      "name": "Mushroom Chana Masala Rice",
+      "version": "03f84cee41e135ecf2c757f377e77f88f1b51fdc4253a6edec160cfb14ad7754",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-sambar-rice",
+      "name": "Quick Red-Lentil Sambar-Style Rice",
+      "version": "b3f7c380fe10f5dd9d7267a5ce7b013ff08d8d1b0cac148865400e81e3334f43",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-chickpea-fatteh",
+      "name": "Chickpea Yogurt Fatteh",
+      "version": "4affea0064c412dff3acc92c4e3fada8c50c31a1cfb035b77b280e54e6789d8c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-vegetable-thareed",
+      "name": "Chickpea Vegetable Thareed",
+      "version": "df16e83e43d742aa519914d7370cd1ee985f69c72af419199ec312ab12e586fa",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-vegetable-machboos",
+      "name": "Chickpea Vegetable Machboos",
+      "version": "071475f1fd73b9889bdb43b47af2e176c7e92ca10ba5611aa4242b0f6a3f04f4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-eggless-chebab",
+      "name": "Eggless Saffron Pancakes with Dates",
+      "version": "84d397c65098992910564848d48ce99234be5e8c7d1fd8181da511ff0f1b9fb7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-khabeesa-yogurt",
+      "name": "Cardamom Khabeesa Yogurt Bowl",
+      "version": "b92c817cff5a97ebe213a15e631bf1b5a460e1ad1caa2e489bda410a1042baac",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-moong-roti",
+      "name": "Moong Dal Tadka with Roti",
+      "version": "47c400bdfb9598e0df4b55cdd9eb76320f363f1014e455ad70a5110fccd0bc9a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-rajma-rice",
+      "name": "Quick Rajma Rice Bowl",
+      "version": "06b49ada4c8fc639425784057856e0b12146ba88f2f6539dc0f85264388c8e57",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-masoor-rice",
+      "name": "Masoor Dal, Rice & Cucumber",
+      "version": "1d98ae6b935590a216b07d07d3bb75cb44e4dd4e57acf5c51d64940c9bd95ce5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-paneer-bhurji",
+      "name": "Paneer Bhurji Roti Plate",
+      "version": "0f30b7236b2fd00d4b1b64b1e230ca4c09ba462c30bd0a4b419642295626284a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-dalia-moong",
+      "name": "Vegetable Dalia & Moong Pot",
+      "version": "68eb68467fd154bcfd336d49e0d7b0229c44973b3a5162b25c7f8edd55d1c223",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-curd-rice-sundal",
+      "name": "Curd Rice with Chana Sundal",
+      "version": "fa659bec2c8ff92b0163d304b51f88d2f98cda18cbf835dac64ba67c579aebf2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-aubergine-besan",
+      "name": "Aubergine Besan Skillet with Roti",
+      "version": "723d83727b26255d86ba595f13f98aa4bcb4c35de8199682c3974a4a75feca36",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-poha-chana",
+      "name": "Vegetable Poha with Warm Chana",
+      "version": "3727392c0f920282d80f168344cf8ebcde346e560dec639b0752ad9508344bdd",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-mujadara",
+      "name": "Quick Lentil Mujadara-Style Rice",
+      "version": "363b47085de1e21fc564d8dc36c803aeb9e2a7092c06254e7c1a2483a1a446b9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-musabbaha",
+      "name": "Warm Musabbaha with Pita",
+      "version": "c5b28590ffb958e3e494f13ff8001dcae02e2b8112ba84e88821c00b4644570c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-lentil-tabbouleh",
+      "name": "Lentil Tabbouleh Pita Plate",
+      "version": "9c32bbaba0b0f0d4aa8cbcf7f9f795a4b06950f0c92de4d2c3e9b616a7add45c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-fasolia",
+      "name": "White Bean Tomato Rice Bowl",
+      "version": "8dcf9777134d2c7efd47687878edaabda513b3845d23dde124cfdfbc412b6a0d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-bamya",
+      "name": "Okra Chickpea Stew with Rice",
+      "version": "d5955b174b651eb35c7fbcea3259be0ea242d5e2268812b843c62c3b9e5580e2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-batata-hummus",
+      "name": "Batata Harra & Rustic Hummus Plate",
+      "version": "289abb9a1bd83cc196062106ac2c40f224922aaba648c20a5967b871b50c5d05",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "quality-whitebean-couscous",
+      "name": "Pepper White-Bean Couscous",
+      "version": "4fa64d2aebab6fb00fbc79994f8e30b128914626b05681ec8982a8ffa3d95e16",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-pumpkin-aseeda",
+      "name": "Savoury Pumpkin Aseeda with White Beans",
+      "version": "00dbb9d756f317cbce7443b7ee15bd7455b754837511b17f6e107feed01c6d1a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-coconut-sago",
+      "name": "Coconut Sago & Date Breakfast Bowl",
+      "version": "c8549cbd365b7692c2b8e47fabc0326d2cf080bf97e49a32e64c6a75bda0b73c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-batheetha-bowl",
+      "name": "Date Batheetha & Tahini Breakfast Bowl",
+      "version": "5f0773354e94af01afa233f7b3b221297059b2cb69b6e455a85cabe0e5b6483d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-pumpkin-khanfaroush",
+      "name": "Baked Pumpkin Khanfaroush-Inspired Cakes",
+      "version": "e8239ada1847ffb3f9d2be5f62ec5a7d0004a4585e57627f853d41ade6fc7c29",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-tofu-regag-scramble",
+      "name": "Loomi Tofu Scramble with Regag",
+      "version": "fa9b007645aceea1e8cffbccb5f69416abb000d93dd397bba1e9625edcbafb94",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-date-chia-oats",
+      "name": "Overnight Saffron Date & Chia Oats",
+      "version": "6424f1f1d4b7c28d72adde94a65e84f3720f6d96fbc4e686befeebbd5f275591",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 490,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-millet-date-porridge",
+      "name": "Cardamom Millet & Date Porridge",
+      "version": "4778328d1b54e0e794d935013de474f41a3e72b7f49ce74fdae9eb85b529b311",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 20,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-sweetpotato-date-mash",
+      "name": "Sesame Sweet Potato & Date Breakfast Mash",
+      "version": "6d8a7ed0fe03f9c56f4e1fc8667213ffc1de22ea45e8e83ea100724affda0517",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-coconut-rice-breakfast",
+      "name": "Saffron Coconut Rice Breakfast Porridge",
+      "version": "95cc311531b8bf06913e121b4fac967ebde56d6bdf6aa988743fe19112902dca",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-regag-bean-bake",
+      "name": "Crisp Regag & White Bean Tray Bake",
+      "version": "62079752801a930b94cac47e77e6eb82537d45ab99f450f613fc7fc99aa11d9a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-stuffed-aubergine",
+      "name": "Baked Aubergine Boats with Date Bulgur & Beans",
+      "version": "ae896c4e9df0519d6fdffe76f92a4cea767521312cf5ceeefefa8e37916efa95",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-cauliflower-tahini",
+      "name": "Roast Cauliflower & Chickpea Tahini Rice Plate",
+      "version": "6fa9f4e9d6405611c301cfc53433889fed17d179c139431cce441aa35e62fda7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-vineleaf-rice",
+      "name": "Mushroom & Lentil Vine-Leaf Parcels",
+      "version": "a29ffcc52fb7a41482da3fd08dcfc2f6fa85c88d46ff59f8845fa4a071120792",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 80,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-cabbage-rolls",
+      "name": "Black-Eyed Bean & Rice Cabbage Rolls",
+      "version": "9ffc6db28cdb001a4524124ccbd39023bdfb8c4ad279cd5bd8d7d42042878c65",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-pumpkin-parcels",
+      "name": "Pumpkin Lentil Regag Parcels",
+      "version": "36ab70eb994b9f55e561aa318dac6a381ba64cc6bcb9ded86c65f1b530acdb93",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-bzar-rissoles",
+      "name": "Bzar Chickpea & Pumpkin Rissoles with Rice",
+      "version": "a471094f0d8a597d2dcafed5f3238981e25d0b22dc51a88a10b18b61ba7b0767",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-corn-orange-salad",
+      "name": "Charred Corn & Black-Eyed Bean Orange Salad",
+      "version": "cf0b01562fba0c6213b42a648aa8953d98d2d0458e046668ba584b7a30ff9449",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-date-aubergine",
+      "name": "Date-Glazed Aubergine with White Bean Rice",
+      "version": "4a77470803953fe34099b227b848a80bd2a84d318b595d0f5dc8de727c92e89f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-courgette-muffins",
+      "name": "Savoury Courgette & Chickpea Breakfast Muffins",
+      "version": "2229716ff5cd0077c969cf5f990df08c6458d210bf939ed67638b67256660ee7",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-crisprice-cake",
+      "name": "Crisp-Bottom Lentil Rice Cake",
+      "version": "b421639fd2e17645589941804f11297b4dc3d7ddad2c2251c06f3acbb77bc846",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-liver-regag",
+      "name": "Bzar Liver & Onion Breakfast Regag",
+      "version": "b32408882a163e3af63d95f636a59c45eaedb163520763eabf3ee8dea778ef6f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-lamb-arayes",
+      "name": "Bzar Lamb-Stuffed Breakfast Pita",
+      "version": "d5a3e8ae8128c975055298160755d141a641a82ccb0ed6feef1edecf5d54a843",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-chicken-semolina",
+      "name": "Saffron Chicken Semolina Breakfast Porridge",
+      "version": "63b8fe89331f98d4b72abf38844ec25cb916299d480c6a8cb034dd1b60b8141e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-fish-potatocakes",
+      "name": "Loomi Fish & Potato Breakfast Cakes",
+      "version": "4f813de5f5a904435190b9d2b66311c8eb17cd0012539e2cdbcf98e89c625df5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-fish-potatocakes-complete",
+      "name": "Loomi Fish & Potato Breakfast Cakes + Rice + Cucumber",
+      "version": "852606c4ad5c16e09e9b8a48d267ce59a03ee4577e43fd112da28a1470dcf32d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 55,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-shrimp-eggs",
+      "name": "Shrimp & Tomato Breakfast Scramble with Regag",
+      "version": "b3286cc7a6c5d5264f0f2df78102c56a6ad8032163087522a41ed5a880578bb2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-tuna-oat-pancakes",
+      "name": "Tuna & Corn Oat Breakfast Pancakes",
+      "version": "4eb139cf2e9ce3a151ef671b369b94f8e69fbf75a3e1fc7c39f5eae4905063f0",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-chicken-date-flatcakes",
+      "name": "Chicken & Date Besan Breakfast Flatcakes",
+      "version": "fce7c7066d73d2aa6822a9c57e1876794b9aba630df38aa3903c310089d72ecc",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-mackerel-ricecakes",
+      "name": "Mackerel & Saffron Rice Breakfast Cakes",
+      "version": "2224d9abcfe65f5c9bb300b4f7f7c4d640e7d07dadd72730d0987d2c38da2bb5",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-beef-barley-soup",
+      "name": "Beef & Barley-Flake Breakfast Soup",
+      "version": "bef582ea3d427898c83f5b04dcd82d8ff2761ab31ca1e72d31fe7968b29d8b1f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-beef-barley-soup-complete",
+      "name": "Beef & Barley-Flake Breakfast Soup + Rice + Cucumber",
+      "version": "9e4c9a78da23a2a88f74efbd5ba43e623f505dc09ac8edf898b4554cd12d48ea",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-shrimp-nashef",
+      "name": "Shrimp Nashef-Inspired Regag Plate",
+      "version": "e12cc3e8c467c67fe7ec5b3b8d60d8379987ef6c84c25b852c10a87510b691ca",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-chicken-bean-soup",
+      "name": "Chicken & White Bean Loomi Soup with Bread",
+      "version": "bf17cbad9e5c95faf91b0ada000f29611eb762647903103e4c2878064f06e06f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-lamb-kousa",
+      "name": "Lamb Rice Stuffed Courgettes in Tomato Broth",
+      "version": "bd986a31716cb763d8057386a6ebf52483b653a448b60f7cc74c6b8741160a76",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 70,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-fish-tahini-bake",
+      "name": "Bzar Fish & Tahini Rice Bake",
+      "version": "2287a4c8b9e7990cf8c65f76d87c46e9d2da74b425b62a1247f8605b790f8f15",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-date-chicken-rolls",
+      "name": "Date-Stuffed Chicken Rolls with Saffron Bulgur",
+      "version": "e92ccb7a869eadbf31229f64e302bb7b5ec3b3d28b30b11682970640d372c401",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-lamb-dryroast-complete",
+      "name": "Quick Lamb Nashef-Inspired Potato Pan + Rice + Cucumber",
+      "version": "1b6537ff4e4f727f80fa41f555770238ef5afa91002c4e1408809fc251090c2d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-beef-oat-kofta",
+      "name": "Baked Bzar Beef & Oat Kofta with Pita",
+      "version": "9f047301af5afb916ddfae52cc0797a855d4809472aa32d1b901f330a383bfd6",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-fish-dumpling-broth",
+      "name": "Rice-Flour Fish Dumplings in Loomi Broth",
+      "version": "dccbefec102196f9c0fbcbc4c6cb19b229d78b68a4ba20ec48fa00373ce3585c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-bissara",
+      "name": "Fava Bissara Breakfast with Pita",
+      "version": "9f896f300f08b2eb70eebd5654d9357f129781cb2124ea0940da9b115072e815",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-muhammara-bean",
+      "name": "Muhammara and White-Bean Pita Plate",
+      "version": "1d5b5d20151dec3838e69235c9d6a9ac9188f7b7f24ae0071e99b22c42af5c27",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-hindbeh-bean-wrap",
+      "name": "Hindbeh-Inspired Greens and Bean Wrap",
+      "version": "1e2d7585b9e2c7d85ab3db49a1fbb2f0de7309217c867f2b1af389aa3c1a780b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-spinach-bean-fatayer",
+      "name": "Spinach and White-Bean Filo Fatayer",
+      "version": "d344dbb6bfb5b22d627b353ab17387d24ae51e6989c8d1741b9a1a256788cb5e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-zaatar-chickpea-manakish",
+      "name": "Zaatar Manakish with Chickpea Spread",
+      "version": "0db115913ad74b6b4814f1a9b325fc88b5d7ffeb67e71e687d4fa1639bc3310a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-freekeh-stuffed-tomato",
+      "name": "Freekeh and Mushroom Stuffed Tomatoes",
+      "version": "b7f9709adb99e02d6e8f450648c16efcafd374cf7934500dd81044fc84874506",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-makhloota",
+      "name": "Makhloota Mixed-Pulse Bulgur Pot",
+      "version": "dc15dd5ebe9626863ae81a065bb215deb89000b81e37acf46d68076024071dd3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-lentil-kibbeh",
+      "name": "Red Lentil Kibbeh Patties with Tahini",
+      "version": "1682bc061210dcea9614a0a6139d96e55a3f41325810149841c939b3df038980",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-koshari",
+      "name": "Small-Pot Egyptian Koshari",
+      "version": "c09a408a1ad3dbf841b7605b4cd42e6628a44b56709db13f3ce567352e04d1a4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-lubia-blackeye",
+      "name": "Black-Eyed Bean Tomato Rice",
+      "version": "f4f2dfec5221830ee192069cd876a14f25a753c069f268d41f5773b5fa0bdc04",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-vegan-harira",
+      "name": "Chickpea Lentil Harira with Vermicelli",
+      "version": "833c57be91b77ab25480007263bb1d8cce92c5eee89ce92b0762fb2d67df34f9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-sfiha-flatbread",
+      "name": "Open Beef Sfiha Flatbread",
+      "version": "c743079c8b07734cb599416b2b53e588e582cde84507919318ba44b0396d923d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-musakhan-rolls",
+      "name": "Sumac Chicken Musakhan Rolls",
+      "version": "227c0642aaf5e9689d42961b288c6030f8c0891ccbdf574e65c0d9b91eb69675",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-sujuk-eggs",
+      "name": "Sujuk Tomato Eggs with Pita",
+      "version": "4097e68c218fcb2fd7b459eaded7483c33f0fadb4474c2fd7b40f224a1b304f3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-herring-tahini",
+      "name": "Smoked Herring Tahini Pita",
+      "version": "fc6dee88313ffd72ac0dcbba067e7ea37e4939713a4a3aace30f72adb367249e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-tuna-brik",
+      "name": "Tuna and Egg Brik Parcels",
+      "version": "19441f8bac686042e3bf4f5a4b6bfacf7b29a899c30e8f31f03a174b4c2a5384",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-beef-mutabbaq",
+      "name": "Beef and Leek Mutabbaq Parcels",
+      "version": "43540c0dd581e255d4fdc72d086c968e511dd14c84a4d9860bc400cfe49b80f3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-lamb-fatteh",
+      "name": "Lamb and Chickpea Fatteh",
+      "version": "552445cbbbcbe88c22046607df71b6e9a56d5fabc4c70e1ca55ad7151bb3b8d8",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-chicken-harira",
+      "name": "Chicken Harira Breakfast Bowl",
+      "version": "c11d6b1daa7992d959f9bbfe53f64779d070811a021bf9c54f909ef1a96be62f",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-sardine-chermoula",
+      "name": "Chermoula Sardine Toast",
+      "version": "3bf31151b0534f8d1f46dab89e40767ddca52cb69363245ec6eb1cda74a6b124",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-mas-huni",
+      "name": "Mas Huni with Roti",
+      "version": "e6f60c919902f25aff2fa145423cf0c02e793f7bf5034ec027e0e6524ab56974",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 15,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-appam-chicken-ishtu",
+      "name": "Appam with Chicken Ishtu",
+      "version": "f13f68e1bca482b9faef5458af09ed072b5d6b2186afd84e75b0ab7be55783e4",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-beef-puttu",
+      "name": "Beef Puttu Bowl",
+      "version": "26e3b4931c803aff2cfd739bb19b4de840a7bd83ce105574b1d95812e9b8eb54",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-ambul-thiyal-hoppers",
+      "name": "Sour Pepper Fish with String Hoppers",
+      "version": "584a9f9dd45c3c18d5e1cbb5b68d242c458446220dfc8cc149a1e1aa045ebed2",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-chicken-kottu",
+      "name": "Chicken Kottu Roti",
+      "version": "b5e6e3474028c527fca4c2fc2433aa687458c1d049374fe02a9345b681b42776",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-chicken-thukpa",
+      "name": "Chicken Thukpa Noodle Soup",
+      "version": "534f4858e16ebe48a91b4dfc326b8d1dc573f24c97efd2e47fc6d98c83f571a1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-chicken-mughlai-paratha",
+      "name": "Chicken Mughlai Paratha",
+      "version": "ef89a62f1356986dc66ac415305375a8901554d6c3603a55cf6e159f7d412a82",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-kozhi-rice-dumplings",
+      "name": "Chicken with Rice-Flour Dumplings",
+      "version": "ee56535b233d1df3b266febd6a5645076a75ff4f68ceb49e2a2d9d87baf03626",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 45,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-recheado-fish-rice",
+      "name": "Recheado-Style Fish with Rice",
+      "version": "7680f65c0b5fd03032ef6610baf31ddeeb46637667b0552e0e033a5ed7c4e30c",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-mustard-steamed-fish",
+      "name": "Mustard-Steamed Fish with Rice",
+      "version": "926c814e07f76da5551866a5646eb4d909982e1108666df3277228c58f0ab343",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 35,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-besan-fish-fry",
+      "name": "Besan Fish Fry with Roti",
+      "version": "a8ee1afaf9934fd02e9391154d2506c48a4759bde627c6fbae1f085821ed3953",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 25,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-chicken-choila",
+      "name": "Chicken Choila with Roti",
+      "version": "daeb40b432e060567bb6db8d44f0d37b05dc40a815284fe3b38f62f74ab7280d",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-desi-prawn-patia",
+      "name": "Prawn Patia with Roti",
+      "version": "000e78c4459398b663a5de183062e0c89259dfd856e89f63e403e6539a026a2b",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 30,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-mushroom-harees",
+      "name": "Mushroom & Chickpea Harees-Inspired Bowl",
+      "version": "3b970da39470994a89479464c0284bd6c9a2cd25887410a67f044c78e34e50a3",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 590,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-lentil-jareesh",
+      "name": "Loomi Lentil Jareesh Pot",
+      "version": "648b1b4884f880be72c1f0f6b067edfa5153bb3aed83e9df1100652c5e4898cf",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-date-khameer",
+      "name": "Date-Filled Khameer-Style Breakfast Breads",
+      "version": "ffc75f746f6c4b34a8f24d7d15d50a128292c3e64b343c3d45d0f0a67141aa8e",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 100,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-em-lentil-kousa",
+      "name": "Lentil Rice Stuffed Courgettes in Loomi Broth",
+      "version": "10417f23ab6db42f9e685953ce68d3330bf53c9e67e3a5cb9724a5cc77a221c1",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 65,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-fattet-makdous",
+      "name": "Vegan Fattet Makdous Bowl",
+      "version": "dc4b252d7d25dc7f5941b3b89e761384fb11ba5a3c95a39eca5e4e12ea9c6f5a",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 40,
+      "structuralIssues": []
+    },
+    {
+      "id": "target-ar-lentil-mahshi",
+      "name": "Lentil and Rice Courgette Mahshi",
+      "version": "0013cf69483498fd1c308abc7cb662437a61e78fb890796953ac4e1d47be29e9",
+      "status": "kitchen-test-pending",
+      "currentCookTests": 0,
+      "deskReviewed": true,
+      "estimatedMinutes": 75,
+      "structuralIssues": []
+    }
+  ]
+}

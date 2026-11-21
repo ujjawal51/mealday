@@ -72,6 +72,9 @@ try{
  await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Regag with cheese');
  await first.page.locator('[data-action="recipe"][data-id="draft-regag-cheese"]').click();
  await first.page.locator('.nutrition-status.complete').waitFor();
+ assert.match(await first.page.locator('.recipe-quality').innerText(),/Kitchen test pending/);
+ assert.match(await first.page.locator('.recipe-quality').innerText(),/have not been validated/);
+ assert.match(await first.page.locator('.recipe-quality').innerText(),/scaled to/);
  await first.page.locator('.nutrition-sources summary').click();
  assert.equal(await first.page.locator('.nutrition-sources a[href="https://www.spinneys.com/en-ae/recipes/regag/"]').count(),1);
  assert((await first.page.locator('.nutrition-sources').innerText()).includes('1 pieces per serving'));
