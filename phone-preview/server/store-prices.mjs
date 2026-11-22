@@ -3,6 +3,7 @@ export const MAX_PRICE_AGE_MS=24*60*60*1000;
 const shops=['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Choithrams'];
 const cities=['Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'];
 const safeText=(s,n=200)=>typeof s==='string'&&s.trim().length>0&&s.length<=n;
+const instant=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)?Date.parse(value):NaN;
 const validId=x=>safeText(x,150)&&/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(x)&&!['constructor','prototype','__proto__'].includes(x);
 const url=x=>{try{const u=new URL(x);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}};
 const fail=message=>{throw Object.assign(Error(message),{status:400});};
@@ -22,10 +23,10 @@ export function validateOffer(record,ingredient,now=Date.now()){
  if(!Number.isFinite(r.price)||r.price<=0||r.price>100000||Math.abs(Math.round(r.price*100)-r.price*100)>1e-7||r.currency!=='AED'||r.taxIncluded!==true)errors.push('A positive AED pack price including VAT is required, with at most two decimals.');
  if(!['in-stock','out-of-stock','unknown'].includes(r.availability))errors.push('Availability must be explicit.');
  if(r.stockPacks!==undefined&&r.stockPacks!==null&&(!Number.isInteger(r.stockPacks)||r.stockPacks<0))errors.push('Stock pack quantity must be a nonnegative integer or unknown.');
- const checked=typeof r.checkedAt==='string'?Date.parse(r.checkedAt):NaN,expires=typeof r.validUntil==='string'?Date.parse(r.validUntil):NaN;
+ const checked=instant(r.checkedAt),expires=instant(r.validUntil);
  if(!Number.isFinite(checked)||checked>now||!Number.isFinite(expires)||expires<=checked||expires>checked+MAX_PRICE_AGE_MS)errors.push('Original check time and expiry (within 24 hours) are required.');
  if(!['retailer-page','receipt','partner-feed'].includes(r.source?.type)||!safeText(r.source?.name)||!url(r.source?.url))errors.push('A named, linked source is required.');
- const reviewed=Date.parse(r.review?.at);
+ const reviewed=instant(r.review?.at);
  if(r.review?.approved!==true||!safeText(r.review?.by)||!Number.isFinite(reviewed)||reviewed<checked||reviewed>now)errors.push('A reviewer must approve the product, quantity basis and source after the observation.');
  return errors;
 }

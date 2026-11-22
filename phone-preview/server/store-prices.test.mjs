@@ -32,7 +32,7 @@ test('Prices never cross shops, cities or locations; a newer out-of-stock observ
  assert.equal(quoteStorePrices(body,[record('rice'),newer],ingredients,now).matched,0);
 });
 test('Invalid money, future checks, guessed matching and duplicate quantities fail validation',()=>{
- for(const patch of [{price:0},{price:NaN},{price:2.345},{checkedAt:new Date(now+1000).toISOString()},{ingredientSignature:'guessed'},{productUrl:'javascript:alert(1)'},{source:{type:'search-index'}},{currency:'USD'},{unit:'ml'}])assert(validateOffer(record('rice',patch),ingredients.rice,now).length);
+ for(const patch of [{checkedAt:'2026-11-22'},{validUntil:'2026-11-22T12:00:00'},{price:0},{price:NaN},{price:2.345},{checkedAt:new Date(now+1000).toISOString()},{ingredientSignature:'guessed'},{productUrl:'javascript:alert(1)'},{source:{type:'search-index'}},{currency:'USD'},{unit:'ml'}])assert(validateOffer(record('rice',patch),ingredients.rice,now).length);
  assert.throws(()=>priceRequest({...body,items:[body.items[0],body.items[0]]}),{status:400});
  assert.throws(()=>priceRequest({...body,items:[{key:'rice',need:-1,unit:'g'}]}),{status:400});
 });
