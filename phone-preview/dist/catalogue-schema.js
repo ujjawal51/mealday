@@ -21,7 +21,7 @@ export function publicRecipe(doc){
   ingredients[id]={name:i.name,unit:i.unit,pack:i.pack,price:i.price,category:i.category,kind:i.kind,...(i.allergen?{allergen:i.allergen}:{}),...(Array.isArray(i.allergens)?{allergens:i.allergens}:{})};items.push([id,n]);
  }
  let timing;
- if(r.timing!==undefined){const t=r.timing;if(!t||!['prepMinutes','cookMinutes','waitMinutes'].every(k=>Number.isInteger(t[k])&&t[k]>=0)||t.prepMinutes+t.cookMinutes+t.waitMinutes!==r.time)return null;timing={prepMinutes:t.prepMinutes,cookMinutes:t.cookMinutes,waitMinutes:t.waitMinutes,estimated:true,...(text(t.waitKind,100)?{waitKind:t.waitKind}:{})};}
+ if(r.timing!=null){const t=r.timing;if(!t||!['prepMinutes','cookMinutes','waitMinutes'].every(k=>Number.isInteger(t[k])&&t[k]>=0)||t.prepMinutes+t.cookMinutes+t.waitMinutes!==r.time)return null;timing={prepMinutes:t.prepMinutes,cookMinutes:t.cookMinutes,waitMinutes:t.waitMinutes,estimated:true,...(text(t.waitKind,100)?{waitKind:t.waitKind}:{})};}
  else timing={prepMinutes:0,cookMinutes:r.time,waitMinutes:0,estimated:true}; // Explicit total prevents stale bundled ID-specific timings.
  const data={id:r.id,name:r.name,time:r.time,timing,diet:r.diet,cuisine:r.cuisine,mealTypes:r.mealTypes,appliances:r.appliances,items,steps:r.steps,imageUrl:publicImage(r.imageUrl||doc.photo?.path),tags:Array.isArray(r.tags)?r.tags.filter(x=>text(x,100)).slice(0,20):[],reviewStatus:'preview',image:0};
  for(const key of ['familyId','baseRecipeId','authorship','sourceName','licence'])if(text(r[key],1000))data[key]=r[key];

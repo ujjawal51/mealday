@@ -12,6 +12,8 @@ import {createLiveCatalogue} from '../dist/live-recipes.js';
 const documents=catalogueDocuments();
 test('Public projection validates all 420 records, strips private fields and blocks unsafe data',()=>{
  assert.equal(publicSnapshot(documents).recipes.length,420);
+ const bsonRows=structuredClone(documents);for(const d of bsonRows)if(d.data.timing===undefined)d.data.timing=null;
+ assert.equal(publicSnapshot(bsonRows).recipes.length,420,'MongoDB BSON stores legacy undefined timings as null; total time remains valid');
  const doc=structuredClone(documents[0]);doc.privateNote='secret';doc.data.privateNote='secret';doc.ingredients[doc.data.items[0][0]].secret='hidden';
  assert(!JSON.stringify(publicSnapshot([doc])).includes('secret'));
  for(const change of [d=>d.published=false,d=>d.data.reviewStatus='draft',d=>d.data.items[0][1]=0,d=>d.data.time=NaN,d=>d.data.items.push(['unknown',2]),d=>d.ingredients[d.data.items[0][0]].pack=0]){const d=structuredClone(doc);change(d);assert.equal(publicRecipe(d),null);}
@@ -23,6 +25,8 @@ test('Central GET API reflects inserts, edits, unpublishes and deletes without l
  try{
   const first=await fetch(origin+'/api/catalogue'),etag=first.headers.get('etag');assert.equal(first.status,200);assert.equal((await first.json()).recipes.length,1);
   assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':etag}})).status,304);
+  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':'W/'+etag}})).status,304);
+  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':'"old", W/'+etag}})).status,304);
   rows[0].data.name='Updated title';rows[0].data.items[0][1]=81;rows[0].data.steps[0]='Updated preparation instructions.';
   const next=await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':etag}});assert.equal(next.status,200);assert.notEqual(next.headers.get('etag'),etag);
   const detail=await (await fetch(origin+'/api/recipe/'+rows[0].id)).json();assert.equal(detail.name,'Updated title');assert.equal(detail.items[0].amount,81);assert.equal(detail.steps[0],'Updated preparation instructions.');
