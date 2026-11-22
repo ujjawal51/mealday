@@ -5,12 +5,19 @@ export async function connectStore(uri,dbName){
   const client=new MongoClient(uri,{maxPoolSize:10,serverSelectionTimeoutMS:5000});
   await client.connect();const db=client.db(dbName);await db.command({ping:1});
   const hello=await db.command({hello:1}),transactions=!!(hello.setName||hello.msg==='isdbgrid');
-  try{const result=await seedRecipes(db);console.log(`Recipe catalogue: ${result.present} available, ${result.inserted} imported, ${result.existing} already present.`);}catch(error){await client.close();throw error;}
+  try{
+    const markers=db.collection('catalogue_metadata');
+    if(!await markers.findOne({_id:'initial-import'})){
+      if(!await db.collection('recipes').countDocuments({},{limit:1}))await seedRecipes(db);
+      await markers.updateOne({_id:'initial-import'},{$setOnInsert:{createdAt:new Date().toISOString()}},{upsert:true});
+    }
+  }catch(error){await client.close();throw error;}
   const users=db.collection('users'),sessions=db.collection('sessions'),kitchens=db.collection('kitchens'),googleChallenges=db.collection('google_challenges');
   await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0}),users.createIndex({googleSub:1},{unique:true,sparse:true}),googleChallenges.createIndex({expiresAt:1},{expireAfterSeconds:0})]);
   return {
     close:()=>client.close(),
     ping:()=>db.command({ping:1}),
+    publishedRecipes:()=>db.collection('recipes').find({published:true},{projection:{_id:0,id:1,data:1,ingredients:1,photo:1,published:1}}).sort({id:1}).limit(2001).toArray(),
     userByEmail:email=>users.findOne({email}),
     async createUser(user){try{await users.insertOne(user);return true;}catch(e){if(e.code===11000)return false;throw e;}},
     // A hashed token also satisfies the earlier root app's unique token index.

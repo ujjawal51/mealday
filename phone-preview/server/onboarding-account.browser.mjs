@@ -1,3 +1,4 @@
+import {catalogueDocuments} from './recipe-catalogue.mjs';
 // Google's external SDK and token verifier are mocked only for this isolated browser test.
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
@@ -27,6 +28,8 @@ class Store{
  async saveKitchen(id,revision,data){const old=this.kitchens.get(id);if((old?.revision||0)!==revision)return null;const next={revision:revision+1,data,updatedAt:new Date().toISOString()};this.kitchens.set(id,next);return next;}
  async deleteAccount(id,version){const user=[...this.users.values()].find(u=>u._id===id);if(!user||(user.authVersion||0)!==version)return false;this.users.delete(user.email);this.kitchens.delete(id);for(const [key,s] of this.sessions)if(s.userId===id)this.sessions.delete(key);return true;}
 }
+const liveRows=catalogueDocuments();
+Store.prototype.publishedRecipes=async()=>liveRows.filter(r=>r.published);
 const store=new Store();store.users.set('cook@gmail.com',{_id:'existing',email:'cook@gmail.com',password:{legacy:true}});
 store.kitchens.set('existing',{revision:1,data:{state:{profile:{name:'Old profile',days:[0],mealTypes:['dinner'],people:2,shop:'LuLu',budget:100},pantry:{},result:null,checked:[],favorites:[],recipeJournal:{rice:{note:'Keep this cloud note',rating:5}}},history:{version:1,events:[]}}});
 const googleAuth=createGoogleAuth({clientId,verifyIdToken:async token=>JSON.parse(token)});
@@ -87,6 +90,25 @@ try{
  await first.page.locator('.nutrition-sources summary').click();
  assert.equal(await first.page.locator('.nutrition-sources a[href="https://www.puckarabia.com/en/products/labneh/"]').count(),1);
  await click(first.page,'recipe-back');
+ // Edit the server's live data after this browser already loaded the engine.
+ const added=structuredClone(liveRows.find(r=>r.id==='draft-regag-cheese'));
+ added.id=added.data.id='live-browser-recipe';added.data.name='Live central recipe';
+ added.data.imageUrl='/recipe-image-unavailable.svg';liveRows.push(added);
+ await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Live central recipe');
+ await first.page.locator('[data-action="recipe"][data-id="live-browser-recipe"]').click();
+ assert.equal(await first.page.locator('.recipe-page h1').innerText(),'Live central recipe');
+ assert.equal(await first.page.locator('.recipe-cover img').getAttribute('src'),'/recipe-image-unavailable.svg');
+ await click(first.page,'recipe-back');
+ added.data.name='Edited central recipe';added.data.items[0][1]=2;
+ await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Edited central recipe');
+ await first.page.locator('[data-action="recipe"][data-id="live-browser-recipe"]').click();
+ assert.equal(await first.page.locator('.recipe-page h1').innerText(),'Edited central recipe');
+ assert.match(await first.page.locator('.recipe-ingredients').innerText(),/2 pieces/);
+ await click(first.page,'recipe-back');added.published=false;
+ await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Live central');
+ await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Edited central recipe');
+ await first.page.waitForFunction(()=>document.querySelector('#recipe-results')?.textContent.includes('No recipes matched'));
+ assert.equal(await first.page.locator('[data-action="recipe"][data-id="live-browser-recipe"]').count(),0);
  await first.page.locator('.nav [data-view="settings"]').click();await click(first.page,'delete-account');
  assert.equal(await first.page.locator('#dialog input[type="password"]').count(),0);
  assert.equal(await first.page.locator('#delete-account-form button[type="submit"]').isDisabled(),true);

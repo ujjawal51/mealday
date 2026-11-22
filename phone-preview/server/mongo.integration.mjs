@@ -53,6 +53,19 @@ try{
   const refreshed=await db.collection('recipes').findOne({id:original.id});assert.equal(refreshed.nutrition.dataVersion,original.nutrition.dataVersion);assert.deepEqual(refreshed.nutrition.totals,original.nutrition.totals);assert.equal(refreshed.privateNote,'keep this');
   assert.deepEqual((await db.collection('recipes').findOne({id:edited.id})).nutrition,{custom:true});
 
+  // Real MongoDB edits feed the central catalogue; deletion stays deleted after reconnect.
+  const {liveCatalogue}=await import('./live-catalogue.mjs');
+  const liveDoc=structuredClone(original);liveDoc.id=liveDoc.data.id='central-mongo-test';liveDoc.data.name='Inserted in MongoDB';liveDoc.privateNote='must stay private';
+  await db.collection('recipes').insertOne(liveDoc);
+  let snapshot=await liveCatalogue(store);assert(snapshot.recipes.some(r=>r.id==='central-mongo-test'));assert(!JSON.stringify(snapshot).includes('must stay private'));
+  const revision=snapshot.revision;
+  await db.collection('recipes').updateOne({id:liveDoc.id},{$set:{'data.name':'Edited in MongoDB','data.items.0.1':82,'data.steps.0':'An updated preparation method.'}});
+  snapshot=await liveCatalogue(store);assert.notEqual(snapshot.revision,revision);assert.equal(snapshot.recipes.find(r=>r.id===liveDoc.id).items[0][1],82);
+  await db.collection('recipes').updateOne({id:liveDoc.id},{$set:{published:false}});assert(!(await liveCatalogue(store)).recipes.some(r=>r.id===liveDoc.id));
+  await db.collection('recipes').deleteOne({id:catalogue.at(-1).id});
+  await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
+  assert.equal(await db.collection('recipes').countDocuments({id:catalogue.at(-1).id}),0,'Do not resurrect deleted seeds on startup');
+
   await assert.rejects(store.saveKitchen('one',0,{note:'must not resurrect'}),{status:401});
   await assert.rejects(store.saveSession({_id:'after-delete',userId:'one',expiresAt:new Date(Date.now()+60000)}),{status:401});
  }finally{await inspector.close();}

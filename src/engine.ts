@@ -103,6 +103,13 @@ recipes=assembleMeals(recipes.map(withCataloguePhoto).map(withRecipeTiming),stoc
 const bundledRecipes=[...recipes];
 export function installCatalogue(nextStock:Record<string,Ingredient>,nextRecipes:Recipe[]){stock={...stock,...Object.fromEntries(Object.entries(nextStock).map(([id,item])=>[id,{...stock[id],...item}]))};for(const [id,kind]of Object.entries(ingredientKinds))if(stock[id]&&!stock[id].kind)stock[id].kind=kind;ingredientIndex=undefined as any;const personal=recipes.filter(r=>r.id.startsWith('ai-'));recipes=[...assembleMeals([...new Map(nextRecipes.map(r=>[r.id,r])).values()].map(withCataloguePhoto).map(withRecipeTiming),stock),...personal.filter(r=>!nextRecipes.some(n=>n.id===r.id)),...bundledRecipes.filter(r=>!nextRecipes.some(n=>n.id===r.id)&&!personal.some(n=>n.id===r.id))];const unique=new Map<string,Recipe>();for(const r of recipes)if(!unique.has(r.id))unique.set(r.id,r);recipes=[...unique.values()];}
 
+// Authoritative remote snapshots must never re-add bundled or unpublished records.
+export function replaceCatalogue(nextStock:Record<string,Ingredient>,nextRecipes:Recipe[]){
+ stock=Object.fromEntries(Object.entries(nextStock).map(([id,item])=>[id,{...item}]));
+ ingredientIndex=undefined as any;
+ recipes=nextRecipes.map(r=>({...r,items:r.items.map(([id,n])=>[id,n] as [string,number]),steps:[...r.steps]}));
+}
+
 export function mergeRecipes(extra:Recipe[]){recipes=[...recipes.filter(r=>!extra.some(e=>e.id===r.id)),...extra]}
 
 export const mealNames:Record<string,string>={breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner'};

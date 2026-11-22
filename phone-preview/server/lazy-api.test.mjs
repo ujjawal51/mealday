@@ -30,7 +30,7 @@ test('Shipped home entry stays below 200 KB and HTML does not eagerly load the c
 
 test('Deferred classic engine still serves the full recipe catalogue',async()=>{
  const url=await readFile(new URL('engine-url.js',dist),'utf8');const name=url.match(/engine-[a-f0-9]+\.js/)[0];
- const context=vm.createContext({window:{},console,URL,URLSearchParams,Request,Response,TextEncoder,TextDecoder,structuredClone});
+ const context=vm.createContext({window:{},console,URL,URLSearchParams,Request,Response,TextEncoder,TextDecoder,structuredClone,AbortController,setTimeout,clearTimeout,fetch:async()=>{throw Error("offline");}});
  vm.runInContext(await readFile(new URL(name,dist),'utf8'),context);
  const address=new URL('https://mealday.test/api/health');const response=await context.window.MealdayRecipeEngine(new Request(address),address);
  const health=await response.json();assert.equal(health.recipes,402);assert.equal(health.ok,true);

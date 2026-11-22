@@ -1,10 +1,13 @@
+import backup from './catalogue-backup.json';
+import {calculateNutrition} from '../dist/nutrition.js';
 import {
   assertPlanPreferences, assertWithinBudget, basket, canonicalIngredients,
   dishKey, generateDayPlan, initialProfile, recipes, stock, total,
   type Profile, type Recipe, type Slot,
-} from '../domain/src/engine';
-import {mealSwapChoices} from '../domain/src/mealSwapChoices';
-import {recipeTotalMinutes} from '../domain/src/recipeTiming';
+  replaceCatalogue,
+} from '../../src/engine';
+import {mealSwapChoices} from '../../src/mealSwapChoices';
+import {recipeTotalMinutes} from '../../src/recipeTiming';
 
 const diets = ['Any','Vegetarian','Eggless vegetarian','Vegan','Pescatarian','Non-vegetarian'];
 const cuisines = ['UAE mix','Emirati','Arab','South Asian','Turkish'];
@@ -13,8 +16,15 @@ const appliances = ['Hob','Oven','Microwave','Air fryer'];
 const allergies = ['Gluten','Milk','Egg','Peanuts','Tree nuts','Fish','Shellfish','Sesame','Soy'];
 const cities = ['Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'];
 const shops = ['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Choithrams','Any supermarket'];
+replaceCatalogue(backup.ingredients as any,backup.recipes as Recipe[]);
 const catalog = new Map(recipes.filter(r => r.reviewStatus !== 'draft' && r.mealTypes?.length && Number.isFinite(recipeTotalMinutes(r))).map(r => [r.id,r]));
-const pantryCatalog = canonicalIngredients();
+let pantryCatalog = canonicalIngredients();
+export function installLiveCatalogue(snapshot:any){
+ replaceCatalogue(snapshot.ingredients,snapshot.recipes);
+ catalog.clear();for(const r of recipes)catalog.set(r.id,r);
+ pantryCatalog=canonicalIngredients();
+}
+
 
 class InputError extends Error {}
 const valid = (value: boolean, message: string) => { if (!value) throw new InputError(message); };
@@ -63,7 +73,7 @@ function slots(x: any,p: Profile): Slot[] {
   });
 }
 function summary(r: Recipe) {
-  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes};
+  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes,imageUrl:source(r.imageUrl)||((r.imageUrl?.startsWith('/')&&!r.imageUrl.startsWith('//'))?r.imageUrl:undefined)};
 }
 function ingredientCost(r: Recipe) {
   const cost=r.items.reduce((sum,[id,amount])=>{
@@ -71,6 +81,13 @@ function ingredientCost(r: Recipe) {
     return item?.pack>0?sum+amount/item.pack*item.price:sum;
   },0);
   return Math.round(cost*100)/100;
+}
+function recipeNutrition(r:Recipe){
+ const result=calculateNutrition(r.items.map(([id,amount])=>({id,amount,name:stock[id].name,unit:stock[id].unit})));
+ // Existing source conversions are tied to a named ingredient identity and unit.
+ const changed=r.items.filter(([id])=>{const approved=(backup.ingredients as any)[id];return approved&&(approved.name!==stock[id].name||approved.unit!==stock[id].unit||approved.kind!==stock[id].kind)});
+ if(changed.length)return {...result,complete:false,totals:null,missing:[...result.missing,...changed.map(([id])=>({id,name:stock[id].name,reason:'Ingredient identity changed; nutrition references require review.'}))]};
+ return result;
 }
 function source(url?:string) {
   try { const parsed = new URL(url||''); return parsed.protocol==='https:' && !parsed.username && !parsed.password ? parsed.href : undefined; }
@@ -110,10 +127,14 @@ export async function api(request:Request,url:URL) {
     if (path==='/api/health' && method==='GET') return json({ok:true,recipes:catalog.size,currency:'AED'});
     if (path==='/api/options' && method==='GET') return json({diets,cuisines,meals,appliances,allergies,cities,shops,
       pantry:Object.entries(pantryCatalog).filter(([id])=>id!=='water').map(([id,i])=>({id,name:i.name,unit:i.unit})).sort((a,b)=>a.name.localeCompare(b.name))});
+    if(path==='/api/saved-recipes'&&method==='GET'){
+      const ids=[...new Set((url.searchParams.get('ids')||'').split(',').filter(Boolean))].slice(0,500);
+      return json({recipes:ids.filter(id=>catalog.has(id)).map(id=>summary(catalog.get(id)!)),missing:ids.filter(id=>!catalog.has(id))});
+    }
     if (path==='/api/recipes' && method==='GET') {
       const q=(url.searchParams.get('q')||'').trim().slice(0,100).toLowerCase();
       const cuisine=url.searchParams.get('cuisine'), diet=url.searchParams.get('diet');
-      const offset=Math.min(1000,Math.max(0,Number.parseInt(url.searchParams.get('offset')||'0',10)||0));
+      const offset=Math.min(10000,Math.max(0,Number.parseInt(url.searchParams.get('offset')||'0',10)||0));
       const byDiet:Record<string,string>={Vegan:'vegan',Vegetarian:'vegetarian',Pescatarian:'fish','Non-vegetarian':'meat'};
       const matches=[...catalog.values()].filter(r=>(!q||r.name.toLowerCase().includes(q))&&(!cuisine||r.cuisine===cuisine)&&(!diet||r.diet===byDiet[diet]));
       return json({recipes:matches.slice(offset,offset+18).map(summary), count:matches.length, next:offset+18<matches.length?offset+18:null});
@@ -122,7 +143,7 @@ export async function api(request:Request,url:URL) {
       const r=catalog.get(path.slice('/api/recipe/'.length));
       if (!r) return json({error:'Recipe not found.'},404);
       return json({...summary(r),ingredientCost:ingredientCost(r),items:r.items.map(([id,amount])=>({id,name:stock[id].name,unit:stock[id].unit,amount})),
-        steps:r.steps,appliances:r.appliances,source:source(r.sourceUrl),sourceName:r.sourceName||r.authorship,licence:r.licence});
+        nutrition:recipeNutrition(r),steps:r.steps,appliances:r.appliances,source:source(r.sourceUrl),sourceName:r.sourceName||r.authorship,licence:r.licence});
     }
     if (['/api/plan','/api/quote','/api/swaps','/api/swap'].includes(path) && method==='POST') {
       const body=await readBody(request),p=profile(body.profile),kitchen=pantry(body.pantry);
@@ -154,4 +175,4 @@ export async function api(request:Request,url:URL) {
 
 // Server catalogue import uses the same filtered recipes and ingredient stock.
 export const recipeCatalogue = catalog;
-export const recipeIngredients = stock;
+export {stock as recipeIngredients};
