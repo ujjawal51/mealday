@@ -1,3 +1,4 @@
+import {publicImage} from './catalogue-schema.js';
 import {mountGoogleSignIn} from './google-signin.js';
 import {createOnboardingMotion} from './onboarding-motion.js';
 import {savingsComparison} from './savings.js';
@@ -84,11 +85,18 @@ function recommendationSignals(){
 function rememberPlan(result){
   return [...(state.planHistory||[]),{at:new Date().toISOString(),ids:result.meals.map(r=>r.id)}].slice(-8);
 }
+let lastCatalogueMode='live';
 async function request(path,body) {
   if(body&&['/api/plan','/api/swaps','/api/swap'].includes(path))body={...body,signals:recommendationSignals()};
   const url=new URL(path,location.origin);
   const init=body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};
   const res=await api(new Request(url,init),url);
+  const mode=res.headers.get('X-Mealday-Catalogue');
+  if(mode&&mode!==lastCatalogueMode){
+    if(mode==='cached-offline')notify('Recipe service unavailable. Using your last synced catalogue; recent edits may be missing.');
+    if(mode==='bundled-offline')notify('Recipe service unavailable. Using the packaged offline recipes; recent edits may be missing.');
+    lastCatalogueMode=mode;
+  }
   const data=await res.json();
   if(!res.ok)throw Error(data.error||'Mealday could not finish this action. Please try again.');
   return data;
@@ -96,8 +104,12 @@ async function request(path,body) {
 function button(label,action,style='ghost',symbol='',extra=''){
   return '<button type="button" class="button '+style+'" data-action="'+action+'" '+extra+'>'+(symbol?icon(symbol):'')+label+'</button>';
 }
+function catalogueNotice(){
+  if(lastCatalogueMode==='live')return '';
+  return '<p class="notice" role="status">'+(lastCatalogueMode==='cached-offline'?'Showing your last synced recipe catalogue.':'Showing packaged offline recipes.')+' Recent changes may be missing. '+button('Retry live recipes','refresh-recipes','ghost small')+'</p>';
+}
 function photo(meal){
-  return recipePhotos[meal.id]||'/recipe-image-unavailable.svg';
+  return publicImage(meal.imageUrl||recipePhotos[meal.id]);
 }
 function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minutes)+' min</span><span>'+esc(meal.cuisine)+'</span><span>'+esc(cap(meal.diet))+'</span></div>';}
 function initNavigation(){
@@ -229,14 +241,21 @@ function renderRecipes(snapshot=false){
   const rows=library.saved?filterSavedRecipes(state.favorites,library):library.rows;
   const empty=library.saved?(state.favorites.length?'No saved recipes match your search and filters.':'Save recipes you like to find them here.'):'No recipes matched. Try another search or filter.';
   const clearFilters=library.saved&&state.favorites.length&&!rows.length&&(library.q||library.cuisine||library.diet)?button('Clear filters','clear-recipe-filters','ghost small'):'';
-  holder.innerHTML=(library.saved?'<p class="saved-result-count">'+rows.length+' of '+state.favorites.length+' saved recipes</p>':'')+(library.error&&!library.saved?'<p role="alert" class="notice">'+esc(library.error)+'</p>':'')+
-    (rows.length?'<div class="cards">'+rows.map(r=>'<article class="recipe-card"><img loading="lazy" src="'+photo(r)+'" alt=""><div class="recipe-card-body"><span class="meal-type">'+esc(r.cuisine)+'</span><h3>'+esc(r.name)+'</h3>'+meta(r)+button('View recipe','recipe','ghost small','right','data-id="'+esc(r.id)+'"')+'</div></article>').join('')+'</div>':
+  holder.innerHTML=catalogueNotice()+(library.saved?'<p class="saved-result-count">'+rows.length+' of '+state.favorites.length+' saved recipes</p>':'')+(library.error&&!library.saved?'<p role="alert" class="notice">'+esc(library.error)+'</p>':'')+
+    (rows.length?'<div class="cards">'+rows.map(r=>'<article class="recipe-card"><img loading="lazy" src="'+photo(r)+'" alt=""><div class="recipe-card-body"><span class="meal-type">'+esc(r.cuisine)+'</span><h3>'+esc(r.name)+'</h3>'+meta(r)+button(r.unavailable?'No longer published':'View recipe','recipe','ghost small','right','data-id="'+esc(r.id)+'"'+(r.unavailable?' disabled':''))+'</div></article>').join('')+'</div>':
     '<div class="empty">'+(library.loading?'Loading recipes…':empty)+clearFilters+'</div>')+
     (!library.saved&&library.next!==null?'<div class="more">'+button(library.loading?'Loading…':'More recipes','more','ghost','right',library.loading?'disabled':'')+'</div>':'');
 }
 async function loadRecipes(append=false){
   const seq=++recipeSequence;
-  if(library.saved){library.loading=false;library.error='';if(view==='recipes')renderRecipes(true);return;}
+  if(library.saved){
+    library.loading=true;library.error='';
+    try{const data=await request('/api/saved-recipes?ids='+encodeURIComponent(state.favorites.map(r=>r.id).join(',')));
+      if(seq===recipeSequence){const current=new Map(data.recipes.map(r=>[r.id,r]));state.favorites=state.favorites.map(r=>current.get(r.id)||{...r,unavailable:true});}
+    }catch(error){if(seq===recipeSequence)library.error=error.message;}
+    finally{if(seq===recipeSequence){library.loading=false;if(view==='recipes')renderRecipes(true);}}
+    return;
+  }
   library.loading=true;library.error='';
   if(!append){library.rows=[];library.next=null;}
   renderRecipes(true);
@@ -306,7 +325,7 @@ function ingredientIcon(item){
   return symbols.find(([pattern])=>pattern.test(item.name))?.[1]||'🥣';
 }
 function renderNutrition(r){
-  const result=calculateNutrition(r.items);
+  const result=r.nutrition||calculateNutrition(r.items);
   const metrics=[['kcal','kcal','Calories'],['protein','g','Protein'],['carbs','g','Carbs'],['fat','g','Fats']];
   const values=metrics.map(([key,unit,label])=>'<div class="macro-value macro-'+key+'"><strong>'+ (result.complete?Math.round(result.totals[key])+ (unit==='g'?'<span>g</span>':''):'—')+'</strong><small>'+esc(label)+(unit==='kcal'?' · kcal':'')+'</small></div>').join('');
   const matched=result.references.length,total=r.items.length;
@@ -328,7 +347,7 @@ function renderRecipeDetail(r){
     button('Cook step-by-step','guide-start','guide-start ghost','right')+'<ol>'+r.steps.map(step=>'<li>'+esc(step)+'</li>').join('')+'</ol>':
     '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><p>'+esc(r.steps[guidedStep])+'</p><div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
   const stats=[['time',r.minutes+' min','Total time'],['people',people,people===1?'Serving':'Servings'],['shopping',r.items.length,'Ingredients'],['wallet','AED '+money(r.ingredientCost*people),'Est. cost']];
-  screen.innerHTML='<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">Illustrative photo</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
+  screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">Illustrative photo</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
     button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(r.name)+'</h1>'+
     '<section class="recipe-panel recipe-quality" aria-labelledby="quality-heading"><h2 id="quality-heading" class="recipe-kicker">Recipe quality</h2><strong>Kitchen test pending</strong><p>Quantities, cooking time and taste have not been validated by Mealday in a kitchen. The '+esc(r.minutes)+' min total is an estimate; allow extra time on your first cook.</p><p>Ingredients below are scaled to '+people+' '+(people===1?'serving':'servings')+'. Check ingredient labels for raw, cooked or drained quantities. Your ratings and cooking history are personal feedback.</p></section>'+renderNutrition(r)+'<section class="recipe-panel recipe-facts"><h2 class="recipe-kicker">Recipe overview</h2><div>'+stats.map(([symbol,value,label])=>'<div>'+icon(symbol)+'<strong>'+esc(value)+'</strong><small>'+esc(label)+'</small></div>').join('')+'</div></section>'+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>'+esc(cap(r.diet))+' · '+esc(r.cuisine)+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+
@@ -492,6 +511,7 @@ document.addEventListener('click',async event=>{
   else if(action==='swaps')await swaps(Number(index));
   else if(action==='apply-swap')await applySwap(id,b);
   else if(action==='close'){if(!deletingAccount)dialog.close();}
+  else if(action==='refresh-recipes'){if(detail){const id=detail.id;leaveRecipe();await showRecipe(id);}else await loadRecipes();}
   else if(action==='more')await loadRecipes(true);
   else if(action==='saved'){clearTimeout(libraryDelay);library.saved=!library.saved;renderRecipes();await loadRecipes();}
   else if(action==='clear-recipe-filters'){clearTimeout(libraryDelay);library.q='';library.cuisine='';library.diet='';renderRecipes();await loadRecipes();}
@@ -1054,3 +1074,5 @@ setInterval(()=>{if(!document.hidden&&!dialog.open&&!detail&&view!=="setup")clou
 
 // A missing or failed photo must not leave a broken image in a meal card.
 document.addEventListener('error',event=>{const img=event.target;if(img instanceof HTMLImageElement&&img.getAttribute('src')!=='/recipe-image-unavailable.svg'){img.src='/recipe-image-unavailable.svg';img.alt='Recipe photo unavailable';}},true);
+
+window.addEventListener('focus',()=>{if(view==='recipes'&&!library.loading)loadRecipes();});

@@ -1,3 +1,4 @@
+import {liveCatalogue,catalogueSummary,catalogueDetail} from './live-catalogue.mjs';
 import {isIP} from 'node:net';
 import {timingSafeEqual} from 'node:crypto';
 import {randomUUID} from 'node:crypto';
@@ -33,6 +34,23 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         if(!['GET','HEAD'].includes(req.method)){
           if(req.headers.origin!==origin)return send(403,{error:'Origin rejected.'});
           if(!String(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON required.'});
+        }
+        if(path==='/api/catalogue'||path==='/api/recipes'||path.startsWith('/api/recipe/')){
+          if(req.method!=='GET')return send(405,{error:'Method not allowed.'},{Allow:'GET'});
+          const snapshot=await liveCatalogue(store),etag='"'+snapshot.revision+'"';
+          if(path==='/api/catalogue'){
+            if(req.headers['if-none-match']===etag){res.writeHead(304,{'ETag':etag,'Cache-Control':'no-cache'});return res.end();}
+            return send(200,snapshot,{'ETag':etag,'Cache-Control':'no-cache'});
+          }
+          if(path.startsWith('/api/recipe/')){
+            const id=decodeURIComponent(path.slice('/api/recipe/'.length)),recipe=snapshot.recipes.find(r=>r.id===id);
+            return recipe?send(200,catalogueDetail(recipe,snapshot.ingredients)):send(404,{error:'Recipe not found or no longer published.'});
+          }
+          const params=new URL(req.url,origin).searchParams,q=(params.get('q')||'').slice(0,100).toLowerCase(),cuisine=params.get('cuisine'),diet=params.get('diet');
+          const diets={Vegan:'vegan',Vegetarian:'vegetarian',Pescatarian:'fish','Non-vegetarian':'meat'};
+          const matches=snapshot.recipes.filter(r=>(!q||r.name.toLowerCase().includes(q))&&(!cuisine||r.cuisine===cuisine)&&(!diet||r.diet===diets[diet]));
+          const offset=Math.min(10000,Math.max(0,parseInt(params.get('offset')||'0',10)||0));
+          return send(200,{recipes:matches.slice(offset,offset+18).map(catalogueSummary),count:matches.length,next:offset+18<matches.length?offset+18:null,revision:snapshot.revision});
         }
         const rawCookie=String(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(cookieName+'='))?.slice(cookieName.length+1);
         let session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
