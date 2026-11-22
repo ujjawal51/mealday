@@ -66,6 +66,28 @@ try{
   await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
   assert.equal(await db.collection('recipes').countDocuments({id:catalogue.at(-1).id}),0,'Do not resurrect deleted seeds on startup');
 
+  const {ingredientSignature,quoteStorePrices}=await import('./store-prices.mjs');
+  const {recipeIngredients}=await import('../dist/api.js');const now=Date.now();
+  const priceRecord={shop:'Carrefour',city:'Dubai',ingredientId:'rice',ingredientSignature:ingredientSignature(recipeIngredients.rice),locationId:'fixture-zone',locationName:'Fixture branch',productId:'fixture-rice',productName:'Fixture rice',productUrl:'https://www.carrefouruae.com/fixture',packQuantity:500,packLabel:'500 g',quantityBasis:'Fixture dry ingredient weight.',unit:'g',price:7.5,currency:'AED',taxIncluded:true,availability:'in-stock',checkedAt:new Date(now-60000).toISOString(),validUntil:new Date(now+3600000).toISOString(),source:{type:'retailer-page',name:'Fixture source',url:'https://www.carrefouruae.com/fixture'},review:{approved:true,by:'Fixture',at:new Date(now-30000).toISOString()}};
+  await db.collection('store_price_records').insertOne(priceRecord);
+  assert.equal((await store.storePriceRecords('Carrefour','Dubai',['rice'])).length,1);
+  assert.equal((await store.storePriceRecords('LuLu','Dubai',['rice'])).length,0);
+  assert.equal((await store.storePriceRecords('Carrefour','Ajman',['rice'])).length,0);
+  const recorded=quoteStorePrices({shop:'Carrefour',city:'Dubai',items:[{key:'rice',need:750,unit:'g'}]},await store.storePriceRecords('Carrefour','Dubai',['rice']),recipeIngredients,now);
+  assert.equal(recorded.recordedSubtotal,15);assert.equal(recorded.checkoutVerified,false);
+  const {mkdtemp,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{fileURLToPath}=await import('node:url'),{promisify}=await import('node:util'),{execFile}=await import('node:child_process');
+  const folder=await mkdtemp(join(tmpdir(),'mealday-price-import-'));
+  try{
+    const path=join(folder,'observations.json');const update={...priceRecord,price:8.25,checkedAt:new Date(now-10000).toISOString(),review:{approved:true,by:'Fixture',at:new Date(now-5000).toISOString()},source:{...priceRecord.source,credentials:'fixture-secret'},privateToken:'fixture-secret'};
+    await writeFile(path,JSON.stringify([update]));const run=(...args)=>promisify(execFile)(process.execPath,[fileURLToPath(new URL('./import-store-prices.mjs',import.meta.url)),...args],{env:{...process.env,MONGODB_URI:process.env.MONGODB_TEST_URI,MONGODB_DB:name}});
+    assert.equal(JSON.parse((await run('--file',path,'--dry-run')).stdout).written,0);
+    assert.equal((await store.storePriceRecords('Carrefour','Dubai',['rice']))[0].price,7.5);
+    assert.equal(JSON.parse((await run('--file',path)).stdout).written,1);
+    const imported=(await store.storePriceRecords('Carrefour','Dubai',['rice']))[0];assert.equal(imported.price,8.25);assert(!JSON.stringify(imported).includes('fixture-secret'));
+    assert.equal(JSON.parse((await run('--signature','rice')).stdout).ingredientSignature,priceRecord.ingredientSignature);
+  }finally{await rm(folder,{recursive:true,force:true});}
+
+
   await assert.rejects(store.saveKitchen('one',0,{note:'must not resurrect'}),{status:401});
   await assert.rejects(store.saveSession({_id:'after-delete',userId:'one',expiresAt:new Date(Date.now()+60000)}),{status:401});
  }finally{await inspector.close();}

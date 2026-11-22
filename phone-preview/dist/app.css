@@ -853,3 +853,5 @@ body[data-view="account"] #main{padding:0;max-width:560px}
 @media(prefers-reduced-motion:reduce){.setup-account{animation:none}}
 
 .google-signin{width:100%;display:grid;justify-items:center;gap:10px}.google-signin-status{font-size:14px;color:#707668;line-height:1.6;text-align:center;margin:10px 0}.google-signin-status:empty{display:none}
+
+.store-prices h2{font-size:1rem;margin:0 0 10px}.store-prices p{font-size:.85rem;line-height:1.5}.store-product-record{padding:0 16px 14px 46px;font-size:.78rem;line-height:1.45;overflow-wrap:anywhere}.store-product-record p{margin:4px 0}.store-product-record small{display:block;margin-top:5px;color:#64705e}.store-product-record a{color:#3d601c;text-underline-offset:2px}.priced-grocery-item+.priced-grocery-item{border-top:1px solid #eceee8}.recorded-price-total strong{font-size:1.4rem}.basket-row .price{max-width:100px;text-align:right;font-size:.78rem}

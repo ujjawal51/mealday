@@ -134,7 +134,7 @@ function render(){
   }
   if(view==='week')screen.innerHTML=week();
   if(view==='recipes')renderRecipes();
-  if(view==='shopping')screen.innerHTML=shopping();
+  if(view==='shopping'){screen.innerHTML=shopping();refreshStorePrices();}
   if(view==='pantry')screen.innerHTML=pantry();
   if(view==='plan')screen.innerHTML=planSettings();
   if(view==='settings')screen.innerHTML=settings();
@@ -267,6 +267,47 @@ async function loadRecipes(append=false){
   }catch(err){if(seq===recipeSequence)library.error=err.message;}
   finally{if(seq===recipeSequence){library.loading=false;if(view==='recipes')renderRecipes(true);}}
 }
+let storePriceState={key:'',data:null,error:'',loading:false,at:0},priceLocation='',priceRequestSequence=0,priceContext='',priceExpiryTimer;
+function priceInput(){const context=state.profile.shop+'|'+state.profile.city;if(priceContext!==context){priceContext=context;priceLocation='';}return {shop:state.profile.shop,city:state.profile.city,locationId:priceLocation,items:(state.result?.items||[]).filter(i=>i.packs>0).map(i=>({key:i.key,need:i.need,unit:i.unit}))};}
+function priceKey(){return JSON.stringify(priceInput());}
+async function refreshStorePrices(force=false){
+ if(!state.result)return;
+ const input=priceInput(),key=JSON.stringify(input);
+ if(!force&&storePriceState.key===key&&(storePriceState.loading||Date.now()-storePriceState.at<60000))return;
+ const sequence=++priceRequestSequence;
+ storePriceState={key,data:null,error:'',loading:true,at:Date.now()};if(view==='shopping')screen.innerHTML=shopping();
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+ try{
+  const response=await fetch('/api/store-prices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input),signal:controller.signal});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'Price records unavailable.');
+  if(!Array.isArray(data.items)||!Number.isInteger(data.matched))throw Error('Invalid price response.');
+  if(sequence===priceRequestSequence&&priceKey()===key&&storePriceState.key===key){
+    storePriceState={key,data,error:'',loading:false,at:Date.now()};clearTimeout(priceExpiryTimer);
+    const expiry=Math.min(...data.items.filter(i=>i.status==='recorded-price').map(i=>Date.parse(i.validUntil)));
+    if(Number.isFinite(expiry))priceExpiryTimer=setTimeout(()=>{if(storePriceState.key!==key||sequence!==priceRequestSequence)return;storePriceState={key,data:null,error:'Price records expired. Check again for dated prices.',loading:false,at:0};if(view==='shopping')refreshStorePrices(true);},Math.max(1,expiry-Date.parse(data.calculatedAt)));
+  }
+ }catch{if(sequence===priceRequestSequence&&storePriceState.key===key)storePriceState={key,data:null,error:'Price records could not be checked. Catalogue estimates are shown.',loading:false,at:Date.now()};}
+ finally{clearTimeout(timer);if(view==='shopping'&&priceKey()===key)screen.innerHTML=shopping();}
+}
+function currentStorePrices(){return storePriceState.key===priceKey()?storePriceState:null;}
+function priceMoney(value){return Number(value).toFixed(2);}
+function storePricePanel(){
+ const status=currentStorePrices(),data=status?.data;
+ let copy=status?.loading?'Checking product-price records…':status?.error||'No checked product prices recorded for this store and city. Store selection does not change the catalogue estimates.';
+ if(data?.status==='no-purchases')copy='No products need buying.';
+ else if(data?.status==='choose-location')copy='Choose the location these recorded prices apply to.';
+ else if(data?.matched)copy=data.matched+' of '+data.totalLines+' items have recent, reviewed price records. '+(data.recordedSubtotal===null?'A complete recorded subtotal is unavailable.':'This is a recorded product subtotal, not a live checkout quote.');
+ const total=data?.recordedSubtotal;
+ const location=(data?.locations?.length>1||data?.locations?.length&&!data.locationName)?'<label class="field">Price location<select id="store-price-location" class="control"><option value="">Choose location</option>'+data.locations.map(l=>'<option value="'+esc(l.id)+'" '+(l.id===priceLocation?'selected':'')+'>'+esc(l.name)+'</option>').join('')+'</select></label>':data?.locationName?'<p>'+esc(data.locationName)+' · '+esc(data.city)+'</p>':'';
+ return '<section class="surface-card store-prices" aria-label="Supermarket price records"><h2>Supermarket price records</h2><p class="store-price-status" role="status">'+esc(copy)+'</p>'+location+(total!==null&&total!==undefined?'<p class="recorded-price-total"><strong>AED '+priceMoney(total)+'</strong> · recorded product subtotal</p>':data?.matched?'<p class="known-price-subtotal">AED '+priceMoney(data.knownSubtotal)+' · matched items only</p>':'')+'<p>Price, usable pack quantity and reported stock are checked per product. Delivery fees, checkout totals and current delivery availability are not confirmed. Extra essentials are not priced.</p>'+button(status?.loading?'Checking…':'Check price records','check-store-prices','ghost small','refresh',status?.loading?'disabled':'')+'</section>';
+}
+function priceDate(value){return new Date(value).toLocaleString('en-AE',{timeZone:'Asia/Dubai',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' UAE';}
+function storePriceRow(item){
+ const record=currentStorePrices()?.data?.items.find(r=>r.key===item.key);
+ if(record?.status==='recorded-price')return '<div class="store-product-record"><a href="'+esc(record.productUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(record.productName)+'</a><p>'+record.packs+' × '+esc(record.packLabel)+' · AED '+priceMoney(record.price)+' per pack</p><p>'+esc(record.quantityBasis)+'</p><small>Price checked '+esc(priceDate(record.checkedAt))+' · valid until '+esc(priceDate(record.validUntil))+'</small><small>Reported in stock'+(record.stockPacks===null?' · available quantity not confirmed':' · '+record.stockPacks+' packs reported')+' · <a href="'+esc(record.source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(record.source.name)+'</a></small></div>';
+ const reasons={'stale':'Price record expired.','out-of-stock':'Reported out of stock.','stock-unknown':'Availability not confirmed.','insufficient-stock':'Not enough stock reported.','ingredient-changed':'Ingredient match needs review.','price-overflow':'Price calculation needs review.','choose-location':'Choose a price location.','no-reviewed-match':'No reviewed product match.'};
+ return '<div class="store-product-record"><small>'+esc(reasons[record?.status]||'No retailer product match.')+' Catalogue estimate · assumed pack '+quantity(item.pack)+' '+esc(item.unit)+(record?.checkedAt?' · last observation '+esc(priceDate(record.checkedAt)):' · no retailer price timestamp')+'</small></div>';
+}
 function shopping(){
   const result=state.result;
   const p=state.profile;
@@ -275,12 +316,12 @@ function shopping(){
     const label=item.category||'Groceries';if(!map.has(label))map.set(label,[]);map.get(label).push(item);return map;
   },new Map());
   const rows=[...categories].map(([name,list])=>'<section class="grocery-group"><h3>'+esc(name)+'</h3><div class="basket-items">'+
-    list.map(i=>'<label class="basket-row '+(state.checked.includes(i.key)?'checked':'')+'"><input type="checkbox" data-grocery="'+esc(i.key)+'" '+(state.checked.includes(i.key)?'checked':'')+'><span><strong>'+esc(i.name)+'</strong><small>'+quantity(i.packs)+' × '+quantity(i.pack)+' '+esc(i.unit)+(i.have?' · '+quantity(i.have)+' '+esc(i.unit)+' at home':'')+'</small></span><span class="price">AED '+money(i.cost)+'</span></label>').join('')+
+    list.map(i=>{const record=currentStorePrices()?.data?.items.find(r=>r.key===i.key),checked=record?.status==='recorded-price';return '<div class="priced-grocery-item"><label class="basket-row '+(state.checked.includes(i.key)?'checked':'')+'"><input type="checkbox" data-grocery="'+esc(i.key)+'" '+(state.checked.includes(i.key)?'checked':'')+'><span><strong>'+esc(i.name)+'</strong><small>Need '+quantity(i.need)+' '+esc(i.unit)+(i.have?' · '+quantity(i.have)+' '+esc(i.unit)+' at home':'')+'</small></span><span class="price">'+(checked?'Recorded ':'Est. ')+'AED '+(checked?priceMoney(record.subtotal):money(i.cost))+'</span></label>'+storePriceRow(i)+'</div>';}).join('')+
     '</div></section>').join('');
   return '<div class="subpage-back">'+button('Back to plan','go-week','ghost','back')+'</div><header class="utility-heading"><h1>Groceries</h1><p>'+p.days.length+' cooking days · '+p.people+(p.people===1?' person':' people')+'</p>'+button(esc(p.shop),'go-plan','shop-pill','shopping')+'</header>'+
     (!result?'<div class="empty"><strong>No shopping list yet.</strong>Generate a meal plan to get your list.'+button('Plan my meals','start-setup','green')+'</div>':
       '<div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+money(result.total)+'</strong><p class="subtle">'+items.filter(i=>state.checked.includes(i.key)).length+' of '+items.length+' checked · '+esc(p.shop)+'</p></div>'+button('Copy list','copy','ghost','copy',items.length?'':'disabled')+'</div>'+
-      '<details class="surface-card price-explanation"><summary>Price &amp; pack details</summary><p>Catalogue estimates. Check availability and final prices at your supermarket.</p></details>'+
+      storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>The estimated grocery total uses generic catalogue packs and prices; it is not a price quote from '+esc(p.shop)+'. Recorded product prices appear separately. No missing items are silently counted as free.</p></details>'+
       '<div class="shopping-groups">'+(rows||'<div class="surface-card empty">You have enough ingredients for your plan.</div>')+'</div><div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div>')+extraGroceryList()+button('Add grocery item','grocery-add','primary wide','plus');
 }
 function extraGroceryList(){return (state.extraGroceries||[]).length?'<section class="grocery-group extra-groceries"><h3>Extra essentials</h3><div class="basket-items">'+state.extraGroceries.map(i=>'<label class="basket-row '+(i.checked?'checked':'')+'"><input type="checkbox" data-extra="'+esc(i.id)+'" '+(i.checked?'checked':'')+'><strong>'+esc(i.name)+'</strong></label>').join('')+'</div></section>':'';}
@@ -490,6 +531,7 @@ document.addEventListener('click',async event=>{
   else if(action==='day'){day=Number(b.dataset.day);render();$('.day-btn.active')?.focus();}
   else if(action==='generate')await generate();
   else if(action==='go-shopping')setView('shopping');
+  else if(action==='check-store-prices')await refreshStorePrices(true);
   else if(action==='go-week')setView('week');
   else if(action==='go-pantry')setView('pantry');
   else if(action==='recipe')await showRecipe(id);
@@ -528,7 +570,7 @@ document.addEventListener('click',async event=>{
     else logCook(r);
     renderRecipeDetail(r);
   } else if(action==='copy'){
-    const list=state.result?.items.filter(i=>i.packs>0).map(i=>i.name+' — '+i.packs+' × '+i.pack+' '+i.unit).join('\n')||'';
+    const list=state.result?.items.filter(i=>i.packs>0).map(i=>{const r=currentStorePrices()?.data?.items.find(x=>x.key===i.key);return r?.status==='recorded-price'?i.name+' — '+r.packs+' × '+r.packLabel+' ('+r.productName+', recorded AED '+priceMoney(r.subtotal)+', checked '+r.checkedAt+')':i.name+' — '+i.packs+' × '+i.pack+' '+i.unit+' (catalogue estimate)';}).join('\n')||'';
     try{if(window.MealdayAndroid)window.MealdayAndroid.copy(list);else await navigator.clipboard.writeText(list);notify('Grocery list copied.');}catch{openDialog('Copy grocery list','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(list)+'</textarea>');}
   }
 });
@@ -590,6 +632,7 @@ document.addEventListener('submit',async event=>{
 });
 document.addEventListener('change',event=>{
   const el=event.target;
+  if(el.id==='store-price-location'){priceLocation=el.value;refreshStorePrices(true);return;}
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
   if(el.dataset.extra){const item=state.extraGroceries?.find(x=>x.id===el.dataset.extra);if(item){item.checked=el.checked;persist();el.closest('.basket-row').classList.toggle('checked',el.checked);}return;}
   if(el.dataset.grocery){const key=el.dataset.grocery;state.checked=el.checked?[...new Set([...state.checked,key])]:state.checked.filter(id=>id!==key);persist();
@@ -1075,4 +1118,4 @@ setInterval(()=>{if(!document.hidden&&!dialog.open&&!detail&&view!=="setup")clou
 // A missing or failed photo must not leave a broken image in a meal card.
 document.addEventListener('error',event=>{const img=event.target;if(img instanceof HTMLImageElement&&img.getAttribute('src')!=='/recipe-image-unavailable.svg'){img.src='/recipe-image-unavailable.svg';img.alt='Recipe photo unavailable';}},true);
 
-window.addEventListener('focus',()=>{if(view==='recipes'&&!library.loading)loadRecipes();});
+window.addEventListener('focus',()=>{if(view==='recipes'&&!library.loading)loadRecipes();if(view==='shopping')refreshStorePrices(true);});
