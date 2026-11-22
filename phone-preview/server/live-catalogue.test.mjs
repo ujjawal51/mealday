@@ -64,3 +64,22 @@ test('The actual shipped engine uses changed live data for recipes, planning, qu
  rows=[];assert.equal((await (await call('/api/recipes')).json()).count,0);assert.equal((await call('/api/recipe/only-central')).status,404);
  assert.equal((await call('/api/quote',{profile,pantry:{},plan:plan.plan})).status,400);
 });
+
+test('External recipe links are public GETs while account, auth, backup and write routes stay protected',async()=>{
+ const store={publishedRecipes:async()=>[documents[0]],session:()=>{throw Error('Public reads must not access sessions');}};
+ const server=createServer();server.listen(0,'127.0.0.1');await once(server,'listening');const origin='http://127.0.0.1:'+server.address().port;server.on('request',createApp({store,origin}));
+ const headers={'Sec-Fetch-Site':'cross-site','Sec-Fetch-Mode':'navigate','Sec-Fetch-Dest':'document'};
+ try{
+  for(const path of ['/api/catalogue','/api/recipes','/api/recipe/'+documents[0].id]){
+   const response=await fetch(origin+path,{headers});assert.equal(response.status,200,path);
+   assert.equal(response.headers.get('access-control-allow-origin'),null);
+   assert.equal(response.headers.get('set-cookie'),null);
+  }
+  for(const path of ['/api/account','/api/kitchen','/api/auth/google/challenge','/api/recipes-private']){
+   assert.equal((await fetch(origin+path,{headers})).status,403,path);
+  }
+  for(const [path,method] of [['/api/catalogue','POST'],['/api/kitchen','PUT'],['/api/account','DELETE'],['/api/auth/google','POST']]){
+   const response=await fetch(origin+path,{method,headers:{...headers,origin,'Content-Type':'application/json'},body:'{}'});assert.equal(response.status,403,path);
+  }
+ }finally{server.closeAllConnections();await new Promise(r=>server.close(r));}
+});

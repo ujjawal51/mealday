@@ -30,7 +30,8 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         if(!trustedProxy)return send(403,{error:'Use the configured Mealday app address.'});
       }
       if(path.startsWith('/api/')){
-        if(req.headers['sec-fetch-site']==='cross-site')return send(403,{error:'Cross-site request rejected.'});
+        const publicRecipeRead=req.method==='GET'&&(path==='/api/catalogue'||path==='/api/recipes'||path.startsWith('/api/recipe/'));
+        if(req.headers['sec-fetch-site']==='cross-site'&&!publicRecipeRead)return send(403,{error:'Cross-site request rejected.'});
         if(!['GET','HEAD'].includes(req.method)){
           if(req.headers.origin!==origin)return send(403,{error:'Origin rejected.'});
           if(!String(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON required.'});
