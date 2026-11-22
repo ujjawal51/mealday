@@ -1,3 +1,4 @@
+import {priceRequest,quoteStorePrices} from './store-prices.mjs';
 import {liveCatalogue,catalogueSummary,catalogueDetail,matchesCatalogueTag} from './live-catalogue.mjs';
 import {isIP} from 'node:net';
 import {timingSafeEqual} from 'node:crypto';
@@ -35,6 +36,15 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         if(!['GET','HEAD'].includes(req.method)){
           if(req.headers.origin!==origin)return send(403,{error:'Origin rejected.'});
           if(!String(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON required.'});
+        }
+        if(path==='/api/store-prices'){
+          if(req.method!=='POST')return send(405,{error:'Send a grocery price request.'},{Allow:'POST'});
+          let raw='',size=0;
+          for await(const chunk of req){size+=chunk.length;if(size>30000)return send(413,{error:'Price request is too large.'});raw+=chunk.toString();}
+          let input;try{input=priceRequest(JSON.parse(raw));}catch(error){return send(400,{error:error.status?error.message:'Invalid price request.'});}
+          const records=store.storePriceRecords?await store.storePriceRecords(input.shop,input.city,input.items.map(i=>i.key)):[];
+          const catalogue=records.length?await liveCatalogue(store):{ingredients:{}};
+          return send(200,quoteStorePrices(input,records,catalogue.ingredients));
         }
         if(path==='/api/catalogue'||path==='/api/recipes'||path.startsWith('/api/recipe/')){
           if(req.method!=='GET')return send(405,{error:'Method not allowed.'},{Allow:'GET'});

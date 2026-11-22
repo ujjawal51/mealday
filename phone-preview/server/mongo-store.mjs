@@ -17,6 +17,7 @@ export async function connectStore(uri,dbName){
   return {
     close:()=>client.close(),
     ping:()=>db.command({ping:1}),
+    storePriceRecords:(shop,city,keys)=>db.collection('store_price_records').find({shop,city,ingredientId:{$in:keys}},{projection:{_id:0}}).limit(2001).toArray(),
     publishedRecipes:()=>db.collection('recipes').find({published:true},{projection:{_id:0,id:1,data:1,ingredients:1,photo:1,published:1}}).sort({id:1}).limit(2001).toArray(),
     userByEmail:email=>users.findOne({email}),
     async createUser(user){try{await users.insertOne(user);return true;}catch(e){if(e.code===11000)return false;throw e;}},
