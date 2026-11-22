@@ -1,4 +1,4 @@
-import {liveCatalogue,catalogueSummary,catalogueDetail} from './live-catalogue.mjs';
+import {liveCatalogue,catalogueSummary,catalogueDetail,matchesCatalogueTag} from './live-catalogue.mjs';
 import {isIP} from 'node:net';
 import {timingSafeEqual} from 'node:crypto';
 import {randomUUID} from 'node:crypto';
@@ -39,7 +39,7 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           if(req.method!=='GET')return send(405,{error:'Method not allowed.'},{Allow:'GET'});
           const snapshot=await liveCatalogue(store),etag='"'+snapshot.revision+'"';
           if(path==='/api/catalogue'){
-            if(req.headers['if-none-match']===etag){res.writeHead(304,{'ETag':etag,'Cache-Control':'no-cache'});return res.end();}
+            if(matchesCatalogueTag(req.headers['if-none-match'],etag)){res.writeHead(304,{'ETag':etag,'Cache-Control':'no-cache'});return res.end();}
             return send(200,snapshot,{'ETag':etag,'Cache-Control':'no-cache'});
           }
           if(path.startsWith('/api/recipe/')){

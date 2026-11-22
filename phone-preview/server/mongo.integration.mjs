@@ -55,7 +55,7 @@ try{
 
   // Real MongoDB edits feed the central catalogue; deletion stays deleted after reconnect.
   const {liveCatalogue}=await import('./live-catalogue.mjs');
-  const liveDoc=structuredClone(original);liveDoc.id=liveDoc.data.id='central-mongo-test';liveDoc.data.name='Inserted in MongoDB';liveDoc.privateNote='must stay private';
+  const liveDoc=structuredClone(original);liveDoc.id=liveDoc.data.id='central-mongo-test';liveDoc.data.name='Inserted in MongoDB';liveDoc.data.timing=null;liveDoc.privateNote='must stay private';
   await db.collection('recipes').insertOne(liveDoc);
   let snapshot=await liveCatalogue(store);assert(snapshot.recipes.some(r=>r.id==='central-mongo-test'));assert(!JSON.stringify(snapshot).includes('must stay private'));
   const revision=snapshot.revision;
