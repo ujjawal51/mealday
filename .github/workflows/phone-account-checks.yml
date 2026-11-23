@@ -54,6 +54,7 @@ jobs:
         run: |
           node phone-preview/server/onboarding-account.browser.mjs
           node phone-preview/server/store-prices.browser.mjs
+          node phone-preview/server/lulu-prices.browser.mjs
   deployment-smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: account-tests
@@ -90,6 +91,12 @@ jobs:
           assert.equal(await response.text(),await readFile('phone-preview/dist/'+entry,'utf8'));
           const health=await fetch(origin+'/api/health',{signal:AbortSignal.timeout(20000)});
           assert(health.ok);assert.equal((await health.json()).database,'connected');
+          const luluScript=await fetch(origin+'/lulu-prices.js?v=1',{signal:AbortSignal.timeout(20000)});
+          assert(luluScript.ok);assert.equal(await luluScript.text(),await readFile('phone-preview/dist/lulu-prices.js','utf8'));
+          const luluStatus=await fetch(origin+'/api/lulu/status',{signal:AbortSignal.timeout(10000)});
+          assert(luluStatus.ok);const supplier=await luluStatus.json();
+          assert.equal(supplier.provider,'ReefAPI');assert.equal(supplier.locationVerified,false);
+          console.log('LULU_CONFIGURED '+supplier.configured+' (configuration only; no paid provider request)');
           const privateRead=await fetch(origin+'/api/account',{headers:externalHeaders,signal:AbortSignal.timeout(10000)});
           assert.equal(privateRead.status,403,'Cross-site private account reads must remain blocked.');
           console.log('DEPLOYMENT_VERIFIED '+entry+' MongoDB connected; external recipe links allowed; private account reads protected');

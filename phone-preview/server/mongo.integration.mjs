@@ -6,6 +6,11 @@ if(!process.env.MONGODB_TEST_URI)throw Error('Set MONGODB_TEST_URI to a disposab
 const name='mealday_test_'+randomUUID().replaceAll('-','');
 let store=await connectStore(process.env.MONGODB_TEST_URI,name);
 try{
+ const budgetResults=await Promise.all(Array.from({length:20},()=>store.reservePriceCredits('2026-11-23',2,6)));
+ assert.equal(budgetResults.filter(Boolean).length,3);
+ await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
+ assert.equal(await store.reservePriceCredits('2026-11-23',1,6),false);
+ assert.equal(await store.reservePriceCredits('2026-11-24',1,6),true);
  assert.equal(await store.createUser({_id:'one',email:'a@example.com'}),true);
  assert.equal(await store.createUser({_id:'two',email:'a@example.com'}),false);
  assert.equal((await store.userByEmail('a@example.com'))._id,'one');
