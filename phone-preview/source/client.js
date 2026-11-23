@@ -512,12 +512,14 @@ document.addEventListener('click',async event=>{
   else if(action==='reset-suggestions')openDialog('Reset suggested meal history?','Start fresh with your next suggestions.','<p>This clears previous plan suggestions. Your current plan, favourites, ratings, notes and cooking history are kept.</p>'+button('Cancel','close')+' '+button('Reset suggestions','confirm-suggestions','danger'));
   else if(action==='confirm-suggestions'){state.planHistory=[];state.suggestionsReset=true;persist();dialog.close();notify('Suggested meal history cleared. Rebuild your plan for fresh suggestions.');}
   else if(action==='delete-account'){
-    const c=cloudBackup.info();
-    if(!c.account){openDialog('Delete my account','Sign in to the account you want to delete.','<p>You are currently using a guest kitchen. No online account will be deleted unless you sign in and confirm.</p>'+button('Log in','account-login','green wide')+button('Cancel','close','ghost wide'));return;}
-    const google=c.account.authMethod==='google';
-    openDialog('Delete my account','This permanently deletes your Mealday account.','<p>Your profile, saved meals, ratings, notes and cooking history will be removed from this account. You will be signed out on all devices. This cannot be undone. Downloaded backups and copies on other devices must be cleared separately.</p><p>'+esc(c.account.email)+'</p><form id="delete-account-form">'+(google?'<div id="delete-google-confirm"></div>':'<label class="field">Current password<input class="control" name="password" type="password" autocomplete="current-password" required maxlength="128"></label>')+'<label class="field">Type DELETE to confirm<input class="control" name="confirmation" autocomplete="off" autocapitalize="characters" spellcheck="false" pattern="DELETE" required></label><p role="alert"></p><button class="button danger wide" type="submit" '+(google?'disabled':'')+'>Permanently delete my account</button>'+button('Cancel','close','ghost wide')+'</form>');
-    if(google)mountGoogleSignIn(dialog.querySelector('#delete-google-confirm'),{purpose:'delete',onSuccess:()=>{dialog.querySelector('#delete-account-form button[type="submit"]').disabled=false;}});
-
+    if(deletingAccount)return;
+    if(!cloudBackup.info().account){notify('Sign in to delete your account.');return;}
+    deletingAccount=true;b.disabled=true;b.setAttribute('aria-busy','true');b.querySelector('strong').textContent='Deleting account…';
+    try{
+      const result=await cloudBackup.deleteAccount();
+      clearPendingSetup();notify(result.localCleared?'Account deleted.':'Account deleted. Clear this browser’s site data to remove remaining local copies.');
+    }catch(e){notify(e.message);}
+    finally{deletingAccount=false;if(view==='settings')render();}
   }
   else if(action==='language'){openDialog('App language','English is the current app language.','<div class="language-active">'+icon('check')+'<span><strong>English</strong><small>Active language</small></span></div><p class="quick-help">Other languages are not available yet.</p>'+button('Done','close','green wide'));}
   else if(action==='edit-name')openDialog('Edit your name','','<form id="name-form"><label class="field">Name<input class="control" name="name" maxlength="40" required value="'+esc(state.profile.name)+'"></label><button class="button green wide">Save name</button></form>');
@@ -585,16 +587,6 @@ document.addEventListener('submit',async event=>{
     try{const calendar=weeklyCalendar((day+1)%7,time);downloadFile('mealday-weekly-reminder.ics',calendar,'text/calendar;charset=utf-8');state.reminder={day,time};persist();dialog.close();render();notify('Calendar file downloaded. Open it in your calendar to enable reminders.');}catch(e){notify(e.message);}return;
   }
   if(form.id==='extra-grocery-form'){event.preventDefault();const name=String(new FormData(form).get('item')||'').trim();if(!name)return;state.extraGroceries=[...(state.extraGroceries||[]),{id:crypto.randomUUID(),name,checked:false}];persist();dialog.close();render();return;}
-  if(form.id==='delete-account-form'){
-    event.preventDefault();const data=new FormData(form),submit=form.querySelector('button[type="submit"]'),message=form.querySelector('[role="alert"]');
-    if(submit.disabled)return;deletingAccount=true;submit.disabled=true;submit.textContent='Deleting account…';message.textContent='';
-    try{
-      const result=await cloudBackup.deleteAccount(String(data.get('password')||''),String(data.get('confirmation')||''));
-      clearPendingSetup();dialog.close();notify(result.localCleared?'Your account and cloud kitchen have been deleted.':'Account deleted online. Clear this browser’s site data to remove remaining local copies.');
-    }catch(e){message.textContent=e.message;}
-    finally{deletingAccount=false;submit.disabled=false;submit.textContent='Permanently delete my account';}
-    return;
-  }
   if(form.id==='name-form'){
     event.preventDefault();
     const name=String(new FormData(form).get('name')).trim();
@@ -1017,7 +1009,7 @@ function planSettings(){
 }
 function settingRow(label,action,note=''){
   const symbols={'edit-name':'people','edit-setup':'leaf','open-recipes':'recipes','go-history':'week','go-pantry':'pantry','go-home':'hob','review-setup':'check','language':'globe','weekly-reminder':'bell','cloud-account':'cloud','export-backup':'download','share-plan':'share','privacy':'shield','clear-saved':'heart','settings-reset':'refresh'};
-  const disabled=action==='share-plan'&&!state.result;
+  const disabled=(action==='share-plan'&&!state.result)||(action==='delete-account'&&deletingAccount);
   return '<button type="button" class="setting-row '+(['clear-saved','settings-reset'].includes(action)?'setting-destructive':'')+'" data-action="'+action+'" '+(disabled?'disabled':'')+'><span class="setting-symbol" aria-hidden="true">'+icon(symbols[action]||'gear')+'</span><span class="setting-label"><strong>'+esc(label)+'</strong>'+(note?'<small>'+esc(note)+'</small>':'')+'</span><span class="setting-chevron" aria-hidden="true">›</span></button>';
 }
 
@@ -1036,7 +1028,7 @@ function settings(){
  section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
  section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact')+settingRow('Manage subscription','subscription'))+
  section('Legal',settingRow('Privacy policy','privacy')+settingRow('Terms of service','terms'))+
- section('Account',settingRow('Delete my account','delete-account'))+
+ section('Account',settingRow(deletingAccount?'Deleting account…':'Delete my account','delete-account'))+
  '<details class="settings-extra"><summary>Kitchen &amp; backup</summary><div class="setting-list">'+settingRow('Edit your name','edit-name')+settingRow('Profile & food preferences','edit-setup')+settingRow('Cooking history','go-history')+settingRow('Review setup · '+steps.length+' steps','review-setup')+settingRow('Welcome screen','go-home')+settingRow('Backup & login','cloud-account')+settingRow('Download kitchen backup','export-backup')+settingRow('Share meal plan','share-plan')+settingRow('Reset this kitchen','settings-reset')+'</div></details></div>';
 }
 function readFeedback(){try{return JSON.parse(localStorage.getItem('mealday.feedback-draft.v1')||'null')||{};}catch{return {};}}
