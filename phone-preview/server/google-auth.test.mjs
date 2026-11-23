@@ -57,13 +57,10 @@ test('Google creates or restores the same account, binds a single-use challenge 
  assert.equal((await a.call('/api/auth/request-verification','POST',{email:'cook@gmail.com'})).status,410);
  assert.equal((await a.call('/verify-email.html')).status,303);
 });
-test('Google deletion requires fresh confirmation of the same Google subject, not another signed-in account',async t=>{
+test('Google account deletion uses the existing session without another Google challenge',async t=>{
  const {store,browser}=await fixture(t),a=browser();await a.call('/api/auth/google/challenge');await a.call('/api/auth/google','POST',{credential:JSON.stringify(claims(a.nonce))});
- assert.equal((await a.call('/api/account','DELETE',{confirmation:'DELETE'})).status,403);
- await a.call('/api/auth/google/challenge?purpose=delete');assert.equal((await a.call('/api/auth/google','POST',{credential:JSON.stringify(claims(a.nonce,{sub:'other',email:'other@gmail.com'}))})).status,403);assert.equal(store.users.size,1);
- await a.call('/api/auth/google/challenge?purpose=delete');assert.equal((await a.call('/api/auth/google','POST',{credential:JSON.stringify(claims(a.nonce))})).data.reauthenticated,true);
- assert.equal((await a.call('/api/account','DELETE',{confirmation:'wrong'})).status,400);
- assert.equal((await a.call('/api/account','DELETE',{confirmation:'DELETE'})).data.deleted,true);assert.equal(store.users.size,0);
+ assert.equal((await a.call('/api/account','DELETE',{})).data.deleted,true);assert.equal(store.users.size,0);assert.equal(store.sessions.size,0);
+ assert.equal((await a.call('/api/account','DELETE',{})).status,401);
 });
 test('Missing Google client configuration stays explicit without re-enabling email signup',async t=>{
  const {browser}=await fixture(t,null),a=browser();assert.equal((await a.call('/api/account')).data.googleSignIn,false);

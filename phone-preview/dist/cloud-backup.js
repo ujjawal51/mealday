@@ -77,12 +77,12 @@ export function createCloudBackup({snapshot,apply,changed}){
       const guest=read(CACHE+'guest');if(guest)apply(guest);else apply({state:{profile:{name:'',city:'Dubai',shop:'LuLu',people:2,budget:150,minutes:30,cuisine:'UAE mix',diet:'Any',days:[0,1,2,3,4],mealTypes:['dinner'],allergies:[],appliances:['Hob'],cuisines:['UAE mix'],priorities:['Everyday']},pantry:{},result:null,checked:[],favorites:[],seed:0},history:{version:1,events:[]}});
       cache();update('guest','Signed out · guest kitchen is on this device only.');
     },
-    async deleteAccount(password,confirmation){
+    async deleteAccount(){
       if(!account||meta.owner!==account.id)throw Error('Sign in before deleting your account.');
       if(working||initializing)throw Error('Please wait for the current backup to finish, then try again.');
       const owner=account.id;clearTimeout(delay);working=true;
       try{
-        const result=await call('/api/account','DELETE',{password,confirmation});
+        const result=await call('/api/account','DELETE',{});
         if(result.deleted!==true)throw Error('Account deletion was not confirmed.');
         account=null;csrf=null;conflict=false;meta={owner:null,revision:0,dirty:false};
         let cleared=true;

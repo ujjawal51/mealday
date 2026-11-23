@@ -129,15 +129,9 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           const key='delete:'+session.userId,stamp=Date.now();let rate=limits.get(key);
           if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(key,rate);}
           if(++rate.count>5)return send(429,{error:'Too many attempts. Try again in 15 minutes.'});
-          const value=await body();
-          if(value?.confirmation!=='DELETE')return send(400,{error:'Type DELETE to confirm.'});
-          if(session.authMethod==='google'){
-            const verified=Date.parse(session.deleteVerifiedAt);
-            if(!Number.isFinite(verified)||verified<Date.now()-5*60000)return send(403,{error:'Confirm with Google before deleting your account.',reauthRequired:true});
-          }else{
-            if(typeof value.password!=='string'||value.password.length<1||value.password.length>128)return send(400,{error:'Enter your current password.'});
-            if(!await passwordMatches(value.password,accountUser.password||accountUser))return send(401,{error:'Password is incorrect. Your account has not been deleted.'});
-          }
+          // The authenticated session identifies the owner. Origin, JSON and CSRF
+          // checks above still protect this one-click destructive action.
+          await body();
           if(!await store.deleteAccount(session.userId,accountUser.authVersion||0))return send(409,{error:'Your account changed. Sign in again before deleting it.'});
           return send(200,{ok:true,deleted:true},{'Set-Cookie':cookie('',0)});
         }
