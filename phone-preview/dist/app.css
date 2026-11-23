@@ -903,3 +903,17 @@ body[data-view=shopping] .shopping-price-area{margin-top:18px}
 body[data-view=shopping] .shopping-price-area .shopping-head{padding:16px}
 .shopping-empty{padding:35px 10px;text-align:center;font-size:14px;line-height:1.6;color:#78816d}
 @media(max-width:350px){body[data-view=shopping] main{padding-inline:9px}body[data-view=shopping] .shopping-list-card{padding-inline:12px}.shopping-toolbar{gap:5px}.button.shopping-tab{padding-inline:8px}.button.shopping-share{padding-inline:9px;font-size:10px}body[data-view=shopping] .basket-row{grid-template-columns:19px 32px minmax(0,1fr) auto;gap:6px}body[data-view=shopping] .ingredient-image{width:32px;height:39px}body[data-view=shopping] .basket-row strong{font-size:14px}body[data-view=shopping] .basket-row .price{font-size:12px}}
+
+/* Keep compact checklist controls above the broader app button rules. */
+body[data-view=shopping] .shopping-toolbar .button{font-size:11px;line-height:1.2;min-height:40px;white-space:nowrap;font-weight:450}
+body[data-view=shopping] .shopping-toolbar .shopping-share{padding:8px 12px;min-height:42px}
+body[data-view=shopping] .shopping-toolbar .shopping-tabs{flex-shrink:0}
+body[data-view=shopping] .shopping-progress-label .shopping-reset{font-size:10px;min-height:30px}
+body[data-view=shopping] .shopping-list-heading h1{font-weight:650}
+body[data-view=shopping] .basket-row{padding-top:14px;padding-bottom:13px;min-height:92px}
+body[data-view=shopping] .basket-row strong{font-weight:500}
+.nav button,.nav button.active{min-width:0;font-size:10px;line-height:1.2;text-transform:none;font-weight:450;gap:2px}
+.nav button span{max-width:100%;white-space:nowrap}
+.nav button svg{width:39px;height:32px;padding:5px 8px;box-sizing:border-box}
+.nav button.active svg{background:#eff5df;border-radius:24px}
+@media(max-width:350px){body[data-view=shopping] .shopping-toolbar .button{font-size:10px}.nav button,.nav button.active{font-size:9px}body[data-view=shopping] .shopping-toolbar .shopping-share{padding-inline:9px}}
