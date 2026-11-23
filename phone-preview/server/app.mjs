@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy;
   const googleCookieName=production?'__Host-mealday_google':'mealday_google';
   const googleCookie=(value,maxAge)=>`${googleCookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -63,6 +63,7 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
           const offset=Math.min(10000,Math.max(0,parseInt(params.get('offset')||'0',10)||0));
           return send(200,{recipes:matches.slice(offset,offset+18).map(catalogueSummary),count:matches.length,next:offset+18<matches.length?offset+18:null,revision:snapshot.revision});
         }
+        if(path==='/api/lulu/status'&&req.method==='GET')return send(200,luluPrices?luluPrices.status():{configured:false});
         const rawCookie=String(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(cookieName+'='))?.slice(cookieName.length+1);
         let session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
         let accountUser=session?await store.userByEmail(session.email):null;
@@ -125,6 +126,16 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         }
         if(!session)return send(401,{error:'Sign in to access your backup.'});
         if(req.method!=='GET'&&req.headers['x-csrf-token']!==session.csrf)return send(403,{error:'Session verification failed. Refresh and try again.'});
+        if(['/api/lulu/search','/api/lulu/product'].includes(path)){
+          if(req.method!=='POST')return send(405,{error:'Use POST for a price lookup.'},{Allow:'POST'});
+          if(!luluPrices)return send(503,{error:'LuLu price lookup is not configured.'});
+          const stamp=Date.now(),rateKey='lulu:'+session.userId;let rate=limits.get(rateKey);
+          if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+60000};limits.set(rateKey,rate);}
+          if(++rate.count>10)return send(429,{error:'Please wait a minute before another price lookup.'});
+          let raw='',size=0;for await(const chunk of req){size+=chunk.length;if(size>4096)return send(413,{error:'Price lookup request is too large.'});raw+=chunk.toString();}
+          let input;try{input=JSON.parse(raw);}catch{return send(400,{error:'Invalid price request.'});}
+          return send(200,await luluPrices[path.endsWith('/search')?'search':'product'](input));
+        }
         if(path==='/api/account'&&req.method==='DELETE'){
           const key='delete:'+session.userId,stamp=Date.now();let rate=limits.get(key);
           if(!rate||rate.until<stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+15*60000};limits.set(key,rate);}

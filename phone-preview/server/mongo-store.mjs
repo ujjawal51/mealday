@@ -17,6 +17,12 @@ export async function connectStore(uri,dbName){
   return {
     close:()=>client.close(),
     ping:()=>db.command({ping:1}),
+    async reservePriceCredits(day,cost,limit){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!Number.isInteger(cost)||cost<1||!Number.isInteger(limit)||limit<cost)return false;
+      const usage=db.collection('price_api_usage'),id='reef:'+day;
+      try{await usage.updateOne({_id:id},{$setOnInsert:{spent:0}},{upsert:true});}catch(error){if(error.code!==11000)throw error;}
+      return (await usage.updateOne({_id:id,spent:{$lte:limit-cost}},{$inc:{spent:cost}})).modifiedCount===1;
+    },
     storePriceRecords:(shop,city,keys)=>db.collection('store_price_records').find({shop,city,ingredientId:{$in:keys}},{projection:{_id:0}}).limit(2001).toArray(),
     publishedRecipes:()=>db.collection('recipes').find({published:true},{projection:{_id:0,id:1,data:1,ingredients:1,photo:1,published:1}}).sort({id:1}).limit(2001).toArray(),
     userByEmail:email=>users.findOne({email}),
