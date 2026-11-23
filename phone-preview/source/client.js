@@ -517,7 +517,7 @@ document.addEventListener('click',async event=>{
     deletingAccount=true;b.disabled=true;b.setAttribute('aria-busy','true');b.querySelector('strong').textContent='Deleting account…';
     try{
       const result=await cloudBackup.deleteAccount();
-      clearPendingSetup();notify(result.localCleared?'Account deleted.':'Account deleted. Clear this browser’s site data to remove remaining local copies.');
+      clearPendingSetup();setView('welcome');notify(result.localCleared?'Account deleted.':'Account deleted. Clear this browser’s site data to remove remaining local copies.');
     }catch(e){notify(e.message);}
     finally{deletingAccount=false;if(view==='settings')render();}
   }
