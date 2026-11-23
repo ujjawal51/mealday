@@ -111,10 +111,15 @@ try{
  assert.equal(await first.page.locator('[data-action="recipe"][data-id="live-browser-recipe"]').count(),0);
  await first.page.locator('.nav [data-view="settings"]').click();
  await first.page.waitForFunction(()=>!JSON.parse(localStorage.getItem('mealday.cloud.v1')).dirty);
+ // A separate guest plan must not redirect deletion back into the planner.
+ await first.page.evaluate(()=>{const guest=JSON.parse(localStorage.getItem('mealday.android.v1'));guest.profile.name='Guest kitchen';localStorage.setItem('mealday.cloud.cache.guest',JSON.stringify({state:guest,history:{version:1,events:[]}}));});
  const challengesBefore=store.challenges.size;let deleteRequests=0;
  first.page.on('request',request=>{if(request.url()===origin+'/api/account'&&request.method()==='DELETE')deleteRequests++;});
  await click(first.page,'delete-account');
  await first.page.waitForSelector('body[data-view="welcome"]');
+ assert.equal(new URL(first.page.url()).hash,'#welcome');
+ assert.equal(await first.page.locator('.nav').isVisible(),false);
+ assert.equal(await first.page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')).profile.name),'Guest kitchen');
  assert.equal(await first.page.locator('#dialog[open]').count(),0);
  assert.equal(deleteRequests,1);assert.equal(store.challenges.size,challengesBefore);
  assert(!store.users.has('cook@gmail.com'));assert(!store.kitchens.has('existing'));
