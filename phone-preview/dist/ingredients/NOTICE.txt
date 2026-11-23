@@ -1,0 +1,4 @@
+Google Noto Emoji 3D ingredient illustrations
+Copyright Google LLC. Source: https://github.com/googlefonts/noto-emoji/tree/main/3D/png/128
+Redistributed unmodified. The source repository license is included in LICENSE.
+Illustrations identify ingredients and are not retailer product photographs.

@@ -1,3 +1,4 @@
+import {ingredientPicture} from './ingredient-pictures.js';
 import {publicImage} from './catalogue-schema.js';
 import {mountGoogleSignIn} from './google-signin.js';
 import {createOnboardingMotion} from './onboarding-motion.js';
@@ -67,7 +68,7 @@ try{storedCookingHistory=JSON.parse(localStorage.getItem(COOKING_HISTORY_KEY)||'
 let cookingHistory=loadHistory(storedCookingHistory,state.cooked,[...(state.result?.meals||[]),...(state.favorites||[])]);
 let options=null, view=state.result?'week':'welcome', day=state.profile.days[0], busy=false, error='', toastTimer, requestId=0, recipeSequence=0;
 let library={q:'',cuisine:'',diet:'',saved:false,rows:[],count:0,next:null,loading:false,error:''};
-let libraryDelay, swapIndex=null;
+let libraryDelay, swapIndex=null,shoppingFilter='all';
 let detail=null, detailTab='ingredients', guidedStep=null, recipeOrigin='week', recipeScroll=0, recipeSequenceId=0;
 const cookingTimer=createCookingTimer({onTick:updateTimerDisplay,onComplete:()=>notify('Your 5-minute timer finished.')});
 let cloudApplying=false,deletingAccount=false;
@@ -123,7 +124,7 @@ function render(){
   document.body.dataset.view=view;
   $('.nav').hidden=['welcome','setup','recipe','account'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
-    const active=b.dataset.view===view||(b.dataset.view==='week'&&view==='shopping')||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
+    const active=b.dataset.view===view||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
     if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   }
   screen.setAttribute('aria-busy',String(busy&&view!=='setup'));
@@ -306,25 +307,48 @@ function storePriceRow(item){
  const record=currentStorePrices()?.data?.items.find(r=>r.key===item.key);
  if(record?.status==='recorded-price')return '<div class="store-product-record"><a href="'+esc(record.productUrl)+'" target="_blank" rel="noopener noreferrer">'+esc(record.productName)+'</a><p>'+record.packs+' × '+esc(record.packLabel)+' · AED '+priceMoney(record.price)+' per pack</p><p>'+esc(record.quantityBasis)+'</p><small>Price checked '+esc(priceDate(record.checkedAt))+' · valid until '+esc(priceDate(record.validUntil))+'</small><small>Reported in stock'+(record.stockPacks===null?' · available quantity not confirmed':' · '+record.stockPacks+' packs reported')+' · <a href="'+esc(record.source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(record.source.name)+'</a></small></div>';
  const reasons={'stale':'Price record expired.','out-of-stock':'Reported out of stock.','stock-unknown':'Availability not confirmed.','insufficient-stock':'Not enough stock reported.','ingredient-changed':'Ingredient match needs review.','price-overflow':'Price calculation needs review.','choose-location':'Choose a price location.','no-reviewed-match':'No reviewed product match.'};
- return '<div class="store-product-record"><small>'+esc(reasons[record?.status]||'No retailer product match.')+' Catalogue estimate · assumed pack '+quantity(item.pack)+' '+esc(item.unit)+(record?.checkedAt?' · last observation '+esc(priceDate(record.checkedAt)):' · no retailer price timestamp')+'</small></div>';
+ return '<div class="store-product-record catalogue-record"><small>'+esc((record?.status&&record.status!=='no-reviewed-match'?(reasons[record.status]||'Price record needs a recheck.'):'')+(record?.checkedAt?' Last observation '+priceDate(record.checkedAt):''))+'</small></div>';
 }
+function shoppingItems(){return (state.result?.items||[]).filter(i=>i.packs>0);}
+function shoppingVisible(bought){return shoppingFilter==='all'||(shoppingFilter==='bought'?bought:!bought);}
 function shopping(){
-  const result=state.result;
-  const p=state.profile;
-  const items=result?.items.filter(i=>i.packs>0)||[];
-  const categories=Map.groupBy?Map.groupBy(items,i=>i.category||'Groceries'):items.reduce((map,item)=>{
-    const label=item.category||'Groceries';if(!map.has(label))map.set(label,[]);map.get(label).push(item);return map;
-  },new Map());
-  const rows=[...categories].map(([name,list])=>'<section class="grocery-group"><h3>'+esc(name)+'</h3><div class="basket-items">'+
-    list.map(i=>{const record=currentStorePrices()?.data?.items.find(r=>r.key===i.key),checked=record?.status==='recorded-price';return '<div class="priced-grocery-item"><label class="basket-row '+(state.checked.includes(i.key)?'checked':'')+'"><input type="checkbox" data-grocery="'+esc(i.key)+'" '+(state.checked.includes(i.key)?'checked':'')+'><span><strong>'+esc(i.name)+'</strong><small>Need '+quantity(i.need)+' '+esc(i.unit)+(i.have?' · '+quantity(i.have)+' '+esc(i.unit)+' at home':'')+'</small></span><span class="price">'+(checked?'Recorded ':'Est. ')+'AED '+(checked?priceMoney(record.subtotal):money(i.cost))+'</span></label>'+storePriceRow(i)+'</div>';}).join('')+
-    '</div></section>').join('');
-  return '<div class="subpage-back">'+button('Back to plan','go-week','ghost','back')+'</div><header class="utility-heading"><h1>Groceries</h1><p>'+p.days.length+' cooking days · '+p.people+(p.people===1?' person':' people')+'</p>'+button(esc(p.shop),'go-plan','shop-pill','shopping')+'</header>'+
-    (!result?'<div class="empty"><strong>No shopping list yet.</strong>Generate a meal plan to get your list.'+button('Plan my meals','start-setup','green')+'</div>':
-      '<div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+money(result.total)+'</strong><p class="subtle">'+items.filter(i=>state.checked.includes(i.key)).length+' of '+items.length+' checked · '+esc(p.shop)+'</p></div>'+button('Copy list','copy','ghost','copy',items.length?'':'disabled')+'</div>'+
-      storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>The estimated grocery total uses generic catalogue packs and prices; it is not a price quote from '+esc(p.shop)+'. Recorded product prices appear separately. No missing items are silently counted as free.</p></details>'+
-      '<div class="shopping-groups">'+(rows||'<div class="surface-card empty">You have enough ingredients for your plan.</div>')+'</div><div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div>')+extraGroceryList()+button('Add grocery item','grocery-add','primary wide','plus');
+ const items=shoppingItems(),extras=state.extraGroceries||[],total=items.length+extras.length;
+ const bought=items.filter(i=>state.checked.includes(i.key)).length+extras.filter(i=>i.checked).length;
+ const groups=new Map();for(const item of items){const category=item.category||'Pantry';if(!groups.has(category))groups.set(category,[]);groups.get(category).push(item);}
+ const ordered=[...groups].sort(([a],[b])=>((/vegetable/i.test(a)?0:/pantry|groc|grain/i.test(a)?1:2)-(/vegetable/i.test(b)?0:/pantry|groc|grain/i.test(b)?1:2)));
+ let shown=0;
+ const rows=ordered.map(([name,list])=>{
+  const visible=list.filter(i=>shoppingVisible(state.checked.includes(i.key)));if(!visible.length)return '';shown+=visible.length;
+  return '<section class="grocery-group"><h3><span>'+esc(name)+'</span><span>'+visible.length+'</span></h3><div class="basket-items">'+visible.map(i=>{
+   const record=currentStorePrices()?.data?.items.find(r=>r.key===i.key),recorded=record?.status==='recorded-price',checked=state.checked.includes(i.key);
+   const packs=recorded?record.packs:i.packs,pack=recorded?record.packLabel:quantity(i.pack)+' '+i.unit;
+   const have=Number(i.have)||0,remaining=Math.max(0,i.need-have);
+   return '<div class="priced-grocery-item"><label class="basket-row '+(checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-grocery="'+esc(i.key)+'" '+(checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy" decoding="async"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><span class="basket-pack">'+packs+' × '+esc(pack)+'</span><small class="basket-quantities">Recipe '+quantity(i.need)+' '+esc(i.unit)+' · At home '+quantity(have)+' '+esc(i.unit)+' · Needed '+quantity(remaining)+' '+esc(i.unit)+'</small><small class="basket-price-kind">'+(recorded?'Recorded product price':'Catalogue estimate')+'</small></span><span class="price">'+'AED '+priceMoney(recorded?record.subtotal:i.cost)+'</span></label>'+storePriceRow(i)+'</div>';
+  }).join('')+'</div></section>';
+ }).join('');
+ const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
+ const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
+ return '<div class="shopping-page"><section class="shopping-list-card"><header class="shopping-list-heading"><h1>Shopping list</h1><p>Tick items you’ve bought.</p></header><div class="shopping-progress-label"><p><strong>'+bought+'</strong> / '+total+' items bought</p>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Share grocery list ↗','shopping-share','shopping-share')+'</div><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div>'+button('Add grocery item','grocery-add','ghost wide shopping-add','plus')+'</section>'+
+ (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 }
-function extraGroceryList(){return (state.extraGroceries||[]).length?'<section class="grocery-group extra-groceries"><h3>Extra essentials</h3><div class="basket-items">'+state.extraGroceries.map(i=>'<label class="basket-row '+(i.checked?'checked':'')+'"><input type="checkbox" data-extra="'+esc(i.id)+'" '+(i.checked?'checked':'')+'><strong>'+esc(i.name)+'</strong></label>').join('')+'</div></section>':'';}
+function extraGroceryList(){
+ const items=(state.extraGroceries||[]).filter(i=>shoppingVisible(i.checked));if(!items.length)return '';
+ return '<section class="grocery-group extra-groceries"><h3><span>Extra essentials</span><span>'+items.length+'</span></h3><div class="basket-items">'+items.map(i=>'<div class="priced-grocery-item"><label class="basket-row '+(i.checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-extra="'+esc(i.id)+'" '+(i.checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><small>Extra item · not included in price totals</small></span></label></div>').join('')+'</div></section>';
+}
+function groceryListText(){
+ const lines=shoppingItems().map(i=>{
+  const choice=window.MealdayLuluPrices?.choice(i.key),r=currentStorePrices()?.data?.items.find(x=>x.key===i.key),mark=state.checked.includes(i.key)?'[x] ':'[ ] ';
+  if(choice?.quote){const p=choice.products[0];return mark+i.name+' — '+choice.quote.packs+' × '+p.packLabel+' ('+p.name+', LuLu UAE online AED '+priceMoney(choice.quote.subtotal)+', retrieved '+choice.checkedAt+')';}
+  return mark+(r?.status==='recorded-price'?i.name+' — '+r.packs+' × '+r.packLabel+' ('+r.productName+', recorded AED '+priceMoney(r.subtotal)+', checked '+r.checkedAt+')':i.name+' — '+i.packs+' × '+i.pack+' '+i.unit+' (catalogue estimate AED '+priceMoney(i.cost)+')');
+ });
+ for(const i of state.extraGroceries||[])lines.push((i.checked?'[x] ':'[ ] ')+i.name+' (extra item, unpriced)');
+ return 'Mealday shopping list\n'+lines.join('\n');
+}
+async function shareGroceries(){
+ const text=groceryListText();
+ try{if(navigator.share){await navigator.share({title:'Mealday shopping list',text});return;}}catch(e){if(e.name==='AbortError')return;}
+ try{if(window.MealdayAndroid)window.MealdayAndroid.copy(text);else await navigator.clipboard.writeText(text);notify('Grocery list copied.');}catch{openDialog('Share grocery list','Copy your list below.','<textarea class="control" rows="12" readonly aria-label="Grocery list to share">'+esc(text)+'</textarea>');}
+}
 function pantry(){
   const contents=Object.entries(state.pantry),data=options?.pantry||[];
   return heading('Kitchen','Keep track of what you already have.')+
@@ -464,7 +488,10 @@ document.addEventListener('click',async event=>{
   const b=event.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.view){setView(b.dataset.view);$('#main').focus({preventScroll:true});return;}
   const {action,id,index}=b.dataset;
-  if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
+  if(action==='shopping-filter'){shoppingFilter=['all','todo','bought'].includes(id)?id:'all';screen.innerHTML=shopping();screen.querySelector('[data-action="shopping-filter"][data-id="'+shoppingFilter+'"]').focus({preventScroll:true});}
+  else if(action==='shopping-reset'){const ids=new Set(shoppingItems().map(i=>i.key));state.checked=state.checked.filter(key=>!ids.has(key));for(const item of state.extraGroceries||[])item.checked=false;persist();screen.innerHTML=shopping();notify('Bought items reset.');}
+  else if(action==='shopping-share'){await shareGroceries();}
+  else if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
   else if(action==='setup-account-back'){if(setupAccountBusy)return;error='';setupAccountMode='choice';wizardStory='benefits';setView('setup',false);}
   else if(action==='setup-account-guest'||action==='setup-account-continue'){await finishOnboarding();}
   else if(action==='cloud-account'){openCloudAccount();}
@@ -572,7 +599,7 @@ document.addEventListener('click',async event=>{
     else logCook(r);
     renderRecipeDetail(r);
   } else if(action==='copy'){
-    const list=state.result?.items.filter(i=>i.packs>0).map(i=>{const r=currentStorePrices()?.data?.items.find(x=>x.key===i.key);return r?.status==='recorded-price'?i.name+' — '+r.packs+' × '+r.packLabel+' ('+r.productName+', recorded AED '+priceMoney(r.subtotal)+', checked '+r.checkedAt+')':i.name+' — '+i.packs+' × '+i.pack+' '+i.unit+' (catalogue estimate)';}).join('\n')||'';
+    const list=groceryListText();
     try{if(window.MealdayAndroid)window.MealdayAndroid.copy(list);else await navigator.clipboard.writeText(list);notify('Grocery list copied.');}catch{openDialog('Copy grocery list','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(list)+'</textarea>');}
   }
 });
@@ -626,12 +653,8 @@ document.addEventListener('change',event=>{
   const el=event.target;
   if(el.id==='store-price-location'){priceLocation=el.value;refreshStorePrices(true);return;}
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
-  if(el.dataset.extra){const item=state.extraGroceries?.find(x=>x.id===el.dataset.extra);if(item){item.checked=el.checked;persist();el.closest('.basket-row').classList.toggle('checked',el.checked);}return;}
-  if(el.dataset.grocery){const key=el.dataset.grocery;state.checked=el.checked?[...new Set([...state.checked,key])]:state.checked.filter(id=>id!==key);persist();
-    el.closest('.basket-row').classList.toggle('checked',el.checked);
-    const count=state.result.items.filter(i=>i.packs>0).length;
-    $('.shopping-head .subtle').textContent=state.checked.length+' of '+count+' checked · '+state.profile.shop;
-  }
+  if(el.dataset.extra){const item=state.extraGroceries?.find(x=>x.id===el.dataset.extra);if(item){item.checked=el.checked;persist();screen.innerHTML=shopping();}return;}
+  if(el.dataset.grocery){const id=el.dataset.grocery;state.checked=el.checked?[...new Set([...state.checked,id])]:state.checked.filter(key=>key!==id);persist();screen.innerHTML=shopping();Array.from(screen.querySelectorAll('[data-grocery]')).find(input=>input.dataset.grocery===id)?.focus({preventScroll:true});}
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
@@ -1108,6 +1131,6 @@ window.addEventListener("focus",()=>{if(!dialog.open&&!['recipe','setup'].includ
 setInterval(()=>{if(!document.hidden&&!dialog.open&&!detail&&view!=="setup")cloudBackup.refresh();},30000);
 
 // A missing or failed photo must not leave a broken image in a meal card.
-document.addEventListener('error',event=>{const img=event.target;if(img instanceof HTMLImageElement&&img.getAttribute('src')!=='/recipe-image-unavailable.svg'){img.src='/recipe-image-unavailable.svg';img.alt='Recipe photo unavailable';}},true);
+document.addEventListener('error',event=>{const img=event.target;if(img instanceof HTMLImageElement&&img.classList.contains('ingredient-image')){if(img.getAttribute('src')!=='/ingredients/basket.png')img.src='/ingredients/basket.png';else img.hidden=true;return;}if(img instanceof HTMLImageElement&&img.getAttribute('src')!=='/recipe-image-unavailable.svg'){img.src='/recipe-image-unavailable.svg';img.alt='Recipe photo unavailable';}},true);
 
 window.addEventListener('focus',()=>{if(view==='recipes'&&!library.loading)loadRecipes();if(view==='shopping')refreshStorePrices(true);});

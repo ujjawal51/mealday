@@ -30,7 +30,7 @@ try{
  assert.match(await page.locator('.lulu-old-estimate').innerText(),/AED 10.00/);
  assert.match(await page.locator('.shopping-head strong').innerText(),/AED 12.96/);
  assert.match(await page.locator('.shopping-head .section-caption').textContent(),/includes estimates/);
- assert.match(await page.locator('.basket-row .price').last().innerText(),/Est. AED 6/);
+ assert.match(await page.locator('.basket-row .price').last().innerText(),/AED 6.00/);
  assert.equal(await page.locator('.priced-grocery-item').first().locator('.store-product-record:not(.lulu-ingredient)').isVisible(),false);
  await page.getByRole('button',{name:'Change / recheck LuLu product',exact:true}).click();
  await page.getByRole('button',{name:'Use this product',exact:true}).last().click();
@@ -41,7 +41,7 @@ try{
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  // Restore the estimates when references expire, without spending credits.
  await page.evaluate(()=>{window.realTestNow=Date.now;Date.now=()=>window.realTestNow()+360000;window.dispatchEvent(new Event('focus'));});
- await page.waitForFunction(()=>document.querySelector('.basket-row .price')?.textContent.includes('Est. AED 10'));
+ await page.waitForFunction(()=>document.querySelector('.basket-row .price')?.textContent==='AED 10.00');
  assert.match(await page.locator('.shopping-head strong').innerText(),/AED 16/);
  assert.equal(await page.locator('.lulu-old-estimate').count(),0);
  await page.evaluate(()=>{Date.now=window.realTestNow;});
@@ -59,9 +59,9 @@ try{
  await page.locator('#lulu-product-dialog button[type="submit"]').click();
  await page.waitForFunction(()=>document.querySelector('#lulu-product-dialog [role="status"]')?.textContent.includes('could not be reached'));
  assert.match(await page.locator('.lulu-selected-total').innerText(),/No LuLu products/);
- assert.match(await page.locator('.basket-row .price').innerText(),/Est. AED 10/);
+ assert.match(await page.locator('.basket-row .price').innerText(),/AED 10.00/);
  assert.equal(await page.locator('.shopping-head .section-caption').textContent(),'Estimated grocery total');
- assert.equal(await page.locator('.priced-grocery-item .store-product-record:not(.lulu-ingredient)').isVisible(),true);
+ assert.equal(await page.locator('.basket-price-kind').innerText(),'Catalogue estimate');
  assert(!await page.content().then(s=>s.includes('PRIVATE_FIXTURE_KEY')));
  await context.close();console.log('LuLu phone browser passed: main-row selected prices, mixed and complete totals, pack changes, expiry and failure restoration, responsive layout, no secret exposure.');
 }finally{await browser.close();await new Promise(r=>server.close(r));}
