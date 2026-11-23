@@ -21,3 +21,5 @@ Selected choices are transient in-memory references, cleared on account, store, 
 Tests use synthetic supplier responses and isolated users only. CI runs API/parser tests, atomic MongoDB quota tests and an actual phone browser picker test. Deployment smoke checks the exact served widget plus configuration status without spending provider credits. A successful real authenticated lookup in the live app is still required to confirm the user's key and upstream response shape.
 
 Provider documentation: https://reefapi.com/docs/luluhypermarket and https://api.reefapi.com/openapi/luluhypermarket.json
+
+Selected pack totals are displayed as the primary grocery-row price labelled LuLu UAE. The generic estimate is secondary and its no-match message is hidden while a usable selection is active. The grocery header sums selected pack prices plus unmatched catalogue estimates and explicitly labels mixed totals. Fully selected baskets show a LuLu UAE online subtotal. Expiry and failed rechecks restore the original row and total.

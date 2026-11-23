@@ -3,12 +3,13 @@
  'use strict';
  const choices=new Map();let context='',active=null,sequence=0,provider=null,expiryTimer,scheduled=false;
  const node=(tag,copy,cls)=>{const e=document.createElement(tag);if(copy!==undefined)e.textContent=copy;if(cls)e.className=cls;return e;};
+ const setText=(element,value)=>{if(element&&element.textContent!==value)element.textContent=value;};
  const money=value=>'AED '+Number(value).toFixed(2);
  const date=value=>new Date(value).toLocaleString('en-AE',{timeZone:'Asia/Dubai'});
  function kitchen(){try{return JSON.parse(localStorage.getItem('mealday.android.v1'))||{};}catch{return {};}}
  function owner(){try{return JSON.parse(localStorage.getItem('mealday.cloud.v1'))?.owner||'';}catch{return '';}}
  function items(){return (kitchen().result?.items||[]).filter(i=>i.packs>0);}
- function currentKey(){const k=kitchen();return JSON.stringify([owner(),k.profile?.shop,k.profile?.city,items().map(i=>[i.key,i.need,i.have||0,i.unit])]);}
+ function currentKey(){const k=kitchen();return JSON.stringify([owner(),k.profile?.shop,k.profile?.city,items().map(i=>[i.key,i.name,i.need,i.have||0,i.unit])]);}
  function close(){sequence++;active=null;const d=document.getElementById('lulu-product-dialog');if(d){d.close();d.remove();}}
  function stale(choice){return !choice||Date.parse(choice.validUntil)<=Date.now();}
  function render(){
@@ -27,13 +28,38 @@
   const selected=items().map(i=>choices.get(i.key)).filter(c=>c?.quote&&!stale(c)),total=selected.reduce((sum,c)=>sum+Math.round(c.quote.subtotal*100),0)/100;
   const text=selected.length?money(total)+' · '+selected.length+' of '+items().length+' selected items (UAE online reference; delivery fees and extra essentials excluded).':'No LuLu products selected. Catalogue estimates above remain separate.';
   if(panel.querySelector('.lulu-selected-total').textContent!==text)panel.querySelector('.lulu-selected-total').textContent=text;
+  const head=document.querySelector('.shopping-head'),caption=head?.querySelector('.section-caption'),headline=head?.querySelector('strong');
+  if(caption&&headline){
+   if(!caption.dataset.luluOriginal)caption.dataset.luluOriginal=caption.textContent;
+   if(!headline.dataset.luluOriginal)headline.dataset.luluOriginal=headline.textContent;
+   let note=head.querySelector('.lulu-total-note');
+   if(selected.length){
+    const all=selected.length===items().length;
+    const mixed=items().reduce((sum,item)=>sum+Math.round((choices.get(item.key)?.quote?.subtotal??item.cost)*100),0)/100;
+    setText(caption,all?'LuLu UAE online subtotal':'Grocery total · includes estimates');setText(headline,money(mixed));
+    if(!note){note=node('p',undefined,'subtle lulu-total-note');head.append(note);}
+    setText(note,all?'Selected product packs · delivery fees and checkout availability unverified.':selected.length+' of '+items().length+' items use selected LuLu prices; remaining items use catalogue estimates. Delivery fees excluded.');
+   }else{setText(caption,caption.dataset.luluOriginal);setText(headline,headline.dataset.luluOriginal);note?.remove();}
+  }
   for(const input of document.querySelectorAll('input[data-grocery]')){
    const id=input.dataset.grocery,item=items().find(i=>i.key===id),host=input.closest('.priced-grocery-item');if(!item||!host)continue;
+   const choice=choices.get(id),primary=host.querySelector('.basket-row .price'),originalRecord=host.querySelector('.store-product-record:not(.lulu-ingredient)');
+   if(primary){
+    if(!primary.dataset.luluOriginal)primary.dataset.luluOriginal=primary.textContent;
+    primary.classList.toggle('lulu-primary-price',!!choice?.quote);
+    if(choice?.quote){
+     const expected='LuLu UAE'+money(choice.quote.subtotal);
+     if(primary.textContent!==expected)primary.replaceChildren(node('small','LuLu UAE','lulu-price-source'),node('span',money(choice.quote.subtotal)));
+     primary.setAttribute('aria-label','Selected LuLu UAE online price '+money(choice.quote.subtotal));
+    }else{setText(primary,primary.dataset.luluOriginal);primary.removeAttribute('aria-label');}
+   }
+   if(originalRecord)originalRecord.hidden=!!choice?.quote;
+   const version=JSON.stringify([choice?.products[0]?.id,choice?.checkedAt,choice?.quote,!!provider?.configured]);
    let box=host.querySelector('.lulu-ingredient');
-   if(box&&box.dataset.version===String(choices.get(id)?.checkedAt||'empty')+String(!!provider?.configured))continue;
-   box?.remove();box=node('div',undefined,'store-product-record lulu-ingredient');box.dataset.version=String(choices.get(id)?.checkedAt||'empty')+String(!!provider?.configured);
-   const choice=choices.get(id);
+   if(box&&box.dataset.version===version)continue;
+   box?.remove();box=node('div',undefined,'store-product-record lulu-ingredient');box.dataset.version=version;
    if(choice){
+    if(choice.quote)box.append(node('small','Catalogue estimate: AED '+Number(item.cost).toFixed(2)+' · assumed pack '+item.pack+' '+item.unit,'lulu-old-estimate'));
     const p=choice.products[0],link=node('a',p.name);link.href=p.url;link.target='_blank';link.rel='noopener noreferrer';box.append(link);
     box.append(node('p',choice.quote?choice.quote.packs+' × '+p.packLabel+' = '+money(choice.quote.subtotal)+' · LuLu UAE online':money(p.price)+' per '+p.packLabel+' · pack total unavailable'));
     box.append(node('small','Retrieved '+date(choice.checkedAt)+' UAE · '+(p.inStock===true?'Reported in stock':p.inStock===false?'Reported out of stock':'Availability unknown')+' · delivery-area availability unverified.'));
