@@ -18,7 +18,7 @@ try{
  await page.addInitScript(value=>localStorage.setItem('mealday.android.v1',JSON.stringify(value)),state);
  await page.goto(origin);await page.locator('[data-action="go-shopping"]').click();
  await page.waitForFunction(()=>document.querySelector('.store-price-status')?.textContent.includes('No checked product prices'));
- assert.equal(await page.locator('.recorded-price-total').count(),0);assert.match(await page.locator('.basket-row').first().innerText(),/Est\. AED/);
+ assert.equal(await page.locator('.recorded-price-total').count(),0);assert.match(await page.locator('.basket-row').first().innerText(),/Catalogue estimate/);
  mode='complete';await page.locator('[data-action="check-store-prices"]').click();
  await page.waitForSelector('.recorded-price-total');assert.match(await page.locator('.recorded-price-total').innerText(),/21.50/);
  assert.match(await page.locator('.store-price-status').innerText(),/not a live checkout quote/);
@@ -29,7 +29,7 @@ try{
  mode='error';await page.locator('[data-action="check-store-prices"]').click();
  await page.waitForFunction(()=>document.querySelector('.store-price-status')?.textContent.includes('could not be checked'));
  assert.equal(await page.locator('.known-price-subtotal').count(),0);assert.equal(await page.locator('.recorded-price-total').count(),0);
- assert.match(await page.locator('.basket-row').first().innerText(),/Est\. AED/);
+ assert.match(await page.locator('.basket-row').first().innerText(),/Catalogue estimate/);
  console.log('Store pricing browser checks passed: unconnected, exact product packs, dated source, partial stock, failed refresh and responsive layout.');
  await context.close();
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}

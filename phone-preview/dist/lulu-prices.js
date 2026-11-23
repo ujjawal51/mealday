@@ -54,6 +54,9 @@
     }else{setText(primary,primary.dataset.luluOriginal);primary.removeAttribute('aria-label');}
    }
    if(originalRecord)originalRecord.hidden=!!choice?.quote;
+   const pack=host.querySelector('.basket-pack'),kind=host.querySelector('.basket-price-kind');
+   if(pack){if(!pack.dataset.original)pack.dataset.original=pack.textContent;setText(pack,choice?.quote?choice.quote.packs+' × '+choice.products[0].packLabel:pack.dataset.original);}
+   if(kind){if(!kind.dataset.original)kind.dataset.original=kind.textContent;setText(kind,choice?.quote?'LuLu UAE online reference':kind.dataset.original);}
    const version=JSON.stringify([choice?.products[0]?.id,choice?.checkedAt,choice?.quote,!!provider?.configured]);
    let box=host.querySelector('.lulu-ingredient');
    if(box&&box.dataset.version===version)continue;
@@ -119,6 +122,7 @@
   form.onsubmit=event=>{event.preventDefault();if(!search.disabled)lookup();};
   lookup();
  }
+ window.MealdayLuluPrices={choice:key=>{const value=choices.get(key);return value&&!stale(value)&&context===currentKey()?value:null;}};
  function init(){
   new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-view']});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});window.addEventListener('focus',schedule);
