@@ -122,7 +122,7 @@ function initNavigation(){
 function render(){
   onboardingMotion.cancel();
   document.body.dataset.view=view;
-  $('.nav').hidden=['welcome','setup','recipe','account','shopping'].includes(view);
+  $('.nav').hidden=['welcome','setup','recipe','account','shopping','add-grocery'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
     const active=b.dataset.view===view||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
     if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
@@ -136,6 +136,7 @@ function render(){
   if(view==='week')screen.innerHTML=week();
   if(view==='recipes')renderRecipes();
   if(view==='shopping'){screen.innerHTML=shopping();refreshStorePrices();}
+  if(view==='add-grocery')screen.innerHTML=addGrocery();
   if(view==='pantry')screen.innerHTML=pantry();
   if(view==='plan')screen.innerHTML=planSettings();
   if(view==='settings')screen.innerHTML=settings();
@@ -332,9 +333,12 @@ function shopping(){
  (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
 }
+function addGrocery(){
+ return '<section class="add-grocery-page"><div class="grocery-sheet-handle" aria-hidden="true"></div><header class="add-grocery-header">'+button('←','grocery-cancel','grocery-back','','aria-label="Back to grocery list"')+'<h1>Add groceries</h1></header><form id="extra-grocery-form"><label class="field" for="grocery-item">Item</label><input id="grocery-item" class="control" name="item" required maxlength="80" placeholder="e.g. Bananas" autocomplete="off"><label class="field" for="grocery-quantity">Quantity (optional)</label><input id="grocery-quantity" class="control" name="quantity" maxlength="80" placeholder="e.g. 2 lb" autocomplete="off"><button class="button green wide" type="submit" disabled>Add to list</button></form></section>';
+}
 function extraGroceryList(){
  const items=(state.extraGroceries||[]).filter(i=>shoppingVisible(i.checked));if(!items.length)return '';
- return '<section class="grocery-group extra-groceries"><h3><span>Extra essentials</span><span>'+items.length+'</span></h3><div class="basket-items">'+items.map(i=>'<div class="priced-grocery-item"><label class="basket-row '+(i.checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-extra="'+esc(i.id)+'" '+(i.checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><small>Extra item · not included in price totals</small></span></label></div>').join('')+'</div></section>';
+ return '<section class="grocery-group extra-groceries"><h3><span>Extra essentials</span><span>'+items.length+'</span></h3><div class="basket-items">'+items.map(i=>'<div class="priced-grocery-item"><label class="basket-row '+(i.checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-extra="'+esc(i.id)+'" '+(i.checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><small>Extra item · unpriced</small></span><span class="basket-buy-quantity">'+esc(i.quantity||'')+'</span></label></div>').join('')+'</div></section>';
 }
 function groceryListText(){
  const lines=shoppingItems().map(i=>{
@@ -342,7 +346,7 @@ function groceryListText(){
   if(choice?.quote){const p=choice.products[0];return mark+i.name+' — '+choice.quote.packs+' × '+p.packLabel+' ('+p.name+', LuLu UAE online AED '+priceMoney(choice.quote.subtotal)+', retrieved '+choice.checkedAt+')';}
   return mark+(r?.status==='recorded-price'?i.name+' — '+r.packs+' × '+r.packLabel+' ('+r.productName+', recorded AED '+priceMoney(r.subtotal)+', checked '+r.checkedAt+')':i.name+' — '+i.packs+' × '+i.pack+' '+i.unit+' (catalogue estimate AED '+priceMoney(i.cost)+')');
  });
- for(const i of state.extraGroceries||[])lines.push((i.checked?'[x] ':'[ ] ')+i.name+' (extra item, unpriced)');
+ for(const i of state.extraGroceries||[])lines.push((i.checked?'[x] ':'[ ] ')+i.name+(i.quantity?' — '+i.quantity:'')+' (extra item, unpriced)');
  return 'Mealday shopping list\n'+lines.join('\n');
 }
 async function shareGroceries(){
@@ -459,7 +463,7 @@ async function applySwap(id,buttonNode){
   finally{busy=false;render();}
 }
 function setView(target,hash=true){
-  view=Object.hasOwn(labels,target)||['welcome','setup','recipe','account'].includes(target)?target:'week';
+  view=Object.hasOwn(labels,target)||['welcome','setup','recipe','account','add-grocery'].includes(target)?target:'week';
   if(hash&&location.hash!=='#'+view)history.replaceState(null,'','#'+view);
   render();
   window.scrollTo(0,0);
@@ -504,7 +508,8 @@ document.addEventListener('click',async event=>{
   else if(action==='cloud-import'){try{await cloudBackup.importGuest();dialog.close();notify('Guest kitchen import processed. Check Settings for backup status.');}catch(e){notify(e.message);}}
   else if(action==='cloud-logout'){try{await cloudBackup.logout();dialog.close();}catch(e){notify(e.message);}}
   else if(action==='cloud-local'||action==='cloud-remote'){try{await cloudBackup.resolve(action==='cloud-local');dialog.close();}catch(e){notify(e.message);}}
-  else if(action==='grocery-add'){openDialog('Add grocery item','Keep extra essentials alongside your meal ingredients.','<form id="extra-grocery-form"><label class="field">Item name<input class="control" name="item" required maxlength="80" placeholder="e.g. Apples"></label><button class="button primary wide">Add item</button></form>');}
+  else if(action==='grocery-add')setView('add-grocery');
+  else if(action==='grocery-cancel')setView('shopping');
   else if(action==='start-setup'){beginWizard(false);}
   else if(action==='review-setup'){beginWizard(true);}
   else if(action==='preview-slide'){selectSlide(Number(id));}
@@ -615,7 +620,7 @@ document.addEventListener('submit',async event=>{
     event.preventDefault();const data=new FormData(form),day=Number(data.get('day')),time=String(data.get('time'));
     try{const calendar=weeklyCalendar((day+1)%7,time);downloadFile('mealday-weekly-reminder.ics',calendar,'text/calendar;charset=utf-8');state.reminder={day,time};persist();dialog.close();render();notify('Calendar file downloaded. Open it in your calendar to enable reminders.');}catch(e){notify(e.message);}return;
   }
-  if(form.id==='extra-grocery-form'){event.preventDefault();const name=String(new FormData(form).get('item')||'').trim();if(!name)return;state.extraGroceries=[...(state.extraGroceries||[]),{id:crypto.randomUUID(),name,checked:false}];persist();dialog.close();render();return;}
+  if(form.id==='extra-grocery-form'){event.preventDefault();if(view!=='add-grocery'||!form.isConnected)return;const data=new FormData(form),name=String(data.get('item')||'').trim().slice(0,80),quantity=String(data.get('quantity')||'').trim().slice(0,80);if(!name)return;state.extraGroceries=[...(state.extraGroceries||[]),{id:crypto.randomUUID(),name,quantity,checked:false}];shoppingFilter='all';persist();setView('shopping');return;}
   if(form.id==='name-form'){
     event.preventDefault();
     const name=String(new FormData(form).get('name')).trim();
@@ -660,6 +665,7 @@ document.addEventListener('change',event=>{
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
+  if(event.target.form?.id==='extra-grocery-form'){event.target.form.querySelector('button[type=submit]').disabled=!event.target.form.elements.namedItem('item').value.trim();return;}
   if(event.target.id==='recipe-note'&&detail){updateJournal(detail.id,{note:event.target.value});return;}
   if(event.target.id==='wizard-name'&&wizardDraft){
     wizardDraft.name=event.target.value;
@@ -1089,6 +1095,7 @@ function resetKitchen(){
 }
 window.mealdayBack=()=>{
   if(dialog.open){if(!deletingAccount)dialog.close();return true;}
+  if(view==='add-grocery'){setView('shopping',false);return true;}
   if(view==='account'){if(setupAccountBusy)return true;wizardStory='benefits';setupAccountMode='choice';setView('setup',false);return true;}
   if(view==='setup'){backWizard();return true;}
   if(view==='recipe'){leaveRecipe();return true;}

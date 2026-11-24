@@ -37,6 +37,7 @@ test('MongoDB API contract: identity, saving, isolation, conflicts and logout',a
  feedback.history.events[0].undoneAt='2026-11-21T06:00:00.000Z';
  feedback.history.events.push({id:'cook-2',recipeId:'pasta',name:'Pasta',cookedAt:'2026-11-21T07:00:00.000Z',undoneAt:null});
  feedback.state.result=null;
+ feedback.state.extraGroceries=[{id:'extra-quantity',name:'Bananas',quantity:'2 lb',checked:false},{id:'extra-legacy',name:'Kitchen towels',checked:true}];
  assert.equal((await second.call('/api/kitchen','PUT',{revision:2,data:feedback})).status,200);
  assert.deepEqual((await a.call('/api/kitchen')).data.data,feedback,'Both sessions retain rating, note, repeated cooks and undo after a plan reset');
  feedback.state.recipeJournal.pasta={rating:0,note:''};
