@@ -1,4 +1,5 @@
 import backup from './catalogue-backup.json';
+import {matchedMealStyles} from './meal-styles.mjs';
 import {calculateNutrition} from '../dist/nutrition.js';
 import {
   assertPlanPreferences, assertWithinBudget, basket, canonicalIngredients,
@@ -19,8 +20,10 @@ const shops = ['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Ch
 replaceCatalogue(backup.ingredients as any,backup.recipes as Recipe[]);
 const catalog = new Map(recipes.filter(r => r.reviewStatus !== 'draft' && r.mealTypes?.length && Number.isFinite(recipeTotalMinutes(r))).map(r => [r.id,r]));
 let pantryCatalog = canonicalIngredients();
+let styleCache = new Map<string,string[]>();
 export function installLiveCatalogue(snapshot:any){
  replaceCatalogue(snapshot.ingredients,snapshot.recipes);
+ styleCache.clear();
  catalog.clear();for(const r of recipes)catalog.set(r.id,r);
  pantryCatalog=canonicalIngredients();
 }
@@ -51,6 +54,7 @@ function profile(x: any): Profile {
     appliances:selected(x.appliances,appliances,'appliances',false),allergies:selected(x.allergies,allergies,'ingredient exclusions',false),
     cuisines: x.cuisines ? selected(x.cuisines,cuisines,'cuisines') : [x.cuisine],
     preferredStyles: x.priorities ? selected(x.priorities,['Everyday','Quick','Family','Comfort','Fresh','Protein'],'priorities',false) : [],
+    mealStyleRecipeIds: styleRecipeIds(x.priorities||[]),
     allowRepeats:true,
   };
 }
@@ -89,6 +93,14 @@ function recipeNutrition(r:Recipe){
  if(changed.length)return {...result,complete:false,totals:null,missing:[...result.missing,...changed.map(([id])=>({id,name:stock[id].name,reason:'Ingredient identity changed; nutrition references require review.'}))]};
  return result;
 }
+function styleRecipeIds(styles:string[]){
+ if(!styles.length)return undefined;
+ return [...catalog.values()].filter(r=>{
+  let matched=styleCache.get(r.id);
+  if(!matched){matched=matchedMealStyles(r,stock,recipeNutrition(r),recipeTotalMinutes(r));styleCache.set(r.id,matched);}
+  return styles.some(style=>matched!.includes(style));
+ }).map(r=>r.id);
+}
 function source(url?:string) {
   try { const parsed = new URL(url||''); return parsed.protocol==='https:' && !parsed.username && !parsed.password ? parsed.href : undefined; }
   catch { return undefined; }
@@ -97,7 +109,7 @@ function planResult(plan:Slot[],p:Profile,kitchen:Record<string,number>) {
   assertPlanPreferences(plan,p);
   return {plan,meals:plan.map(s=>{
     const recipe=catalog.get(s.recipeId)!;
-    return {...summary(recipe),ingredientCost:ingredientCost(recipe),day:s.day,meal:s.meal};
+    return {...summary(recipe),ingredientCost:ingredientCost(recipe),day:s.day,meal:s.meal,matchedStyles:(p.preferredStyles||[]).filter(style=>styleCache.get(recipe.id)?.includes(style))};
   }),
     items:basket(plan,p,kitchen), total:total(plan,p,kitchen), currency:'AED'};
 }
