@@ -11,7 +11,7 @@ server.on('request',createApp({origin,store:{storePriceRecords:async()=>[]}}));
 const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
 try{
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
- await context.addInitScript(value=>{localStorage.setItem('mealday.android.v1',JSON.stringify(value));Object.defineProperty(navigator,'share',{configurable:true,value:async payload=>{window.sharedShopping=payload.text;}});},state);
+ await context.addInitScript(value=>{if(!localStorage.getItem('mealday.android.v1'))localStorage.setItem('mealday.android.v1',JSON.stringify(value));Object.defineProperty(navigator,'share',{configurable:true,value:async payload=>{window.sharedShopping=payload.text;}});},state);
  const page=await context.newPage();await page.goto(origin);await page.locator('.nav [data-view="shopping"]').click();
  await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();
  await page.waitForFunction(()=>[...document.querySelectorAll('.ingredient-image')].every(img=>img.complete&&img.naturalWidth>0));
