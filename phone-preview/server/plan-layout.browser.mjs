@@ -15,7 +15,7 @@ try{
  const page=await context.newPage();await page.goto(origin);
  await page.getByRole('heading',{name:'Chef Ujjawal!',exact:true}).waitFor();
  assert.match(await page.locator('.plan-salutation').innerText(),/GOOD (MORNING|AFTERNOON|EVENING)/);
- assert.match(await page.locator('.overview-cost').innerText(),/AED 72.35.*90/);
+ assert.match(await page.locator('.overview-cost').innerText(),/AED 72\.35\s*\/ 90/);
  assert.equal(await page.locator('.meal-row').count(),5);
  assert.equal(await page.locator('.meal-day').first().innerText(),'MONDAY');
  assert.match(await page.locator('.grocery-link').innerText(),/2\/2 items bought/);
