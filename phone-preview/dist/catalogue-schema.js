@@ -24,6 +24,8 @@ export function publicRecipe(doc){
  if(r.timing!=null){const t=r.timing;if(!t||!['prepMinutes','cookMinutes','waitMinutes'].every(k=>Number.isInteger(t[k])&&t[k]>=0)||t.prepMinutes+t.cookMinutes+t.waitMinutes!==r.time)return null;timing={prepMinutes:t.prepMinutes,cookMinutes:t.cookMinutes,waitMinutes:t.waitMinutes,estimated:true,...(text(t.waitKind,100)?{waitKind:t.waitKind}:{})};}
  else timing={prepMinutes:0,cookMinutes:r.time,waitMinutes:0,estimated:true}; // Explicit total prevents stale bundled ID-specific timings.
  const data={id:r.id,name:r.name,time:r.time,timing,diet:r.diet,cuisine:r.cuisine,mealTypes:r.mealTypes,appliances:r.appliances,items,steps:r.steps,imageUrl:publicImage(r.imageUrl||doc.photo?.path),tags:Array.isArray(r.tags)?r.tags.filter(x=>text(x,100)).slice(0,20):[],reviewStatus:'preview',image:0};
+ if([1,2].includes(r.mealAssemblyVersion)&&Array.isArray(r.componentNames)&&r.componentNames.length<=8&&r.componentNames.every(x=>text(x,500))){data.mealAssemblyVersion=r.mealAssemblyVersion;data.componentNames=[...r.componentNames];}
+ if(typeof r.mealComplete==='boolean')data.mealComplete=r.mealComplete;
  for(const key of ['familyId','baseRecipeId','authorship','sourceName','licence'])if(text(r[key],1000))data[key]=r[key];
  if(typeof r.sourceUrl==='string'){try{const u=new URL(r.sourceUrl);if(u.protocol==='https:'&&!u.username&&!u.password)data.sourceUrl=u.href;}catch{}}
  return {data,ingredients};

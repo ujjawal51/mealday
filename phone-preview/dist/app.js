@@ -157,7 +157,7 @@ function week(){
     const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
     const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
-    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(m.name)+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
+    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(m.componentNames?.[0]||m.name)+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
   const extras=state.extraGroceries||[],total=items.length+extras.length;
@@ -392,10 +392,8 @@ async function showRecipe(id){
     screen.querySelector('h1')?.focus({preventScroll:true});
   }catch(err){if(active===recipeSequenceId&&view===origin)notify(err.message);}
 }
-function ingredientIcon(item){
-  const symbols=[[/garlic/i,'🧄'],[/tomato/i,'🍅'],[/onion/i,'🧅'],[/pepper|chilli/i,'🌶️'],[/carrot/i,'🥕'],[/egg(?!plant)/i,'🥚'],[/oil/i,'🫒'],[/spice|ground|salt/i,'🧂'],[/rice/i,'🍚'],[/pasta|noodle/i,'🍝'],[/bread|pita/i,'🍞'],[/milk/i,'🥛'],[/cheese/i,'🧀'],[/chicken|beef|lamb/i,'🍗'],[/fish|tuna|salmon/i,'🐟'],[/lemon|lime/i,'🍋'],[/bean|lentil|chickpea/i,'🫘'],[/potato/i,'🥔']];
-  return symbols.find(([pattern])=>pattern.test(item.name))?.[1]||'🥣';
-}
+function ingredientIcon(item){return '<img class="ingredient-image" src="'+ingredientPicture(item.name)+'" alt="" width="24" height="24" loading="lazy">';}
+function mealComponents(r){return r.mealComplete&&r.componentNames?.length>1?'<p class="meal-components">Includes: '+r.componentNames.slice(1).map(esc).join(' · ')+'</p>':'';}
 function renderNutrition(r){
   const result=r.nutrition||calculateNutrition(r.items);
   const metrics=[['kcal','kcal','Calories'],['protein','g','Protein'],['carbs','g','Carbs'],['fat','g','Fats']];
@@ -419,8 +417,8 @@ function renderRecipeDetail(r){
     button('Cook step-by-step','guide-start','guide-start ghost','right')+'<ol>'+r.steps.map(step=>'<li>'+esc(step)+'</li>').join('')+'</ol>':
     '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><p>'+esc(r.steps[guidedStep])+'</p><div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
 
-  screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">Illustrative photo</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
-    button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(r.name)+'</h1>'+
+  screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">Main dish illustration</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
+    button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(r.componentNames?.[0]||r.name)+'</h1>'+mealComponents(r)+
     renderNutrition(r)+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>Cook time: '+esc(r.minutes)+' min <span aria-hidden="true">&nbsp; | &nbsp;</span> Serves: '+people+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+
     '<div class="recipe-tabs" role="group" aria-label="Recipe sections">'+['ingredients','instructions'].map(tab=>button(cap(tab),'recipe-tab','recipe-tab','','data-id="'+tab+'" aria-pressed="'+(detailTab===tab)+'"')).join('')+'</div>'+

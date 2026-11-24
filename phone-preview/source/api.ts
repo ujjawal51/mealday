@@ -9,6 +9,7 @@ import {
 } from '../../src/engine';
 import {mealSwapChoices} from '../../src/mealSwapChoices';
 import {recipeTotalMinutes} from '../../src/recipeTiming';
+import {prepareCompleteMeals} from '../../src/mealCompleteness';
 
 const diets = ['Any','Vegetarian','Eggless vegetarian','Vegan','Pescatarian','Non-vegetarian'];
 const cuisines = ['UAE mix','Emirati','Arab','South Asian','Turkish'];
@@ -17,12 +18,12 @@ const appliances = ['Hob','Oven','Microwave','Air fryer'];
 const allergies = ['Gluten','Milk','Egg','Peanuts','Tree nuts','Fish','Shellfish','Sesame','Soy'];
 const cities = ['Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'];
 const shops = ['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Choithrams','Any supermarket'];
-replaceCatalogue(backup.ingredients as any,backup.recipes as Recipe[]);
+replaceCatalogue(backup.ingredients as any,prepareCompleteMeals(backup.recipes as Recipe[],backup.ingredients as any));
 const catalog = new Map(recipes.filter(r => r.reviewStatus !== 'draft' && r.mealTypes?.length && Number.isFinite(recipeTotalMinutes(r))).map(r => [r.id,r]));
 let pantryCatalog = canonicalIngredients();
 let styleCache = new Map<string,string[]>();
 export function installLiveCatalogue(snapshot:any){
- replaceCatalogue(snapshot.ingredients,snapshot.recipes);
+ replaceCatalogue(snapshot.ingredients,prepareCompleteMeals(snapshot.recipes,snapshot.ingredients));
  styleCache.clear();
  catalog.clear();for(const r of recipes)catalog.set(r.id,r);
  pantryCatalog=canonicalIngredients();
@@ -55,6 +56,7 @@ function profile(x: any): Profile {
     cuisines: x.cuisines ? selected(x.cuisines,cuisines,'cuisines') : [x.cuisine],
     preferredStyles: x.priorities ? selected(x.priorities,['Everyday','Quick','Family','Comfort','Fresh','Protein'],'priorities',false) : [],
     mealStyleRecipeIds: styleRecipeIds(x.priorities||[]),
+    completeMealRecipeIds:[...catalog.values()].filter(r=>r.mealComplete===true).map(r=>r.id),
     allowRepeats:true,
   };
 }
@@ -77,7 +79,7 @@ function slots(x: any,p: Profile): Slot[] {
   });
 }
 function summary(r: Recipe) {
-  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes,imageUrl:source(r.imageUrl)||((r.imageUrl?.startsWith('/')&&!r.imageUrl.startsWith('//'))?r.imageUrl:undefined)};
+  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes,componentNames:r.componentNames,mealComplete:r.mealComplete,imageUrl:source(r.imageUrl)||((r.imageUrl?.startsWith('/')&&!r.imageUrl.startsWith('//'))?r.imageUrl:undefined)};
 }
 function ingredientCost(r: Recipe) {
   const cost=r.items.reduce((sum,[id,amount])=>{
