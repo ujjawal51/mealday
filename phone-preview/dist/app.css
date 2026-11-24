@@ -957,3 +957,4 @@ body[data-view=shopping] .show-prices .store-product-record{padding:0 12px 12px 
 .grocery-list-tools .shopping-toolbar{margin-bottom:10px}
 body[data-view=shopping] .grocery-list-tools>.button{font-size:12px;min-height:36px;border-color:#e4e9da;color:#5a7149;background:white}
 @media(max-width:350px){body[data-view=shopping] main{padding-inline:12px}body[data-view=shopping] .basket-row{grid-template-columns:24px minmax(0,1fr) minmax(30px,62px) 25px;gap:7px;padding-inline:10px}body[data-view=shopping] .basket-row .ingredient-image{width:24px;height:26px}body[data-view=shopping] .basket-row input{width:25px;height:25px}body[data-view=shopping] .basket-row strong{font-size:11px}}
+body[data-view=shopping] .show-prices .basket-row .basket-price-kind,body[data-view=shopping] .show-prices .basket-row .basket-quantities{display:block}

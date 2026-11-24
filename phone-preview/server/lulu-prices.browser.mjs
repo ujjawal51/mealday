@@ -27,6 +27,7 @@ try{
  await page.getByRole('button',{name:'Use this product',exact:true}).first().click();
  await page.waitForFunction(()=>document.querySelector('.basket-row .price')?.textContent.includes('AED 6.96'));
  assert.match(await page.locator('.lulu-ingredient').first().innerText(),/2 × 500 g/);
+ assert.equal(await page.locator('.basket-buy-quantity').first().innerText(),'2 × 500 g');
  assert.match(await page.locator('.lulu-old-estimate').innerText(),/AED 10.00/);
  assert.match(await page.locator('.shopping-head strong').innerText(),/AED 12.96/);
  assert.match(await page.locator('.shopping-head .section-caption').textContent(),/includes estimates/);
@@ -36,6 +37,7 @@ try{
  await page.getByRole('button',{name:'Use this product',exact:true}).last().click();
  await page.waitForFunction(()=>document.querySelector('.basket-row .price')?.textContent.includes('AED 11.95'));
  assert.match(await page.locator('.lulu-ingredient').first().innerText(),/1 × 1.5 kg/);
+ assert.equal(await page.locator('.basket-buy-quantity').first().innerText(),'1.5 kg');
  assert.match(await page.locator('.shopping-head strong').innerText(),/AED 17.95/);
  assert.match(await page.locator('#lulu-price-panel').innerText(),/delivery area.*not verified/);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
