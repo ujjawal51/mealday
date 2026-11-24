@@ -56,6 +56,7 @@ jobs:
           node phone-preview/server/store-prices.browser.mjs
           node phone-preview/server/lulu-prices.browser.mjs
           SHOPPING_SCREENSHOT=1 node phone-preview/server/shopping-list.browser.mjs
+          PLAN_SCREENSHOT=1 node phone-preview/server/plan-layout.browser.mjs
   deployment-smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: account-tests

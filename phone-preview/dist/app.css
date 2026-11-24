@@ -974,3 +974,52 @@ body[data-view=add-grocery] main{padding:0;max-width:600px;margin:auto}
 #extra-grocery-form button{margin-top:clamp(40px,24dvh,300px);min-height:54px;border-radius:999px;font-size:16px}
 #extra-grocery-form button:disabled{background:#eeeeec;color:#a3a6a0;opacity:1;box-shadow:none;cursor:default}
 @media(max-width:340px){.add-grocery-page{padding:18px 18px 28px}.add-grocery-header{margin-bottom:32px}}
+
+/* Plan: a light, compact weekly overview with clear daily meal cards. */
+body[data-view=week]{background:#fafbf8;color:#253126}
+body[data-view=week] main{max-width:620px;margin:auto;padding:24px 20px 110px}
+body[data-view=week] .plan-greeting{gap:8px;margin:0 0 12px}
+.plan-salutation{margin:0;color:#93988e;font-size:10px;line-height:1.4;letter-spacing:1.5px;text-transform:uppercase}
+body[data-view=week] .plan-greeting h1{font-size:25px;line-height:1.15;letter-spacing:-.8px;font-weight:700}
+body[data-view=week] .shop-pill{font-size:11px;min-height:34px;padding:4px 12px 4px 5px;background:#edf5d8;color:#64812b}
+body[data-view=week] .shop-pill svg{background:#fff;width:26px;height:26px;padding:5px}
+body[data-view=week] .plan-overview{gap:10px;margin:0 0 24px}
+body[data-view=week] .overview-card{min-height:74px;padding:12px 13px;border:1px solid #e9ebe6;border-radius:17px;gap:4px;box-shadow:0 1px 2px #273b2010}
+body[data-view=week] .overview-card>span{font-size:8px;letter-spacing:.8px;color:#7c8576;font-weight:650}
+body[data-view=week] .overview-card strong{font-size:17px;font-weight:750;letter-spacing:-.4px}
+body[data-view=week] .overview-cost{display:flex;align-items:baseline;gap:3px;flex-wrap:wrap}
+body[data-view=week] .overview-cost small{font-size:11px;font-weight:500;color:#92968d}
+body[data-view=week] .overview-card progress{height:5px;margin-top:4px;background:#edefe9}
+body[data-view=week] .overview-card progress::-moz-progress-bar{background:#9dce2c;border-radius:20px}
+body[data-view=week] .grocery-link{background:#def5ff;border-color:#def5ff;box-shadow:none}
+body[data-view=week] .grocery-link strong{font-size:15px;letter-spacing:-.3px}
+body[data-view=week] .grocery-link small{font-size:11px;color:#385663}
+body[data-view=week] .grocery-link progress::-webkit-progress-bar{background:#effbff}
+body[data-view=week] .meal-list{gap:19px}
+body[data-view=week] .meal-row{padding:12px 10px;min-height:84px;border:1px solid #e1e5dc;border-radius:17px;box-shadow:0 2px 2px #23321e20;background:#fff}
+body[data-view=week] .meal-day{font-size:8px;line-height:1.6;font-weight:550;letter-spacing:.4px;padding:0 9px;border-color:#e6e9e1;border-radius:6px;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+body[data-view=week] .meal-open{gap:10px;align-items:center;min-height:60px}
+body[data-view=week] .meal-open img{width:60px;height:60px;aspect-ratio:1;object-fit:cover;border-radius:11px}
+body[data-view=week] .meal-name{font-size:14px;line-height:1.3;font-weight:650;margin:0 0 4px;letter-spacing:-.25px}
+body[data-view=week] .meal-tag{padding:2px 6px;font-size:9px;line-height:1.3;border-radius:6px;font-weight:600}
+body[data-view=week] .meal-tag.quick{background:#e5d7fb}
+body[data-view=week] .meal-tag.plant{background:#d0edbd}
+body[data-view=week] .meal-tag.home{background:#c5f1e6}
+body[data-view=week] .meal-open .meta{font-size:10px;gap:0;margin-top:5px;line-height:1.3;color:#7c8277}
+body[data-view=week] .meal-open .meta>span{display:inline-flex;align-items:center;gap:4px;padding:0 8px;border-right:1px solid #eceee7}
+body[data-view=week] .meal-open .meta>span:first-child{padding-left:0}
+body[data-view=week] .meal-open .meta>span:last-child{border:0;padding-right:0}
+body[data-view=week] .meal-open .meta svg{width:12px;height:12px}
+body[data-view=week] .meal-recommendation{font-size:11px;margin-top:5px}
+body[data-view=week] .plan-personalisation{font-size:12px;padding:10px 12px;margin-bottom:20px}
+body[data-view=week] .week-bottom{gap:12px;margin-top:21px;align-items:center}
+body[data-view=week] .week-bottom .button.green{min-height:48px;border-radius:999px;background:linear-gradient(100deg,#7fae2c,#9dd12b);color:#fff;font-size:15px;font-weight:600;box-shadow:0 4px 10px #91b83920}
+body[data-view=week] .week-bottom .button.green svg{width:23px;height:23px;padding:5px;background:white;color:#81ac2c;border-radius:50%;box-sizing:content-box}
+body[data-view=week] .week-bottom .icon-only{width:44px;min-width:44px;min-height:44px;border:1px solid #e4e8dc;border-radius:50%;color:#93bb3f;background:#fff}
+body[data-view=week] .meal-open:focus-visible,body[data-view=week] .overview-card:focus-visible{outline:2px solid #81ad28;outline-offset:4px;border-radius:12px}
+@media(max-width:350px){body[data-view=week] main{padding:20px 14px 105px}body[data-view=week] .meal-open img{width:52px;height:56px}body[data-view=week] .meal-name{font-size:13px}body[data-view=week] .overview-card{padding:10px}body[data-view=week] .overview-card strong{font-size:15px}}
+
+body[data-view=week] .meal-list{gap:16px}
+body[data-view=week] .meal-row{min-height:0;padding:9px 10px}
+body[data-view=week] .meal-open{min-height:56px}
+body[data-view=week] .meal-open img{width:56px;height:56px}
