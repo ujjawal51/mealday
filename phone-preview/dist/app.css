@@ -1073,3 +1073,5 @@ body[data-view=recipe] .personal-notes{display:block;margin-top:18px;font-size:1
 body[data-view=recipe] .personal-notes textarea{font-size:14px;border-color:#e5e8e0;box-shadow:none}
 body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-offset:3px}
 @media(max-width:350px){body[data-view=recipe] main{padding-inline:12px}body[data-view=recipe] .recipe-actions .rating-star{width:23px;min-width:23px}body[data-view=recipe] .recipe-page>h1{font-size:19px}}
+
+.meal-components{font-size:11px;line-height:1.5;color:#6b795b;margin:5px 0 0;overflow-wrap:anywhere}.recipe-page>.meal-components{margin:-5px 0 15px;text-align:center;color:#729239;font-size:12px}.recipe-ingredients .ingredient-image{width:24px;height:24px;object-fit:contain;display:block}

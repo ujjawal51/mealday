@@ -59,6 +59,7 @@ jobs:
           PLAN_SCREENSHOT=1 node phone-preview/server/plan-layout.browser.mjs
           RECIPE_SCREENSHOT=1 node phone-preview/server/recipe-detail.browser.mjs
           node phone-preview/server/filter-flow.browser.mjs
+          COMPLETE_MEAL_SCREENSHOT=1 node phone-preview/server/complete-meals.browser.mjs
   deployment-smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: account-tests

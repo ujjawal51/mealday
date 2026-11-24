@@ -4,6 +4,7 @@ import {build} from 'esbuild';
 import {createHash} from 'node:crypto';
 import {readFile,writeFile,readdir,unlink} from 'node:fs/promises';
 const dist=new URL('../dist/',import.meta.url);
+await build({entryPoints:[fileURLToPath(new URL('../../src/mealCompleteness.ts',import.meta.url))],bundle:true,platform:'neutral',format:'esm',outfile:fileURLToPath(new URL('meal-completeness.js',dist)),target:['es2020'],minify:true});
 await build({entryPoints:[fileURLToPath(new URL('../source/api.ts',import.meta.url))],bundle:true,platform:'neutral',format:'esm',outfile:fileURLToPath(new URL('api.js',dist)),target:['es2020'],minify:true});
 const engine=await build({entryPoints:[fileURLToPath(new URL('../dist/recipe-engine-entry.js',import.meta.url))],bundle:true,write:false,format:'iife',target:['es2018'],minify:true,legalComments:'inline'});
 const engineData=engine.outputFiles[0].contents;
