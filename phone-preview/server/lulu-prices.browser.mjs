@@ -18,7 +18,7 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844}});
  await context.addCookies([{name:'mealday_session',value:'a'.repeat(43),url:origin}]);
  const page=await context.newPage();await page.goto(origin);
- await page.waitForSelector('body[data-view="week"]');await page.locator('[data-action="go-shopping"]').click();
+ await page.waitForSelector('body[data-view="week"]');await page.locator('[data-action="go-shopping"]').click();await page.getByRole('button',{name:'Prices & product options',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.lulu-connection')?.textContent.includes('configured'));
  assert.equal(calls,0);
  await page.getByRole('button',{name:'Find LuLu price',exact:true}).first().click();
@@ -47,7 +47,7 @@ try{
  await page.evaluate(()=>{Date.now=window.realTestNow;});
  // With a fully matched single-item basket, label the total as a LuLu reference subtotal.
  state.result.items.pop();state.result.total=10;
- await page.reload();await page.waitForSelector('body[data-view="week"]');await page.locator('[data-action="go-shopping"]').click();
+ await page.reload();await page.waitForSelector('body[data-view="week"]');await page.locator('[data-action="go-shopping"]').click();await page.getByRole('button',{name:'Prices & product options',exact:true}).click();
  await page.getByRole('button',{name:'Find LuLu price',exact:true}).click();await page.getByRole('button',{name:'Use this product',exact:true}).last().click();
  await page.waitForFunction(()=>document.querySelector('.basket-row .price')?.textContent.includes('AED 11.95'));
  assert.equal(await page.locator('.shopping-head .section-caption').textContent(),'LuLu UAE online subtotal');

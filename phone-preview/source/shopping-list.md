@@ -9,3 +9,5 @@ LuLu selections continue to control primary prices and pack labels. The total an
 Ingredient images: Google Noto Emoji 3D, bundled locally with LICENSE and NOTICE under dist/ingredients. Unknown ingredients use a basket illustration; failed image requests fall back locally.
 
 Browser regression checks cover progress, filters, reset, image availability, native share and clipboard failure fallback, preservation of notes and plan contents, and 320px/390px horizontal fit. Existing supplier browser checks cover price selection, expiry and recheck failures.
+
+The clean grocery screen uses a centered This week / Grocery list header, actual selected-store badge with done count, Copy list and Share actions, a green Add groceries action, grouped white cards with right-side circular bought controls, and a dedicated Back control. Bottom navigation is hidden on this dedicated screen. List tools remain below the groceries. Prices and supplier controls are hidden by default and can be opened with Prices & product options; selected retailer pack quantities still update the buying quantity in the clean row.
