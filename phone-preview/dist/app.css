@@ -1023,3 +1023,53 @@ body[data-view=week] .meal-list{gap:16px}
 body[data-view=week] .meal-row{min-height:0;padding:9px 10px}
 body[data-view=week] .meal-open{min-height:56px}
 body[data-view=week] .meal-open img{width:56px;height:56px}
+
+/* Recipe detail: large photo, concise cards and a clear ingredient/method switch. */
+body[data-view=recipe]{background:#fafbf8;color:#28332a}
+body[data-view=recipe] main{max-width:620px;margin:auto;padding:18px 16px 48px}
+body[data-view=recipe] .recipe-cover{border-radius:18px;background:#e8ece2}
+body[data-view=recipe] .recipe-cover>img{aspect-ratio:1.15;width:100%;object-fit:cover}
+body[data-view=recipe] .recipe-cover>.button{top:8px;width:38px;height:38px;min-width:38px;min-height:38px;border:1px solid #efefeb;background:#fffffff0;box-shadow:none}
+body[data-view=recipe] .recipe-cover>.button svg{width:20px;height:20px}
+body[data-view=recipe] .recipe-cover .cover-back{left:8px}
+body[data-view=recipe] .recipe-cover .cover-save{right:8px}
+body[data-view=recipe] .recipe-photo-caption{font-size:9px;padding:3px 7px;background:#ffffffdc;color:#5b6257;border-radius:6px}
+body[data-view=recipe] .recipe-page>h1{font-size:21px;line-height:1.25;letter-spacing:-.6px;font-weight:650;margin:14px 0 15px}
+body[data-view=recipe] .recipe-panel,body[data-view=recipe] .recipe-ingredients{border:1px solid #e5e8e0;border-radius:15px;box-shadow:0 2px 2px #22331c20;background:#fff}
+body[data-view=recipe] .recipe-panel{padding:16px 12px;margin-bottom:12px}
+body[data-view=recipe] .recipe-kicker{font-size:9px;font-weight:600;letter-spacing:.8px;color:#8ab336;margin:0 0 15px}
+body[data-view=recipe] .macro-grid{gap:6px;margin:0 0 10px}
+body[data-view=recipe] .macro-value{gap:5px}
+body[data-view=recipe] .macro-value strong{font-size:23px;font-weight:500}
+body[data-view=recipe] .macro-value strong span{font-size:1em}
+body[data-view=recipe] .macro-value small{font-size:10px;font-weight:400;color:#858a80}
+body[data-view=recipe] .nutrition-status{font-size:10px;line-height:1.4;color:#7e8675}
+body[data-view=recipe] .nutrition-status.pending{color:#966b20}
+body[data-view=recipe] .nutrition-explanation{font-size:11px;line-height:1.5;color:#7a6951;margin:6px 0 0}
+body[data-view=recipe] .nutrition-sources{font-size:12px;margin-top:9px;padding-top:8px}
+body[data-view=recipe] .nutrition-sources summary{font-size:10px;font-weight:500;min-height:24px;color:#789349}
+body[data-view=recipe] .recipe-actions{padding-bottom:9px}
+body[data-view=recipe] .recipe-actions>p{font-size:12px;color:#4c554a;margin:0 0 12px;line-height:1.5}
+body[data-view=recipe] .recipe-actions>div{padding-top:5px;gap:3px}
+body[data-view=recipe] .recipe-actions .cook-check{font-size:11px;padding:0;gap:5px;min-height:36px}
+body[data-view=recipe] .cook-check svg{width:17px;height:17px;border:1px solid #d7dcd1;border-radius:50%;padding:2px;color:#a3ad96}
+body[data-view=recipe] .cook-check.marked svg{color:#78a12b;border-color:#9bc849;background:#edf6dd}
+body[data-view=recipe] .recipe-actions .rating-star{width:25px;min-width:25px;min-height:36px;color:#b3b9ad}
+body[data-view=recipe] .recipe-rating .rating-star svg{width:17px;height:17px}
+body[data-view=recipe] .recipe-tabs{margin:19px auto 12px;padding:3px;gap:2px;background:#eff0eb}
+body[data-view=recipe] .recipe-tabs .button{font-size:11px;min-height:31px;padding:5px 19px;color:#73796d}
+body[data-view=recipe] .recipe-tabs .button[aria-pressed=true]{color:#8bb236;background:white}
+body[data-view=recipe] .recipe-ingredients{overflow:hidden}
+body[data-view=recipe] .recipe-ingredients li{min-height:46px;padding:12px 14px;grid-template-columns:22px minmax(0,1fr) auto;gap:8px}
+body[data-view=recipe] .recipe-ingredients li+li{border-color:#f0f1ed}
+body[data-view=recipe] .recipe-ingredients li>span{font-size:19px}
+body[data-view=recipe] .recipe-ingredients strong{font-size:12px;font-weight:550}
+body[data-view=recipe] .recipe-ingredients small{font-size:11px;color:#7b8273;font-weight:450}
+body[data-view=recipe] .recipe-quality{margin-top:15px;text-align:left;padding:12px 14px;color:#737b69;box-shadow:none}
+body[data-view=recipe] .recipe-quality summary{font-size:11px;font-weight:550;cursor:pointer;min-height:24px;line-height:24px}
+body[data-view=recipe] .recipe-quality p{font-size:12px;line-height:1.6}
+body[data-view=recipe] .recipe-instructions li{font-size:13px;line-height:1.7;border-color:#e5e8e0;box-shadow:none}
+body[data-view=recipe] .personal-notes{display:block;margin-top:18px;font-size:12px;color:#77816b}
+body[data-view=recipe] .personal-notes textarea{font-size:14px;border-color:#e5e8e0;box-shadow:none}
+body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-offset:3px}
+@media(max-width:350px){body[data-view=recipe] main{padding-inline:12px}body[data-view=recipe] .recipe-actions .rating-star{width:23px;min-width:23px}body[data-view=recipe] .recipe-page>h1{font-size:19px}}

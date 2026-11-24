@@ -75,6 +75,7 @@ try{
  await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Regag with cheese');
  await first.page.locator('[data-action="recipe"][data-id="draft-regag-cheese"]').click();
  await first.page.locator('.nutrition-status.complete').waitFor();
+ await first.page.locator('.recipe-quality summary').click();
  assert.match(await first.page.locator('.recipe-quality').innerText(),/Kitchen test pending/);
  assert.match(await first.page.locator('.recipe-quality').innerText(),/have not been validated/);
  assert.match(await first.page.locator('.recipe-quality').innerText(),/scaled to/);
