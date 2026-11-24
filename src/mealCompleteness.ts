@@ -14,7 +14,7 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
  let r={...original,items:original.items.map(pair=>[...pair] as [string,number]),steps:[...original.steps]},time=recipeTotalMinutes(original);
  let names=[...(original.componentNames||[original.name])],added=0;
  const ready=(id:string,unit:string,pattern:RegExp)=>stock[id]?.unit===unit&&stock[id]?.kind==='plant'&&pattern.test(stock[id].name);
- const canRoti=ready('quality-roti','pieces',/roti/i),canRice=ready('rice','g',/rice/i),canChickpeas=ready('chickpeas','g',/chickpea/i);
+ const canRoti=ready('quality-roti','pieces',/roti/i),canRice=ready('rice','g',/rice/i),canChickpeas=ready('chickpeas','g',/chickpea/i)&&/drained|canned|cooked/i.test(stock.chickpeas.name);
  // Upgrade only the exact, identifiable Mealday v1 side instructions and quantities.
  const owned=original.mealAssemblyVersion===1&&original.authorship?.startsWith('Mealday meal combination;')&&names.join(' + ')===original.name;
  if(owned&&r.cuisine==='South Asian'&&names.includes('Rice')&&canRoti&&!/rice|biryani|pulao|khichdi|poha/i.test(names[0])){
@@ -40,7 +40,7 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
  const roles=completeMealRoles(r,stock);
  const append=(name:string,items:[string,number][],step:string,minutes:number)=>{if(items.some(([id])=>!stock[id]))return false;r.items.push(...items);r.steps.push(step);names.push(name);added+=minutes;return true;};
  if(!roles.protein){
-  if(r.cuisine==='South Asian'&&ready('lentils','g',/lentil/i))append('Red lentil dal',[['lentils',60],['cumin',1],['oil',5],['tomato',60]],'For the dal, rinse 60 g dry red lentils per person. Warm the measured oil, cumin and chopped tomato; add lentils and water according to the packet. Simmer until fully tender, adding water as needed. Allow 30 minutes and serve alongside the main.',30);
+  if(r.cuisine==='South Asian'&&ready('lentils','g',/red lentil/i))append('Red lentil dal',[['lentils',60],['cumin',1],['oil',5],['tomato',60]],'For the dal, rinse 60 g dry red lentils per person. Warm the measured oil, cumin and chopped tomato; add lentils and water according to the packet. Simmer until fully tender, adding water as needed. Allow 30 minutes and serve alongside the main.',30);
   else if(canChickpeas)append(r.cuisine==='Emirati'?'Dango-inspired chickpeas':'Cumin chickpeas',[['chickpeas',120],['cumin',1],['oil',5]],'For the chickpea side, use 120 g drained canned chickpeas per person. Warm the measured oil and cumin, add chickpeas and a splash of water, and heat thoroughly. Allow 10 minutes. This is a quick meal pairing, not a kitchen-tested traditional recipe.',10);
  }
  if(!roles.starch){
@@ -62,6 +62,6 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
  if(r.items.some(([id,n])=>id==='regag'&&n>=1)&&!/regag|bread|thareed/i.test(allNames))names.push('Regag bread');
  if(r.items.some(([id,n])=>id==='cucumber'&&n>=80)&&!/cucumber|salad/i.test(allNames))names.push('Cucumber side');
  const changed=names.length>1&&JSON.stringify(names)!==JSON.stringify(original.componentNames);
- return {...r,name:changed&&names.join(' + ').length<=500?names.join(' + '):r.name,time:total,timing:{prepMinutes:0,cookMinutes:total,waitMinutes:0,estimated:true},mealAssemblyVersion:2,mealComplete:true,componentNames:names,
+ return {...r,name:changed&&names.join(' + ').length<=500?names.join(' + '):r.name,time:total,timing:{prepMinutes:0,cookMinutes:total,waitMinutes:0,estimated:true},mealAssemblyVersion:2,mealComplete:true,componentNames:names,qualityReview:added||time!==recipeTotalMinutes(original)?undefined:r.qualityReview,
   ...(added?{authorship:(r.authorship||'Mealday')+'; Mealday complete meal pairing; quantities per person, total elapsed time estimated; kitchen testing pending'}:{})};
 });}

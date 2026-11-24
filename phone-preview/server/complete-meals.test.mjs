@@ -22,6 +22,7 @@ test('Full meals use cuisine-specific staples/protein with complete quantities, 
 });
 test('Already complete dishes never receive duplicate rice/bread and missing definitions never invent side prices',()=>{
  const r=backup.recipes.find(r=>r.id==='arab-mujadara'),full=prepareCompleteMeals([r],stock)[0];assert.deepEqual(full.items,r.items);assert.equal(full.time,r.time);assert.equal(full.mealComplete,true);
+ const dryStock={...stock,chickpeas:{...stock.chickpeas,name:'Dried chickpeas'}};assert.equal(prepareCompleteMeals([simple('Emirati')],dryStock)[0].mealComplete,false,'Dry chickpeas cannot use a ten-minute canned side method');
  const partial=prepareCompleteMeals([simple('South Asian')],{carrot:stock.carrot,onion:stock.onion,oil:stock.oil})[0];assert.equal(partial.mealComplete,false);assert.deepEqual(partial.items,simple('South Asian').items);
  const edited={...full,items:[['carrot',150]],mealComplete:true,mealAssemblyVersion:2};assert.equal(prepareCompleteMeals([edited],{carrot:stock.carrot})[0].mealComplete,false,'Stale complete flags cannot bypass content checks');
 });

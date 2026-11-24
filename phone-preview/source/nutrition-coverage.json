@@ -258,15 +258,15 @@
     },
     {
       "id": "desi-chaat-complete",
-      "name": "Chana chaat lunchbox + Rice + Cucumber",
+      "name": "Chana chaat lunchbox + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 516.5150000000001,
-        "protein": 18.887,
-        "carbs": 99.559,
-        "fat": 5.8383
+        "kcal": 554.655,
+        "protein": 21.36,
+        "carbs": 91.205,
+        "fat": 13.354299999999999
       },
       "referenceAssumptions": []
     },
@@ -291,15 +291,15 @@
     },
     {
       "id": "arab-ful",
-      "name": "Ful medames with Arabic bread",
+      "name": "Ful medames with Arabic bread + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 420.5436546923794,
-        "protein": 19.888,
-        "carbs": 72.304,
-        "fat": 6.376693064748804
+        "kcal": 432.5436546923794,
+        "protein": 20.408,
+        "carbs": 75.208,
+        "fat": 6.464693064748804
       },
       "referenceAssumptions": []
     },
@@ -347,15 +347,15 @@
     },
     {
       "id": "desi-chilla",
-      "name": "Besan chilla with cucumber",
+      "name": "Besan chilla with cucumber + Roti",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 304.56465469237946,
-        "protein": 14.70504,
-        "carbs": 41.8973,
-        "fat": 8.893143064748806
+        "kcal": 561.7046546923794,
+        "protein": 21.45604,
+        "carbs": 81.5433,
+        "fat": 16.805143064748805
       },
       "referenceAssumptions": []
     },
@@ -375,15 +375,15 @@
     },
     {
       "id": "desi-chana",
-      "name": "Chana masala with Arabic bread",
+      "name": "Chana masala with Roti",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 502.15365469237946,
-        "protein": 19.979,
-        "carbs": 83.923,
-        "fat": 10.918893064748804
+        "kcal": 594.2936546923795,
+        "protein": 21.269999999999996,
+        "carbs": 90.149,
+        "fat": 18.1108930647488
       },
       "referenceAssumptions": [
         {
@@ -566,19 +566,23 @@
     },
     {
       "id": "draft-spinach-chickpea-stew",
-      "name": "Emirati-inspired spinach & chickpea stew",
+      "name": "Emirati-inspired spinach & chickpea stew + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 485.9424967976426,
-        "protein": 21.02037157894737,
-        "carbs": 80.7848105263158,
-        "fat": 10.454328854222489
+        "kcal": 467.9424967976426,
+        "protein": 19.560371578947368,
+        "carbs": 78.3648105263158,
+        "fat": 10.73432885422249
       },
       "referenceAssumptions": [
         {
           "id": "bzar",
+          "type": "recipe-reference"
+        },
+        {
+          "id": "regag",
           "type": "recipe-reference"
         }
       ]
@@ -675,57 +679,57 @@
     },
     {
       "id": "draft-chickpea-fatteh",
-      "name": "Chickpea yogurt fatteh-style bowl",
+      "name": "Chickpea yogurt fatteh-style bowl + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 524.4399999999999,
-        "protein": 22.657000000000004,
-        "carbs": 79.27799999999999,
-        "fat": 14.0878
+        "kcal": 536.4399999999999,
+        "protein": 23.177000000000003,
+        "carbs": 82.18199999999999,
+        "fat": 14.175799999999999
       },
       "referenceAssumptions": []
     },
     {
       "id": "draft-tabbouleh-complete",
-      "name": "Parsley & bulgur tabbouleh + Red Lentil Dal + Cucumber",
+      "name": "Parsley & bulgur tabbouleh + Cumin chickpeas + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 562.1495022001865,
-        "protein": 24.7055,
-        "carbs": 92.38749999999999,
-        "fat": 14.24082196834689
+        "kcal": 517.7495022001865,
+        "protein": 18.405499999999996,
+        "carbs": 81.34749999999998,
+        "fat": 16.928821968346895
       },
       "referenceAssumptions": []
     },
     {
       "id": "draft-fattoush-complete",
-      "name": "Fattoush-style crispy pita salad + Red Lentil Dal + Cucumber",
+      "name": "Fattoush-style crispy pita salad + Cumin chickpeas + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 535.2080403232347,
-        "protein": 23.505499999999998,
-        "carbs": 87.26549999999999,
-        "fat": 12.315864742447367
+        "kcal": 490.8080403232348,
+        "protein": 17.205499999999997,
+        "carbs": 76.2255,
+        "fat": 15.00386474244737
       },
       "referenceAssumptions": []
     },
     {
       "id": "draft-tahini-fish",
-      "name": "Tahini lemon fish with rice",
+      "name": "Tahini lemon fish with rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 477.0129237539036,
-        "protein": 35.392,
-        "carbs": 52.836,
-        "fat": 13.247514451799043
+        "kcal": 489.0129237539036,
+        "protein": 35.912000000000006,
+        "carbs": 55.739999999999995,
+        "fat": 13.335514451799042
       },
       "referenceAssumptions": []
     },
@@ -759,15 +763,15 @@
     },
     {
       "id": "draft-bulgur-pilaf-complete",
-      "name": "Tomato bulgur pilaf + Red Lentil Dal + Cucumber",
+      "name": "Tomato bulgur pilaf + Cumin chickpeas + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 618.6073093847588,
-        "protein": 27.136,
-        "carbs": 110.11099999999998,
-        "fat": 11.809786129497606
+        "kcal": 574.2073093847588,
+        "protein": 20.836,
+        "carbs": 99.07099999999998,
+        "fat": 14.497786129497609
       },
       "referenceAssumptions": []
     },
@@ -927,15 +931,15 @@
     },
     {
       "id": "draft-aloo-gobi-complete",
-      "name": "Aloo & courgette sabzi with pita + Red Lentil Dal + Cucumber",
+      "name": "Aloo & courgette sabzi with Roti + Red Lentil Dal + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 636.4673093847589,
-        "protein": 27.0614,
-        "carbs": 110.19449999999999,
-        "fat": 11.922036129497606
+        "kcal": 728.6073093847588,
+        "protein": 28.352399999999996,
+        "carbs": 116.42049999999999,
+        "fat": 19.11403612949761
       },
       "referenceAssumptions": []
     },
@@ -974,7 +978,7 @@
     },
     {
       "id": "draft-chicken-keema",
-      "name": "Chopped chicken & peas curry",
+      "name": "Chopped chicken & peas curry + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -993,29 +997,29 @@
     },
     {
       "id": "draft-cucumber-raita-chana-complete",
-      "name": "Chana & cucumber raita bowl + Rice + Cucumber",
+      "name": "Chana & cucumber raita bowl + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 546.115,
-        "protein": 21.023,
-        "carbs": 97.175,
-        "fat": 9.0663
+        "kcal": 584.255,
+        "protein": 23.496,
+        "carbs": 88.821,
+        "fat": 16.5823
       },
       "referenceAssumptions": []
     },
     {
       "id": "emirati-dango",
-      "name": "Dango with regag",
+      "name": "Dango with regag + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 402.37500000000006,
-        "protein": 16.818999999999996,
-        "carbs": 72.9102,
-        "fat": 6.1015
+        "kcal": 414.37500000000006,
+        "protein": 17.338999999999995,
+        "carbs": 75.8142,
+        "fat": 6.1895
       },
       "referenceAssumptions": [
         {
@@ -1030,15 +1034,15 @@
     },
     {
       "id": "emirati-bajella",
-      "name": "Bajella with regag",
+      "name": "Bajella with regag + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 349.515,
-        "protein": 17.811,
-        "carbs": 67.32900000000001,
-        "fat": 1.8603
+        "kcal": 361.515,
+        "protein": 18.331,
+        "carbs": 70.233,
+        "fat": 1.9483000000000001
       },
       "referenceAssumptions": [
         {
@@ -1110,7 +1114,7 @@
     },
     {
       "id": "emirati-muhammar-fish",
-      "name": "Muhammar rice with pan-cooked fish",
+      "name": "Muhammar rice with pan-cooked fish + Cucumber side",
       "missing": [
         "Pure date syrup (dibs)"
       ],
@@ -1515,7 +1519,7 @@
     },
     {
       "id": "kaggle-111-complete",
-      "name": "North Indian Style Mushroom Matar Masala + Red Lentil Dal + Rice + Cucumber",
+      "name": "North Indian Style Mushroom Matar Masala + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Ginger Garlic Paste"
       ],
@@ -1551,15 +1555,15 @@
     },
     {
       "id": "kaggle-307",
-      "name": "Rajasthani Gatte Ki Sabzi Recipe With Onion & Garlic",
+      "name": "Rajasthani Gatte Ki Sabzi Recipe With Onion & Garlic + Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 314.21659438781734,
-        "protein": 12.8822475,
-        "carbs": 30.818387499999996,
-        "fat": 15.883053131175972
+        "kcal": 583.3565943878173,
+        "protein": 20.1532475,
+        "carbs": 73.3683875,
+        "fat": 23.88305313117597
       },
       "referenceAssumptions": [
         {
@@ -1593,43 +1597,43 @@
     },
     {
       "id": "kaggle-552-complete",
-      "name": "Shepuchi Bhaji Recipe (Stir Fried Maharashtrian Suva/Dill Greens) + Red Lentil Dal + Rice + Cucumber",
+      "name": "Shepuchi Bhaji Recipe (Stir Fried Maharashtrian Suva/Dill Greens) + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 648.815010671975,
-        "protein": 25.245599999999996,
-        "carbs": 108.465825,
-        "fat": 13.958341195924774
+        "kcal": 686.9550106719751,
+        "protein": 27.7186,
+        "carbs": 100.11182500000001,
+        "fat": 21.474341195924772
       },
       "referenceAssumptions": []
     },
     {
       "id": "kaggle-576-complete",
-      "name": "Marwadi Gatte Ki Kadhi Recipe - Gram Flour Dumpling In Yogurt Curry + Rice + Cucumber",
+      "name": "Marwadi Gatte Ki Kadhi Recipe - Gram Flour Dumpling In Yogurt Curry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 366.9861759082218,
-        "protein": 11.939712499999999,
-        "carbs": 68.3992375,
-        "fat": 4.8992
+        "kcal": 405.1261759082218,
+        "protein": 14.4127125,
+        "carbs": 60.0452375,
+        "fat": 12.415199999999999
       },
       "referenceAssumptions": []
     },
     {
       "id": "kaggle-807-complete",
-      "name": "Bihari Aloo Bhujiya + Red Lentil Dal + Rice + Cucumber",
+      "name": "Bihari Aloo Bhujiya + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 716.7271823079315,
-        "protein": 23.778599999999997,
-        "carbs": 119.60924999999999,
-        "fat": 17.18318521582935
+        "kcal": 754.8671823079314,
+        "protein": 26.2516,
+        "carbs": 111.25524999999999,
+        "fat": 24.69918521582935
       },
       "referenceAssumptions": []
     },
@@ -1710,7 +1714,7 @@
     },
     {
       "id": "kaggle-1633-complete",
-      "name": "Red Lentil Curry Without Coconut + Rice + Cucumber",
+      "name": "Red Lentil Curry Without Coconut + Roti + Cucumber",
       "missing": [
         "Kasuri Methi (Dried Fenugreek Leaves)"
       ],
@@ -1728,7 +1732,7 @@
     },
     {
       "id": "kaggle-1756-complete",
-      "name": "Spicy Haryana Style Egg Curry + Rice + Cucumber",
+      "name": "Spicy Haryana Style Egg Curry + Roti + Cucumber",
       "missing": [
         "Ginger Garlic Paste"
       ],
@@ -1750,7 +1754,7 @@
     },
     {
       "id": "kaggle-1846-complete",
-      "name": "Kadai Egg Masala + Rice + Cucumber",
+      "name": "Kadai Egg Masala + Roti + Cucumber",
       "missing": [
         "Kasuri Methi (Dried Fenugreek Leaves)"
       ],
@@ -1763,7 +1767,7 @@
     },
     {
       "id": "kaggle-2209-complete",
-      "name": "Mooli Bhurji + Red Lentil Dal + Rice + Cucumber",
+      "name": "Mooli Bhurji + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Amchur (Dry Mango Powder)"
       ],
@@ -1781,15 +1785,15 @@
     },
     {
       "id": "kaggle-2311-complete",
-      "name": "Carrot & Green Bean Thoran + Red Lentil Dal + Rice + Cucumber",
+      "name": "Carrot & Green Bean Thoran + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 612.0307121552587,
-        "protein": 22.2368125,
-        "carbs": 104.21611250000001,
-        "fat": 13.288325363310406
+        "kcal": 650.1707121552586,
+        "protein": 24.7098125,
+        "carbs": 95.8621125,
+        "fat": 20.804325363310404
       },
       "referenceAssumptions": [
         {
@@ -1818,15 +1822,15 @@
     },
     {
       "id": "kaggle-2535-complete",
-      "name": "Cabbage Yogurt Curry + Rice + Cucumber",
+      "name": "Cabbage Yogurt Curry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 392.95261525157144,
-        "protein": 12.17123236,
-        "carbs": 70.81247922,
-        "fat": 7.313456166919849
+        "kcal": 431.09261525157143,
+        "protein": 14.64423236,
+        "carbs": 62.45847922,
+        "fat": 14.829456166919847
       },
       "referenceAssumptions": [
         {
@@ -1850,15 +1854,15 @@
     },
     {
       "id": "kaggle-2628-complete",
-      "name": "Rajasthani Kadhi + Rice + Cucumber",
+      "name": "Rajasthani Kadhi + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 326.17067578871894,
-        "protein": 8.804064999999998,
-        "carbs": 60.58519749999999,
-        "fat": 5.406683749999999
+        "kcal": 364.3106757887189,
+        "protein": 11.277064999999999,
+        "carbs": 52.23119749999999,
+        "fat": 12.922683749999997
       },
       "referenceAssumptions": [
         {
@@ -1869,7 +1873,7 @@
     },
     {
       "id": "kaggle-2689-complete",
-      "name": "Dubki Wale Aloo Recipe - Potatoes In A Spicy North Indian Gravy + Red Lentil Dal + Rice + Cucumber",
+      "name": "Dubki Wale Aloo Recipe - Potatoes In A Spicy North Indian Gravy + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Amchur (Dry Mango Powder)",
         "Kasuri Methi (Dried Fenugreek Leaves)"
@@ -1940,7 +1944,7 @@
     },
     {
       "id": "kaggle-2934-complete",
-      "name": "Kerala Style Tomato Fry + Red Lentil Dal + Rice + Cucumber",
+      "name": "Kerala Style Tomato Fry + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Ginger Garlic Paste"
       ],
@@ -1972,15 +1976,15 @@
     },
     {
       "id": "kaggle-3106-complete",
-      "name": "Parwal Masala Recipe - No Onion No Garlic + Red Lentil Dal + Rice + Cucumber",
+      "name": "Parwal Masala Recipe - No Onion No Garlic + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 542.7729818680737,
-        "protein": 22.067804999999996,
-        "carbs": 99.799,
-        "fat": 7.915499836611466
+        "kcal": 580.9129818680736,
+        "protein": 24.540804999999995,
+        "carbs": 91.445,
+        "fat": 15.431499836611463
       },
       "referenceAssumptions": [
         {
@@ -2028,15 +2032,15 @@
     },
     {
       "id": "kaggle-3316-complete",
-      "name": "Bihari Style Baingan Chokha + Red Lentil Dal + Rice + Cucumber",
+      "name": "Bihari Style Baingan Chokha + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 615.3772276839812,
-        "protein": 21.493167279999998,
-        "carbs": 99.71833801,
-        "fat": 15.711652971264844
+        "kcal": 653.5172276839812,
+        "protein": 23.966167279999997,
+        "carbs": 91.36433801,
+        "fat": 23.227652971264845
       },
       "referenceAssumptions": [
         {
@@ -2066,15 +2070,15 @@
     },
     {
       "id": "kaggle-3467-complete",
-      "name": "Kongunadu Urulai Kurma Recipe (Curried Potatoes from Kongunadu) + Red Lentil Dal + Rice + Cucumber",
+      "name": "Kongunadu Urulai Kurma Recipe (Curried Potatoes from Kongunadu) + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 689.0402461621007,
-        "protein": 24.279824999999995,
-        "carbs": 118.14338749999999,
-        "fat": 15.250797130336789
+        "kcal": 727.1802461621007,
+        "protein": 26.752824999999998,
+        "carbs": 109.78938749999999,
+        "fat": 22.76679713033679
       },
       "referenceAssumptions": []
     },
@@ -2108,15 +2112,15 @@
     },
     {
       "id": "kaggle-4290-complete",
-      "name": "Matar Chi Usal Recipe - Green Peas In A Onion Tomato Gravy + Red Lentil Dal + Rice + Cucumber",
+      "name": "Matar Chi Usal Recipe - Green Peas In A Onion Tomato Gravy + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 667.6391347915435,
-        "protein": 25.450006,
-        "carbs": 116.65525399999999,
-        "fat": 12.52360256968958
+        "kcal": 705.7791347915434,
+        "protein": 27.923005999999997,
+        "carbs": 108.30125399999999,
+        "fat": 20.039602569689578
       },
       "referenceAssumptions": [
         {
@@ -2131,15 +2135,15 @@
     },
     {
       "id": "kaggle-4381-complete",
-      "name": "Mushroom Do Pyaza + Red Lentil Dal + Rice + Cucumber",
+      "name": "Mushroom Do Pyaza + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 588.0899400189113,
-        "protein": 25.6377,
-        "carbs": 104.9955625,
-        "fat": 9.554215358474128
+        "kcal": 626.2299400189113,
+        "protein": 28.110699999999998,
+        "carbs": 96.64156249999999,
+        "fat": 17.07021535847413
       },
       "referenceAssumptions": [
         {
@@ -2169,7 +2173,7 @@
     },
     {
       "id": "kaggle-5192-complete",
-      "name": "Sesame Peanut Potato Mix + Red Lentil Dal + Rice + Cucumber",
+      "name": "Sesame Peanut Potato Mix + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Amchur (Dry Mango Powder)"
       ],
@@ -2182,7 +2186,7 @@
     },
     {
       "id": "kaggle-5297-complete",
-      "name": "Muga Ambat + Rice + Cucumber",
+      "name": "Muga Ambat + Roti + Cucumber",
       "missing": [
         "Tamarind Water"
       ],
@@ -2209,29 +2213,29 @@
     },
     {
       "id": "kaggle-5553",
-      "name": "Tofu & Capsicum Paratha Recipe (Stuffed Tofu Flatbread)",
+      "name": "Tofu & Capsicum Paratha Recipe (Stuffed Tofu Flatbread) + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 329.7244479014922,
-        "protein": 14.444566000000002,
-        "carbs": 61.07143018,
-        "fat": 5.758199620530799
+        "kcal": 341.7244479014922,
+        "protein": 14.964566000000001,
+        "carbs": 63.975430180000004,
+        "fat": 5.846199620530799
       },
       "referenceAssumptions": []
     },
     {
       "id": "kaggle-5768-complete",
-      "name": "Kodava Kummu Curry Recipe- Coorg Style Mushroom Curry + Red Lentil Dal + Rice + Cucumber",
+      "name": "Kodava Kummu Curry Recipe- Coorg Style Mushroom Curry + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 755.061588634162,
-        "protein": 32.513315,
-        "carbs": 125.88363499999998,
-        "fat": 18.078277652199453
+        "kcal": 793.201588634162,
+        "protein": 34.986315000000005,
+        "carbs": 117.52963499999998,
+        "fat": 25.59427765219945
       },
       "referenceAssumptions": []
     },
@@ -2251,15 +2255,15 @@
     },
     {
       "id": "kaggle-6066-complete",
-      "name": "Radish Greens Poriyal Recipe (South Indian Style Radish Greens Stir Fry) + Red Lentil Dal + Rice + Cucumber",
+      "name": "Radish Greens Poriyal Recipe (South Indian Style Radish Greens Stir Fry) + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 773.0998100717064,
-        "protein": 30.55658734,
-        "carbs": 150.68569480000002,
-        "fat": 8.462100836611466
+        "kcal": 811.2398100717064,
+        "protein": 33.029587340000006,
+        "carbs": 142.3316948,
+        "fat": 15.978100836611466
       },
       "referenceAssumptions": [
         {
@@ -2298,15 +2302,15 @@
     },
     {
       "id": "kaggle-7381",
-      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread)",
+      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread) + Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 170.35628532653183,
-        "protein": 6.4348,
-        "carbs": 24.2172,
-        "fat": 5.001053543725323
+        "kcal": 439.49628532653185,
+        "protein": 13.7058,
+        "carbs": 66.7672,
+        "fat": 13.001053543725321
       },
       "referenceAssumptions": []
     },
@@ -2371,15 +2375,15 @@
     },
     {
       "id": "kaggle-8027-complete",
-      "name": "Green Beans Fry + Red Lentil Dal + Rice + Cucumber",
+      "name": "Green Beans Fry + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 592.715434384759,
-        "protein": 23.196849999999998,
-        "carbs": 103.46875,
-        "fat": 11.605911129497606
+        "kcal": 630.8554343847588,
+        "protein": 25.66985,
+        "carbs": 95.11475,
+        "fat": 19.121911129497605
       },
       "referenceAssumptions": [
         {
@@ -2431,15 +2435,15 @@
     },
     {
       "id": "kaggle-8481-complete",
-      "name": "Stuffed Ridge Gourd + Red Lentil Dal + Rice + Cucumber",
+      "name": "Stuffed Ridge Gourd + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 559.8411546923794,
-        "protein": 23.023349999999997,
-        "carbs": 99.8512,
-        "fat": 8.900843064748804
+        "kcal": 597.9811546923795,
+        "protein": 25.496349999999996,
+        "carbs": 91.49719999999999,
+        "fat": 16.416843064748804
       },
       "referenceAssumptions": []
     },
@@ -2458,7 +2462,7 @@
     },
     {
       "id": "kaggle-8930-complete",
-      "name": "Cauliflower And Red Bell Pepper Stir Fry + Red Lentil Dal + Rice + Cucumber",
+      "name": "Cauliflower And Red Bell Pepper Stir Fry + Red Lentil Dal + Roti + Cucumber",
       "missing": [
         "Kasuri Methi (Dried Fenugreek Leaves)"
       ],
@@ -2476,29 +2480,29 @@
     },
     {
       "id": "kaggle-10015",
-      "name": "Bhaat Na Rasawala Muthia Dhokla | Gujarati Rasiya Dhokla",
+      "name": "Bhaat Na Rasawala Muthia Dhokla | Gujarati Rasiya Dhokla + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 153.76747876290628,
-        "protein": 5.76466853,
-        "carbs": 23.623707180000007,
-        "fat": 4.01788357
+        "kcal": 165.76747876290628,
+        "protein": 6.284668529999999,
+        "carbs": 26.527707180000007,
+        "fat": 4.1058835700000005
       },
       "referenceAssumptions": []
     },
     {
       "id": "kaggle-10044-complete",
-      "name": "Bandhakopir Ghonto Recipe (Bengali Style Cabbage Fry) + Red Lentil Dal + Rice + Cucumber",
+      "name": "Bandhakopir Ghonto Recipe (Bengali Style Cabbage Fry) + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 621.2202641881804,
-        "protein": 23.627079999999996,
-        "carbs": 109.94018750000001,
-        "fat": 11.332192493006822
+        "kcal": 659.3602641881803,
+        "protein": 26.100079999999995,
+        "carbs": 101.5861875,
+        "fat": 18.84819249300682
       },
       "referenceAssumptions": [
         {
@@ -2509,15 +2513,15 @@
     },
     {
       "id": "kaggle-12374-complete",
-      "name": "Gujarati Whole-Moong Tadka + Rice + Cucumber",
+      "name": "Gujarati Whole-Moong Tadka + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 416.4607805010654,
-        "protein": 16.044159999999998,
-        "carbs": 80.74599,
-        "fat": 3.540956532374402
+        "kcal": 454.6007805010654,
+        "protein": 18.51716,
+        "carbs": 72.39198999999999,
+        "fat": 11.0569565323744
       },
       "referenceAssumptions": [
         {
@@ -2528,15 +2532,15 @@
     },
     {
       "id": "kaggle-12788-complete",
-      "name": "Cabbage And Carrot Thoran + Red Lentil Dal + Rice + Cucumber",
+      "name": "Cabbage And Carrot Thoran + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 639.091672548334,
-        "protein": 22.79752,
-        "carbs": 106.96553,
-        "fat": 15.063380880336787
+        "kcal": 677.231672548334,
+        "protein": 25.27052,
+        "carbs": 98.61153,
+        "fat": 22.579380880336785
       },
       "referenceAssumptions": []
     },
@@ -2556,15 +2560,15 @@
     },
     {
       "id": "kaggle-13487-complete",
-      "name": "Amritsari Sookhi Dal + Red Lentil Dal + Rice + Cucumber",
+      "name": "Amritsari Sookhi Dal + Red Lentil Dal + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 646.3201960903991,
-        "protein": 27.729487499999998,
-        "carbs": 113.829475,
-        "fat": 10.428117130336789
+        "kcal": 684.460196090399,
+        "protein": 30.2024875,
+        "carbs": 105.47547499999999,
+        "fat": 17.94411713033679
       },
       "referenceAssumptions": [
         {
@@ -2644,15 +2648,15 @@
     },
     {
       "id": "emirati-chicken-harees",
-      "name": "Chicken Harees",
+      "name": "Chicken Harees + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 568.02,
-        "protein": 50.1246,
-        "carbs": 64.515,
-        "fat": 13.134500000000001
+        "kcal": 580.02,
+        "protein": 50.644600000000004,
+        "carbs": 67.419,
+        "fat": 13.2225
       },
       "referenceAssumptions": []
     },
@@ -2685,15 +2689,15 @@
     },
     {
       "id": "mealday-lamb-khuzi",
-      "name": "Home-Style Lamb Khuzi",
+      "name": "Home-Style Lamb Khuzi + Cucumber side + Rice",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 1060.9255317183336,
-        "protein": 47.312233157894724,
-        "carbs": 74.95532105263158,
-        "fat": 62.38352048254545
+        "kcal": 1072.9255317183336,
+        "protein": 47.83223315789473,
+        "carbs": 77.85932105263157,
+        "fat": 62.47152048254545
       },
       "referenceAssumptions": [
         {
@@ -2779,15 +2783,15 @@
     },
     {
       "id": "mealday-chicken-jareesh",
-      "name": "Chicken Jareesh",
+      "name": "Chicken Jareesh + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 602.445,
-        "protein": 48.80219999999999,
-        "carbs": 69.4264,
-        "fat": 15.651100000000001
+        "kcal": 614.445,
+        "protein": 49.322199999999995,
+        "carbs": 72.3304,
+        "fat": 15.7391
       },
       "referenceAssumptions": []
     },
@@ -3048,7 +3052,7 @@
     },
     {
       "id": "mealday-chicken-kabsa",
-      "name": "Chicken Kabsa",
+      "name": "Chicken Kabsa + Rice",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -3081,15 +3085,15 @@
     },
     {
       "id": "draft-shawarma-chicken",
-      "name": "Chicken Shawarma Wrap",
+      "name": "Chicken Shawarma Wrap + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 466.08365469237947,
-        "protein": 40.84179999999999,
-        "carbs": 35.384,
-        "fat": 17.470693064748804
+        "kcal": 478.08365469237947,
+        "protein": 41.361799999999995,
+        "carbs": 38.288,
+        "fat": 17.558693064748805
       },
       "referenceAssumptions": []
     },
@@ -3109,21 +3113,21 @@
     },
     {
       "id": "mealday-shish-tawook",
-      "name": "Shish Tawook Rice",
+      "name": "Shish Tawook Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 547.0043856308553,
-        "protein": 40.4163,
-        "carbs": 60.458000000000006,
-        "fat": 14.579171677698564
+        "kcal": 559.0043856308553,
+        "protein": 40.9363,
+        "carbs": 63.36200000000001,
+        "fat": 14.667171677698564
       },
       "referenceAssumptions": []
     },
     {
       "id": "mealday-lamb-mansaf",
-      "name": "Home-Style Lamb Mansaf",
+      "name": "Home-Style Lamb Mansaf + Cucumber side + Rice",
       "missing": [
         "Jameed (dried fermented yogurt)"
       ],
@@ -3136,7 +3140,7 @@
     },
     {
       "id": "mealday-chicken-maqluba",
-      "name": "Chicken Maqluba",
+      "name": "Chicken Maqluba + Rice",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -3150,15 +3154,15 @@
     },
     {
       "id": "mealday-baked-kibbeh",
-      "name": "Baked Beef Kibbeh",
+      "name": "Baked Beef Kibbeh + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 577.2368475078072,
-        "protein": 41.687569999999994,
-        "carbs": 47.138200000000005,
-        "fat": 25.37024890359809
+        "kcal": 589.2368475078072,
+        "protein": 42.20757,
+        "carbs": 50.04220000000001,
+        "fat": 25.45824890359809
       },
       "referenceAssumptions": []
     },
@@ -3192,15 +3196,15 @@
     },
     {
       "id": "mealday-freekeh-chicken",
-      "name": "Freekeh with Chicken",
+      "name": "Freekeh with Chicken + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 546.3983249823332,
-        "protein": 45.97737,
-        "carbs": 46.38019999999999,
-        "fat": 14.996670290648325
+        "kcal": 558.3983249823332,
+        "protein": 46.497370000000004,
+        "carbs": 49.284199999999984,
+        "fat": 15.084670290648324
       },
       "referenceAssumptions": [
         {
@@ -3295,15 +3299,15 @@
     },
     {
       "id": "mealday-egg-fatteh",
-      "name": "Egg Fatteh",
+      "name": "Egg Fatteh + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 481.0136546923794,
-        "protein": 23.489199999999997,
-        "carbs": 42.27,
-        "fat": 24.205693064748807
+        "kcal": 493.0136546923794,
+        "protein": 24.009199999999996,
+        "carbs": 45.17400000000001,
+        "fat": 24.29369306474881
       },
       "referenceAssumptions": []
     },
@@ -3491,7 +3495,7 @@
     },
     {
       "id": "mealday-hawawshi",
-      "name": "Beef Hawawshi",
+      "name": "Beef Hawawshi + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -3677,15 +3681,15 @@
     },
     {
       "id": "mealday-chicken-karahi-complete",
-      "name": "Chicken Karahi + Rice + Cucumber",
+      "name": "Chicken Karahi + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 579.6343093847588,
-        "protein": 45.9012,
-        "carbs": 64.3732,
-        "fat": 15.10336612949761
+        "kcal": 617.7743093847588,
+        "protein": 48.3742,
+        "carbs": 56.0192,
+        "fat": 22.61936612949761
       },
       "referenceAssumptions": []
     },
@@ -3742,15 +3746,15 @@
     },
     {
       "id": "mealday-nihari-complete",
-      "name": "Beef Nihari + Rice + Cucumber",
+      "name": "Beef Nihari + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 659.6133093847588,
-        "protein": 51.25944,
-        "carbs": 70.57509999999999,
-        "fat": 19.718936129497614
+        "kcal": 697.7533093847587,
+        "protein": 53.73244,
+        "carbs": 62.22109999999999,
+        "fat": 27.234936129497612
       },
       "referenceAssumptions": [
         {
@@ -3780,15 +3784,15 @@
     },
     {
       "id": "mealday-seekh-kebab-complete",
-      "name": "Beef Seekh Kebab + Rice + Cucumber",
+      "name": "Beef Seekh Kebab + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 622.9666546923795,
-        "protein": 42.13,
-        "carbs": 58.072199999999995,
-        "fat": 23.763393064748808
+        "kcal": 661.1066546923795,
+        "protein": 44.603,
+        "carbs": 49.718199999999996,
+        "fat": 31.279393064748806
       },
       "referenceAssumptions": [
         {
@@ -3799,15 +3803,15 @@
     },
     {
       "id": "mealday-chicken-tikka",
-      "name": "Chicken Tikka Rice",
+      "name": "Chicken Tikka Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 549.7611165693312,
-        "protein": 45.36014,
-        "carbs": 58.86690000000001,
-        "fat": 13.450800290648326
+        "kcal": 561.7611165693312,
+        "protein": 45.880140000000004,
+        "carbs": 61.77090000000001,
+        "fat": 13.538800290648325
       },
       "referenceAssumptions": [
         {
@@ -3818,15 +3822,15 @@
     },
     {
       "id": "mealday-lamb-keema-complete",
-      "name": "Lamb Keema with Peas + Rice + Cucumber",
+      "name": "Lamb Keema with Peas + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 893.2608475078072,
-        "protein": 39.17023999999999,
-        "carbs": 74.1781,
-        "fat": 48.826978903598075
+        "kcal": 931.4008475078072,
+        "protein": 41.64323999999999,
+        "carbs": 65.8241,
+        "fat": 56.34297890359807
       },
       "referenceAssumptions": [
         {
@@ -3837,43 +3841,43 @@
     },
     {
       "id": "mealday-rogan-josh-complete",
-      "name": "Lamb Rogan Josh + Rice + Cucumber",
+      "name": "Lamb Rogan Josh + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 869.6758093847588,
-        "protein": 39.15397,
-        "carbs": 57.52865,
-        "fat": 52.80925612949762
+        "kcal": 907.8158093847588,
+        "protein": 41.62697,
+        "carbs": 49.17465,
+        "fat": 60.32525612949762
       },
       "referenceAssumptions": []
     },
     {
       "id": "mealday-coconut-fish-curry-complete",
-      "name": "South Indian Coconut Fish Curry + Rice + Cucumber",
+      "name": "South Indian Coconut Fish Curry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 767.6793580240594,
-        "protein": 40.060919999999996,
-        "carbs": 70.2332,
-        "fat": 38.15202890359808
+        "kcal": 805.8193580240594,
+        "protein": 42.533919999999995,
+        "carbs": 61.8792,
+        "fat": 45.66802890359808
       },
       "referenceAssumptions": []
     },
     {
       "id": "mealday-chicken-65-complete",
-      "name": "Chicken 65 + Rice + Cucumber",
+      "name": "Chicken 65 + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 1209.3423962233983,
-        "protein": 48.441159999999996,
-        "carbs": 71.59479999999999,
-        "fat": 81.08521339921036
+        "kcal": 1247.4823962233982,
+        "protein": 50.914159999999995,
+        "carbs": 63.24079999999999,
+        "fat": 88.60121339921037
       },
       "referenceAssumptions": []
     },
@@ -3926,15 +3930,15 @@
     },
     {
       "id": "mealday-anda-paratha",
-      "name": "Anda Paratha",
+      "name": "Anda Paratha + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 491.5858475078071,
-        "protein": 20.7314,
-        "carbs": 60.278499999999994,
-        "fat": 17.68182890359809
+        "kcal": 503.5858475078071,
+        "protein": 21.2514,
+        "carbs": 63.18249999999999,
+        "fat": 17.76982890359809
       },
       "referenceAssumptions": []
     },
@@ -3973,29 +3977,29 @@
     },
     {
       "id": "mealday-egg-drop-curry-complete",
-      "name": "Coconut Egg-Drop Curry + Rice + Cucumber",
+      "name": "Coconut Egg-Drop Curry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 702.8848961471077,
-        "protein": 21.767639999999997,
-        "carbs": 68.2837,
-        "fat": 39.83562167769857
+        "kcal": 741.0248961471077,
+        "protein": 24.240639999999996,
+        "carbs": 59.9297,
+        "fat": 47.35162167769857
       },
       "referenceAssumptions": []
     },
     {
       "id": "mealday-aloo-egg-curry-complete",
-      "name": "Aloo Egg Curry + Rice + Cucumber",
+      "name": "Aloo Egg Curry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 590.0181165693311,
-        "protein": 22.367239999999995,
-        "carbs": 87.1943,
-        "fat": 17.317400290648326
+        "kcal": 628.1581165693312,
+        "protein": 24.840239999999998,
+        "carbs": 78.8403,
+        "fat": 24.833400290648324
       },
       "referenceAssumptions": [
         {
@@ -4006,15 +4010,15 @@
     },
     {
       "id": "mealday-egg-keema-complete",
-      "name": "Egg Keema + Rice + Cucumber",
+      "name": "Egg Keema + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 517.3373856308554,
-        "protein": 22.410359999999997,
-        "carbs": 70.268,
-        "fat": 16.400071677698566
+        "kcal": 555.4773856308555,
+        "protein": 24.88336,
+        "carbs": 61.914,
+        "fat": 23.916071677698568
       },
       "referenceAssumptions": [
         {
@@ -4044,15 +4048,15 @@
     },
     {
       "id": "mealday-egg-masala-dry-complete",
-      "name": "Boiled Egg Masala Dry + Rice + Cucumber",
+      "name": "Boiled Egg Masala Dry + Roti + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 481.7261165693312,
-        "protein": 19.312359999999998,
-        "carbs": 62.709599999999995,
-        "fat": 17.08035029064833
+        "kcal": 519.8661165693312,
+        "protein": 21.78536,
+        "carbs": 54.355599999999995,
+        "fat": 24.596350290648328
       },
       "referenceAssumptions": [
         {
@@ -4185,7 +4189,7 @@
     },
     {
       "id": "coverage-em-tomato-fava",
-      "name": "Tomato Fava Loomi Stew",
+      "name": "Tomato Fava Loomi Stew + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4222,7 +4226,7 @@
     },
     {
       "id": "coverage-ar-chickpea-potato",
-      "name": "Cumin Potato Chickpea Supper",
+      "name": "Cumin Potato Chickpea Supper + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4347,7 +4351,7 @@
     },
     {
       "id": "coverage-em-protein-3",
-      "name": "Beef Potato Breakfast Hash",
+      "name": "Beef Potato Breakfast Hash + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4421,7 +4425,7 @@
     },
     {
       "id": "coverage-ar-protein-2",
-      "name": "Cumin Beef Pepper Toast",
+      "name": "Cumin Beef Pepper Toast + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4505,15 +4509,15 @@
     },
     {
       "id": "coverage-desi-protein-5",
-      "name": "Tuna Chana Breakfast Toast",
+      "name": "Tuna Chana Breakfast Toast + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 455.9536546923795,
-        "protein": 35.99979999999999,
-        "carbs": 55.559,
-        "fat": 10.490793064748805
+        "kcal": 467.9536546923795,
+        "protein": 36.5198,
+        "carbs": 58.462999999999994,
+        "fat": 10.578793064748805
       },
       "referenceAssumptions": []
     },
@@ -4608,7 +4612,7 @@
     },
     {
       "id": "coverage-ar-cold-2",
-      "name": "Pepper Chickpea Lemon Pita",
+      "name": "Pepper Chickpea Lemon Pita + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4622,7 +4626,7 @@
     },
     {
       "id": "coverage-ar-cold-3",
-      "name": "Tomato Cucumber Ful Salad Plate",
+      "name": "Tomato Cucumber Ful Salad Plate + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4832,21 +4836,21 @@
     },
     {
       "id": "coverage-ar-protein-5",
-      "name": "Tuna Chickpea Breakfast Toast",
+      "name": "Tuna Chickpea Breakfast Toast + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 467.30365469237944,
-        "protein": 36.408,
-        "carbs": 60.098,
-        "fat": 9.469893064748806
+        "kcal": 479.30365469237944,
+        "protein": 36.928000000000004,
+        "carbs": 63.001999999999995,
+        "fat": 9.557893064748805
       },
       "referenceAssumptions": []
     },
     {
       "id": "coverage-desi-cold-0",
-      "name": "Kachumber Chana Bread Plate",
+      "name": "Kachumber Chana Bread Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4874,7 +4878,7 @@
     },
     {
       "id": "coverage-desi-cold-2",
-      "name": "Pepper Chana Chaat Toast",
+      "name": "Pepper Chana Chaat Toast + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4888,7 +4892,7 @@
     },
     {
       "id": "coverage-desi-cold-3",
-      "name": "Tomato Fava Chaat Bread Plate",
+      "name": "Tomato Fava Chaat Bread Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4977,7 +4981,7 @@
     },
     {
       "id": "coverage-em-cold-2",
-      "name": "Pepper Dango Cold Regag Plate",
+      "name": "Pepper Dango Cold Regag Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -4996,7 +5000,7 @@
     },
     {
       "id": "coverage-em-cold-3",
-      "name": "Tomato Cucumber Bajella Plate",
+      "name": "Tomato Cucumber Bajella Plate + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5015,7 +5019,7 @@
     },
     {
       "id": "coverage-em-cold-4",
-      "name": "Carrot Tomato Dango Salad Plate",
+      "name": "Carrot Tomato Dango Salad Plate + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5137,15 +5141,15 @@
     },
     {
       "id": "coverage-em-protein-5",
-      "name": "Tuna Dango Breakfast Plate",
+      "name": "Tuna Dango Breakfast Plate + Cucumber side + Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 448.05365469237944,
-        "protein": 34.769999999999996,
-        "carbs": 58.236000000000004,
-        "fat": 9.526893064748805
+        "kcal": 460.05365469237944,
+        "protein": 35.29,
+        "carbs": 61.14,
+        "fat": 9.614893064748804
       },
       "referenceAssumptions": [
         {
@@ -5160,7 +5164,7 @@
     },
     {
       "id": "quality-aloo-matar-chana",
-      "name": "Aloo Matar Chana with Roti",
+      "name": "Aloo Matar Chana with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5174,7 +5178,7 @@
     },
     {
       "id": "quality-palak-paneer",
-      "name": "Palak Paneer Roti Plate",
+      "name": "Palak Paneer Roti Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5211,7 +5215,7 @@
     },
     {
       "id": "quality-soya-keema",
-      "name": "Soya Keema & Roti",
+      "name": "Soya Keema & Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5234,7 +5238,7 @@
     },
     {
       "id": "quality-mushroom-chana",
-      "name": "Mushroom Chana Masala Rice",
+      "name": "Mushroom Chana Masala Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5267,15 +5271,15 @@
     },
     {
       "id": "quality-chickpea-fatteh",
-      "name": "Chickpea Yogurt Fatteh",
+      "name": "Chickpea Yogurt Fatteh + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 616.6636546923795,
-        "protein": 24.5808,
-        "carbs": 84.02299999999998,
-        "fat": 21.8576930647488
+        "kcal": 628.6636546923795,
+        "protein": 25.1008,
+        "carbs": 86.92699999999998,
+        "fat": 21.945693064748802
       },
       "referenceAssumptions": []
     },
@@ -5359,7 +5363,7 @@
     },
     {
       "id": "quality-moong-roti",
-      "name": "Moong Dal Tadka with Roti",
+      "name": "Moong Dal Tadka with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5373,7 +5377,7 @@
     },
     {
       "id": "quality-rajma-rice",
-      "name": "Quick Rajma Rice Bowl",
+      "name": "Quick Rajma Rice Bowl + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5406,7 +5410,7 @@
     },
     {
       "id": "quality-paneer-bhurji",
-      "name": "Paneer Bhurji Roti Plate",
+      "name": "Paneer Bhurji Roti Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5439,7 +5443,7 @@
     },
     {
       "id": "quality-curd-rice-sundal",
-      "name": "Curd Rice with Chana Sundal",
+      "name": "Curd Rice with Chana Sundal + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5453,7 +5457,7 @@
     },
     {
       "id": "quality-aubergine-besan",
-      "name": "Aubergine Besan Skillet with Roti",
+      "name": "Aubergine Besan Skillet with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5481,7 +5485,7 @@
     },
     {
       "id": "quality-mujadara",
-      "name": "Quick Lentil Mujadara-Style Rice",
+      "name": "Quick Lentil Mujadara-Style Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5495,7 +5499,7 @@
     },
     {
       "id": "quality-musabbaha",
-      "name": "Warm Musabbaha with Pita",
+      "name": "Warm Musabbaha with Pita + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5509,7 +5513,7 @@
     },
     {
       "id": "quality-lentil-tabbouleh",
-      "name": "Lentil Tabbouleh Pita Plate",
+      "name": "Lentil Tabbouleh Pita Plate + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5523,7 +5527,7 @@
     },
     {
       "id": "quality-fasolia",
-      "name": "White Bean Tomato Rice Bowl",
+      "name": "White Bean Tomato Rice Bowl + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5551,7 +5555,7 @@
     },
     {
       "id": "quality-batata-hummus",
-      "name": "Batata Harra & Rustic Hummus Plate",
+      "name": "Batata Harra & Rustic Hummus Plate + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5807,7 +5811,7 @@
     },
     {
       "id": "target-em-vineleaf-rice",
-      "name": "Mushroom & Lentil Vine-Leaf Parcels",
+      "name": "Mushroom & Lentil Vine-Leaf Parcels + Rice",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -5890,7 +5894,7 @@
     },
     {
       "id": "target-em-corn-orange-salad",
-      "name": "Charred Corn & Black-Eyed Bean Orange Salad",
+      "name": "Charred Corn & Black-Eyed Bean Orange Salad + Regag bread",
       "missing": [
         "Canned black-eyed beans (drained weight)"
       ],
@@ -5995,17 +5999,21 @@
     },
     {
       "id": "target-em-lamb-arayes",
-      "name": "Bzar Lamb-Stuffed Breakfast Pita",
+      "name": "Bzar Lamb-Stuffed Breakfast Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 634.6224967976425,
-        "protein": 30.181971578947373,
-        "carbs": 40.88321052631579,
-        "fat": 38.41552885422248
+        "kcal": 616.6224967976425,
+        "protein": 28.72197157894737,
+        "carbs": 38.46321052631579,
+        "fat": 38.69552885422248
       },
       "referenceAssumptions": [
+        {
+          "id": "regag",
+          "type": "recipe-reference"
+        },
         {
           "id": "bzar",
           "type": "recipe-reference"
@@ -6094,15 +6102,15 @@
     },
     {
       "id": "target-em-tuna-oat-pancakes",
-      "name": "Tuna & Corn Oat Breakfast Pancakes",
+      "name": "Tuna & Corn Oat Breakfast Pancakes + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 409.6376908940132,
-        "protein": 32.72222294736842,
-        "carbs": 38.700486315789476,
-        "fat": 14.625333151382774
+        "kcal": 421.6376908940132,
+        "protein": 33.242222947368425,
+        "carbs": 41.60448631578947,
+        "fat": 14.713333151382773
       },
       "referenceAssumptions": [
         {
@@ -6113,15 +6121,15 @@
     },
     {
       "id": "target-em-chicken-date-flatcakes",
-      "name": "Chicken & Date Besan Breakfast Flatcakes",
+      "name": "Chicken & Date Besan Breakfast Flatcakes + Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 430.4565751045396,
-        "protein": 36.75626010526316,
-        "carbs": 43.355067368421054,
-        "fat": 11.872076730330145
+        "kcal": 661.4565751045395,
+        "protein": 41.55426010526316,
+        "carbs": 94.25906736842106,
+        "fat": 12.356076730330145
       },
       "referenceAssumptions": [
         {
@@ -6132,15 +6140,15 @@
     },
     {
       "id": "target-em-mackerel-ricecakes",
-      "name": "Mackerel & Saffron Rice Breakfast Cakes",
+      "name": "Mackerel & Saffron Rice Breakfast Cakes + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 589.0763856308554,
-        "protein": 34.574180000000005,
-        "carbs": 44.66668,
-        "fat": 28.708641677698562
+        "kcal": 601.0763856308554,
+        "protein": 35.09418000000001,
+        "carbs": 47.570679999999996,
+        "fat": 28.796641677698563
       },
       "referenceAssumptions": []
     },
@@ -6228,12 +6236,16 @@
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 557.5858441660637,
-        "protein": 46.81676010526316,
-        "carbs": 70.23806736842106,
-        "fat": 9.582598117380384
+        "kcal": 539.5858441660636,
+        "protein": 45.356760105263156,
+        "carbs": 67.81806736842105,
+        "fat": 9.862598117380383
       },
       "referenceAssumptions": [
+        {
+          "id": "regag",
+          "type": "recipe-reference"
+        },
         {
           "id": "loomi",
           "type": "product-reference"
@@ -6326,17 +6338,21 @@
     },
     {
       "id": "target-em-beef-oat-kofta",
-      "name": "Baked Bzar Beef & Oat Kofta with Pita",
+      "name": "Baked Bzar Beef & Oat Kofta with Regag bread",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 600.8224967976427,
-        "protein": 41.75797157894737,
-        "carbs": 55.20121052631579,
-        "fat": 22.999528854222483
+        "kcal": 582.8224967976427,
+        "protein": 40.29797157894737,
+        "carbs": 52.78121052631579,
+        "fat": 23.279528854222484
       },
       "referenceAssumptions": [
+        {
+          "id": "regag",
+          "type": "recipe-reference"
+        },
         {
           "id": "bzar",
           "type": "recipe-reference"
@@ -6368,15 +6384,15 @@
     },
     {
       "id": "target-ar-bissara",
-      "name": "Fava Bissara Breakfast with Pita",
+      "name": "Fava Bissara Breakfast with Pita + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 431.3171165693312,
-        "protein": 19.606,
-        "carbs": 71.1284,
-        "fat": 8.096890290648325
+        "kcal": 443.3171165693312,
+        "protein": 20.126,
+        "carbs": 74.0324,
+        "fat": 8.184890290648324
       },
       "referenceAssumptions": []
     },
@@ -6422,7 +6438,7 @@
     },
     {
       "id": "target-ar-zaatar-chickpea-manakish",
-      "name": "Zaatar Manakish with Chickpea Spread",
+      "name": "Zaatar Manakish with Chickpea Spread + Cucumber side",
       "missing": [
         "Egg- and dairy-free ready-baked plain flatbread base"
       ],
@@ -6473,21 +6489,21 @@
     },
     {
       "id": "target-ar-lentil-kibbeh",
-      "name": "Red Lentil Kibbeh Patties with Tahini",
+      "name": "Red Lentil Kibbeh Patties with Tahini + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 527.2643856308554,
-        "protein": 24.36200000000001,
-        "carbs": 79.922,
-        "fat": 15.134671677698563
+        "kcal": 539.2643856308554,
+        "protein": 24.88200000000001,
+        "carbs": 82.826,
+        "fat": 15.222671677698562
       },
       "referenceAssumptions": []
     },
     {
       "id": "target-ar-koshari",
-      "name": "Small-Pot Egyptian Koshari",
+      "name": "Small-Pot Egyptian Koshari + Rice",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6569,7 +6585,7 @@
     },
     {
       "id": "target-ar-herring-tahini",
-      "name": "Smoked Herring Tahini Pita",
+      "name": "Smoked Herring Tahini Pita + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6616,15 +6632,15 @@
     },
     {
       "id": "target-ar-lamb-fatteh",
-      "name": "Lamb and Chickpea Fatteh",
+      "name": "Lamb and Chickpea Fatteh + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 810.0836546923796,
-        "protein": 35.8618,
-        "carbs": 61.828,
-        "fat": 47.2748930647488
+        "kcal": 822.0836546923796,
+        "protein": 36.381800000000005,
+        "carbs": 64.732,
+        "fat": 47.3628930647488
       },
       "referenceAssumptions": []
     },
@@ -6658,15 +6674,15 @@
     },
     {
       "id": "target-desi-mas-huni",
-      "name": "Mas Huni with Roti",
+      "name": "Mas Huni with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 524.48,
-        "protein": 29.9465,
-        "carbs": 49.8382,
-        "fat": 24.1008
+        "kcal": 536.48,
+        "protein": 30.4665,
+        "carbs": 52.7422,
+        "fat": 24.1888
       },
       "referenceAssumptions": []
     },
@@ -6703,7 +6719,7 @@
     },
     {
       "id": "target-desi-ambul-thiyal-hoppers",
-      "name": "Sour Pepper Fish with String Hoppers",
+      "name": "Sour Pepper Fish with String Hoppers + Cucumber side",
       "missing": [
         "Ready-to-eat cooked rice string hoppers",
         "Dried goraka (garcinia) pieces"
@@ -6751,15 +6767,15 @@
     },
     {
       "id": "target-desi-chicken-mughlai-paratha",
-      "name": "Chicken Mughlai Paratha",
+      "name": "Chicken Mughlai Paratha + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 658.7173093847589,
-        "protein": 43.77989999999999,
-        "carbs": 76.48469999999999,
-        "fat": 18.401286129497606
+        "kcal": 670.7173093847589,
+        "protein": 44.299899999999994,
+        "carbs": 79.38869999999999,
+        "fat": 18.489286129497607
       },
       "referenceAssumptions": [
         {
@@ -6789,7 +6805,7 @@
     },
     {
       "id": "target-desi-recheado-fish-rice",
-      "name": "Recheado-Style Fish with Rice",
+      "name": "Recheado-Style Fish with Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6803,7 +6819,7 @@
     },
     {
       "id": "target-desi-mustard-steamed-fish",
-      "name": "Mustard-Steamed Fish with Rice",
+      "name": "Mustard-Steamed Fish with Rice + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6817,7 +6833,7 @@
     },
     {
       "id": "target-desi-besan-fish-fry",
-      "name": "Besan Fish Fry with Roti",
+      "name": "Besan Fish Fry with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6831,7 +6847,7 @@
     },
     {
       "id": "target-desi-chicken-choila",
-      "name": "Chicken Choila with Roti",
+      "name": "Chicken Choila with Roti + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
@@ -6845,7 +6861,7 @@
     },
     {
       "id": "target-desi-prawn-patia",
-      "name": "Prawn Patia with Roti",
+      "name": "Prawn Patia with Roti + Cucumber side",
       "missing": [
         "tamarind paste"
       ],
@@ -6932,7 +6948,7 @@
     },
     {
       "id": "target-ar-fattet-makdous",
-      "name": "Vegan Fattet Makdous Bowl",
+      "name": "Vegan Fattet Makdous Bowl + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
