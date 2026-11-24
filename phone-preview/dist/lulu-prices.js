@@ -56,6 +56,8 @@
    if(originalRecord)originalRecord.hidden=!!choice?.quote;
    const pack=host.querySelector('.basket-pack'),kind=host.querySelector('.basket-price-kind');
    if(pack){if(!pack.dataset.original)pack.dataset.original=pack.textContent;setText(pack,choice?.quote?choice.quote.packs+' × '+choice.products[0].packLabel:pack.dataset.original);}
+   const buy=host.querySelector('.basket-buy-quantity');
+   if(buy){if(!buy.dataset.original)buy.dataset.original=buy.textContent;setText(buy,choice?.quote?(choice.quote.packs>1?choice.quote.packs+' × ':'')+choice.products[0].packLabel:buy.dataset.original);}
    if(kind){if(!kind.dataset.original)kind.dataset.original=kind.textContent;setText(kind,choice?.quote?'LuLu UAE online reference':kind.dataset.original);}
    const version=JSON.stringify([choice?.products[0]?.id,choice?.checkedAt,choice?.quote,!!provider?.configured]);
    let box=host.querySelector('.lulu-ingredient');

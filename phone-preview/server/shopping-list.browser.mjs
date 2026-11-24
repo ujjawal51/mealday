@@ -13,12 +13,16 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
  await context.addInitScript(value=>{localStorage.setItem('mealday.android.v1',JSON.stringify(value));Object.defineProperty(navigator,'share',{configurable:true,value:async payload=>{window.sharedShopping=payload.text;}});},state);
  const page=await context.newPage();await page.goto(origin);await page.locator('.nav [data-view="shopping"]').click();
- await page.getByRole('heading',{name:'Shopping list',exact:true}).waitFor();
+ await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();
  await page.waitForFunction(()=>[...document.querySelectorAll('.ingredient-image')].every(img=>img.complete&&img.naturalWidth>0));
  assert.equal(await page.locator('.priced-grocery-item').count(),8);assert.match(await page.locator('.shopping-progress-label').innerText(),/0 \/ 8 items bought/);
- assert.match(await page.locator('.grocery-group').first().locator('h3').innerText(),/VEGETABLES/);
+ assert.match(await page.locator('.grocery-group').first().locator('h3').innerText(),/FRUIT & VEG/);
  assert.equal(await page.locator('.ingredient-image').first().getAttribute('src'),'/ingredients/onion.png');
- assert.equal(await page.locator('.basket-row .price').first().innerText(),'AED 5.00');
+ assert.equal(await page.locator('.basket-buy-quantity').first().innerText(),'1,000 g');
+ assert.equal(await page.locator('.basket-row .price').first().isVisible(),false);
+ assert.equal(await page.locator('.nav').isVisible(),false);
+ assert.equal(await page.getByRole('button',{name:'Copy list',exact:true}).isVisible(),true);
+ assert.equal(await page.getByRole('button',{name:'+ Add groceries',exact:true}).isVisible(),true);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  // Capture the actual rendered reference layout using public fixture data only.
  if(process.env.SHOPPING_SCREENSHOT==='1')console.log('SHOPPING_SCREENSHOT '+(await page.screenshot()).toString('base64'));
@@ -30,14 +34,27 @@ try{
  await page.getByRole('button',{name:'Reset bought items',exact:true}).click();await page.getByText('No items bought yet.',{exact:true}).waitFor();
  await page.getByRole('button',{name:'All',exact:true}).click();assert.equal(await page.locator('.priced-grocery-item').count(),8);
  await page.getByRole('checkbox',{name:'Bought Kitchen towels',exact:true}).check();
- await page.getByRole('button',{name:'Share grocery list ↗',exact:true}).click();
+ await page.getByRole('button',{name:'Share',exact:true}).click();
  const share=await page.evaluate(()=>window.sharedShopping);assert.match(share,/\[x\] Kitchen towels/);assert.match(share,/Tuna \(drained weight\) — 4 × 120 g/);assert.match(share,/catalogue estimate AED 5.00/);
  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')));assert.equal(saved.recipeJournal.tomato.note,'Keep this note');assert.equal(saved.result.items.length,7);
  // A rejected share falls back to a copyable list, without losing any kitchen data.
  await page.evaluate(()=>{Object.defineProperty(navigator,'share',{value:undefined});Object.defineProperty(navigator,'clipboard',{value:{writeText:async()=>{throw Error('Fixture clipboard unavailable');}}});});
- await page.getByRole('button',{name:'Share grocery list ↗',exact:true}).click();await page.getByRole('textbox',{name:'Grocery list to share'}).waitFor();
+ await page.getByRole('button',{name:'Share',exact:true}).click();await page.getByRole('textbox',{name:'Grocery list to share'}).waitFor();
  await page.locator('#dialog').evaluate(d=>d.close());
  await page.getByRole('button',{name:'Reset bought items',exact:true}).click();assert.equal(await page.getByRole('checkbox',{name:'Bought Kitchen towels',exact:true}).isChecked(),false);
+ await page.getByRole('button',{name:'Prices & product options',exact:true}).click();
+ assert.equal(await page.locator('.basket-row .price').first().isVisible(),true);
+ await page.getByRole('button',{name:'Hide price details',exact:true}).click();
+ assert.equal(await page.locator('.basket-row .price').first().isVisible(),false);
+ await page.getByRole('button',{name:'+ Add groceries',exact:true}).click();
+ await page.locator('#extra-grocery-form input').fill('Olive oil');await page.locator('#extra-grocery-form button').click();
+ assert.equal(await page.getByRole('checkbox',{name:'Bought Olive oil',exact:true}).count(),1);
+ assert.equal(await page.locator('.grocery-done').innerText(),'0/9 done');
+ await page.getByRole('button',{name:'Copy list',exact:true}).click();
+ await page.getByRole('heading',{name:'Copy grocery list',exact:true}).waitFor();assert.match(await page.locator('#dialog textarea').inputValue(),/Olive oil/);await page.locator('#dialog').evaluate(d=>d.close());
+ await page.getByRole('button',{name:'Back to my week',exact:true}).click();await page.waitForSelector('body[data-view=week]');
+ assert.equal(await page.locator('.nav').isVisible(),true);await page.locator('.nav [data-view=shopping]').click();
+ assert.equal(await page.locator('.grocery-done').innerText(),'0/9 done');
  await page.setViewportSize({width:320,height:750});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await context.close();console.log('Shopping list browser passed: local ingredient images, bought progress, All/To buy/Bought, reset, extra items, native share and copy fallback, 390px and 320px layout.');
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}

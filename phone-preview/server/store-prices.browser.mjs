@@ -16,7 +16,7 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage();
  const state={profile:{name:'Fixture Chef',shop:'Carrefour',city:'Dubai',people:2,days:[0],mealTypes:['dinner'],budget:150},favorites:[],pantry:{},checked:[],result:{total:21,meals:[],plan:[],items:[{...ingredients.rice,key:'rice',need:750,packs:1,cost:14},{...ingredients.yogurt,key:'yogurt',need:300,packs:1,cost:7}]}};
  await page.addInitScript(value=>localStorage.setItem('mealday.android.v1',JSON.stringify(value)),state);
- await page.goto(origin);await page.locator('[data-action="go-shopping"]').click();
+ await page.goto(origin);await page.locator('[data-action="go-shopping"]').click();await page.getByRole('button',{name:'Prices & product options',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.store-price-status')?.textContent.includes('No checked product prices'));
  assert.equal(await page.locator('.recorded-price-total').count(),0);assert.match(await page.locator('.basket-row').first().innerText(),/Catalogue estimate/);
  mode='complete';await page.locator('[data-action="check-store-prices"]').click();
