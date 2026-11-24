@@ -153,7 +153,8 @@ function heading(title,description){return '<div class="page-head"><h1>'+title+'
 function week(){
   const result=state.result,p=state.profile;
   const rows=result?.meals.map(m=>{
-    const tag=m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine;
+    const selected=priorities.find(([id])=>m.matchedStyles?.includes(id));
+    const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
     const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
     return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(m.name)+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
@@ -638,6 +639,7 @@ document.addEventListener('submit',async event=>{
     if(form.id==='preferences'){
       const fields=['city','shop','diet','cuisine'];
       const profile={...state.profile,...Object.fromEntries(fields.map(key=>[key,data.get(key)]))};
+      profile.cuisines=[profile.cuisine];
       for(const key of ['budget','people','minutes'])profile[key]=Number(data.get(key));
       for(const key of ['appliances','mealTypes','allergies'])profile[key]=data.getAll(key);
       profile.days=data.getAll('days').map(Number);
@@ -1036,7 +1038,7 @@ function planSettings(){
     '<div class="surface-card plan-section"><label class="field">Diet'+dropdown('diet',foodTypes.map(x=>x[0]),p.diet)+'</label></div>'+
     group('Ingredients to avoid','allergies',allergyOptions.filter(x=>x[0]!=='None').map(x=>[x[0],x[0]]),p.allergies)+'<p class="quick-help">No exclusions? Leave all unchecked. Always check packaged food labels.</p>'+
     group('Available appliances','appliances',appliances.map(x=>[x[0],x[0]]),p.appliances)+
-    '<details class="surface-card plan-section optional-preferences"><summary>Personalise further</summary><div class="optional-fields"><label class="field">Your name (optional)<input class="control" name="name" autocomplete="given-name" maxlength="40" value="'+esc(p.name)+'"></label><label class="field">City'+dropdown('city',places,p.city)+'</label><label class="field">Supermarket'+dropdown('shop',supermarkets,p.shop)+'</label>'+group('Cuisines','cuisines',styles.map(x=>[x[0],x[2]||x[0]]),p.cuisines||[p.cuisine])+group('Meal styles · up to 3','priorities',priorities.filter(x=>x[0]!=='None').map(x=>[x[0],x[2]]),p.priorities)+'</div></details>'+
+    '<details class="surface-card plan-section optional-preferences"><summary>Personalise further</summary><div class="optional-fields"><label class="field">Your name (optional)<input class="control" name="name" autocomplete="given-name" maxlength="40" value="'+esc(p.name)+'"></label><label class="field">City'+dropdown('city',places,p.city)+'</label><label class="field">Supermarket'+dropdown('shop',supermarkets,p.shop)+'</label>'+group('Cuisines','cuisines',styles.map(x=>[x[0],x[2]||x[0]]),p.cuisines||[p.cuisine])+group('Meal styles · up to 3','priorities',priorities.filter(x=>x[0]!=='None').map(x=>[x[0],x[2]]),p.priorities)+'<details class="meal-style-rules"><summary>How meal styles match</summary><p>Recipes match any chosen style, plus every other filter. Speedy: 30 min or less. Everyday: 60 min or less, up to 15 ingredients. Family: a rice, pasta, potato, bread or wrap dish in 45 min or less. Comfort: a warm staple or pulse dish. Fresh: at least 150 g vegetables and up to 600 estimated kcal per serving. Protein: at least 25 g estimated protein per serving. Fresh and Protein require complete nutrition data.</p></details>'+'</div></details>'+
     '<div class="setting-list">'+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have')+'</div><button class="button green wide" '+(busy?'disabled':'')+'>'+icon('refresh')+(busy?'Building your plan…':'Apply & rebuild plan')+'</button></form>';
 }
 function settingRow(label,action,note=''){

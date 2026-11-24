@@ -36,7 +36,7 @@ r('potato-salad','Lemon potato & chickpea salad',25,['Hob'],'vegan',[['potato',1
 r('cheese-wrap','Crispy cheese & spinach wraps',15,['Hob'],'vegetarian',[['wraps',2],['cheese',40],['spinach',70],['tomato',60]],['Wash the spinach and tomato. Dice the tomato and grate the cheese.','Wilt the spinach in a pan with a splash of water. Drain excess water.','Place spinach, tomato and cheese inside each wrap and fold over.','Warm each folded wrap in a dry frying pan, turning once, until crisp and the cheese has melted.'],['Quick','Comfort'],1),
 r('simple-rice','Chickpea & spinach rice',25,['Hob'],'vegan',[['rice',60],['chickpeas',120],['spinach',60],['onion',30],['oil',5]],['Rinse rice, spinach and drained chickpeas. Dice the onion.','Soften onion in the oil. Add rice and cook with water according to the rice packet.','When rice is almost ready, fold in the chickpeas and spinach. Cover and heat through.','Check that the rice is tender. Rest for a few minutes, fluff and serve.'],['Family','Comfort'],0)
 ];
-export type Profile={name:string;people:number;days:number[];budget:number;diet:string;allergies:string[];minutes:number;appliances:string[];city:string;mood:string;source:string;shop:string;availableIngredients?:string[];dislikedIngredients?:string[];preferredStyles?:string[];fullDay?:boolean;mealTypes?:string[];mealDefaults?:Record<string,string>;packedLunch?:boolean;lowCook?:boolean;cuisine?:string;cuisines?:string[];enabledDraftIds?:string[];repeatDays?:number;allowRepeats?:boolean;ingredientSchemaVersion?:number};
+export type Profile={name:string;people:number;days:number[];budget:number;diet:string;allergies:string[];minutes:number;appliances:string[];city:string;mood:string;source:string;shop:string;availableIngredients?:string[];dislikedIngredients?:string[];preferredStyles?:string[];mealStyleRecipeIds?:string[];fullDay?:boolean;mealTypes?:string[];mealDefaults?:Record<string,string>;packedLunch?:boolean;lowCook?:boolean;cuisine?:string;cuisines?:string[];enabledDraftIds?:string[];repeatDays?:number;allowRepeats?:boolean;ingredientSchemaVersion?:number};
 export type Slot={day:number;recipeId:string;cooked?:boolean;meal?:string;mode?:string};
 export const initialProfile:Profile={name:'',people:2,days:[0,1,2,3,4],budget:150,diet:'Any',allergies:[],minutes:30,appliances:['Hob'],city:'Dubai',mood:'Everyday',source:'',shop:'',cuisine:'UAE mix',fullDay:true,mealTypes:['dinner'],ingredientSchemaVersion:1};
 const ingredientKinds:Record<string,'plant'|'dairy'|'egg'|'meat'|'fish'>={salt:'plant',blackpepper:'plant',garlic:'plant',butter:'dairy',water:'plant',rice:'plant',pasta:'plant',chickpeas:'plant',lentils:'plant',bread:'plant',wraps:'plant',tomato:'plant',cucumber:'plant',onion:'plant',pepper:'plant',spinach:'plant',potato:'plant',carrot:'plant',yogurt:'dairy',cheese:'dairy',egg:'egg',chicken:'meat',tuna:'fish',oil:'plant',lemon:'plant',oats:'plant'};
@@ -118,7 +118,7 @@ export function cuisineMatches(cuisine:Recipe['cuisine'],p:Profile){
  const selected=preferredCuisines(p);
  return !!cuisine&&(selected.includes('UAE mix')||selected.includes(cuisine));
 }
-export function mealChoices(p:Profile,meal:string){let pool=recipes.filter(r=>compatible(r,p)&&(r.reviewStatus!=='draft'||p.enabledDraftIds?.includes(r.id))&&!r.id.startsWith('spoon-')&&cuisineMatches(r.cuisine,p));pool=pool.filter(r=>r.mealTypes?.includes(meal));if(p.packedLunch&&meal==='lunch')pool=pool.filter(r=>withinTime(r,15));if(p.lowCook&&meal!=='dinner')pool=pool.filter(r=>!r.appliances.includes('Hob')&&!r.appliances.includes('Oven'));return pool;}
+export function mealChoices(p:Profile,meal:string){let pool=recipes.filter(r=>compatible(r,p)&&(!p.mealStyleRecipeIds||p.mealStyleRecipeIds.includes(r.id))&&(r.reviewStatus!=='draft'||p.enabledDraftIds?.includes(r.id))&&!r.id.startsWith('spoon-')&&cuisineMatches(r.cuisine,p));pool=pool.filter(r=>r.mealTypes?.includes(meal));if(p.packedLunch&&meal==='lunch')pool=pool.filter(r=>withinTime(r,15));if(p.lowCook&&meal!=='dinner')pool=pool.filter(r=>!r.appliances.includes('Hob')&&!r.appliances.includes('Oven'));return pool;}
 export const dishKey=(r:Recipe)=>(r.familyId||(recipeFamilies as Record<string,string>)[r.baseRecipeId||r.aiBaseId||r.id]||(r.baseRecipeId?recipes.find(x=>x.id===r.baseRecipeId)?.name||r.baseRecipeId:r.name)).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 export type PlanMemory={history?:MealHistory[];ratings?:Record<string,number>;favorites?:string[]};
 export function historyChoices(p:Profile,meal:string,memory:PlanMemory){const days=p.repeatDays??14;const cutoff=Date.now()-days*86400000;const ids=new Set((memory.history||[]).filter(h=>h.at>=cutoff&&h.at<=Date.now()).map(h=>h.recipeId));const old=new Set(recipes.filter(r=>ids.has(r.id)||ids.has(r.baseRecipeId||'')).map(dishKey));return mealChoices(p,meal).filter(r=>p.allowRepeats||!old.has(dishKey(r)));}
@@ -203,7 +203,7 @@ export function generateDayPlan(p:Profile,pantry:Record<string,number>={},seed=0
   if((p.mealDefaults?.[meal]||'cook')!=='cook')continue;
   const pool=historyChoices(p,meal,memory);
   const count=new Set(pool.map(dishKey)).size;
-  if(!count&&!mealChoices(p,meal).length)throw Error('No '+meal+' recipes match '+preferredCuisines(p).join(', ')+' · '+p.diet+'. Check your cooking time, appliances and exclusions.');
+  if(!count&&!mealChoices(p,meal).length)throw Error('No '+meal+' recipes match '+preferredCuisines(p).join(', ')+' · '+p.diet+'. Check your meal styles, cooking time, appliances and exclusions.');
   if(count<p.days.length)throw Error((count?'Only '+count:'No')+' different '+meal+' recipes match your preferences for '+p.days.length+' days after recent-history exclusions. Choose fewer days, increase cooking time, or allow recently suggested meals in Plan settings. Your saved plan is unchanged.');
   byMeal.set(meal,pool);
  }
@@ -265,7 +265,7 @@ export function planPreferenceIssues(plan:Slot[],p:Profile){
  for(const day of p.days)for(const meal of meals)if(!keys.has(day+':'+meal))issues.push(day+':'+meal);
  return issues;
 }
-export function assertPlanPreferences(plan:Slot[],p:Profile){if(planPreferenceIssues(plan,p).length)throw Error('These meals no longer match your cuisine, diet or meal routine. Rebuild your plan to apply your current preferences.');}
+export function assertPlanPreferences(plan:Slot[],p:Profile){if(planPreferenceIssues(plan,p).length)throw Error('These meals no longer match your filters. Rebuild your plan to apply your current preferences.');}
 export function hasAvoidableRepeats(plan:Slot[],p:Profile){const seen=new Set<string>();for(const s of plan){if(s.mode&&s.mode!=='cook')continue;const r=recipes.find(r=>r.id===s.recipeId);if(!r)continue;const key=dishKey(r);if(seen.has(key))return true;seen.add(key)}return false;}
 export function reconcilePlan(plan:Slot[],p:Profile,pantry:Record<string,number>={},seed=0,memory:PlanMemory={}){
  if(!planPreferenceIssues(plan,p).length&&!hasAvoidableRepeats(plan,p))return plan;
