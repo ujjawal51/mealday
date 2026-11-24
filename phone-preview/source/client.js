@@ -159,10 +159,11 @@ function week(){
     return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(m.name)+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
-  const bought=items.filter(item=>state.checked.includes(item.key)).length;
-  return '<header class="plan-greeting"><h1>'+(p.name?'Chef '+esc(p.name)+'!':'My week')+'</h1>'+button('Planned for '+esc(p.shop),'go-plan','shop-pill','shopping')+'</header>'+
+  const extras=state.extraGroceries||[],total=items.length+extras.length;
+  const bought=items.filter(item=>state.checked.includes(item.key)).length+extras.filter(i=>i.checked).length;
+  return '<header class="plan-greeting"><p class="plan-salutation">Good '+(new Date().getHours()<12?'morning':new Date().getHours()<18?'afternoon':'evening')+'</p><h1>'+(p.name?'Chef '+esc(p.name)+'!':'My week')+'</h1>'+button('Planned for '+esc(p.shop),'go-plan','shop-pill','shopping')+'</header>'+
     '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Est. cost</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress></div>'+
-    '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+items.length+' items bought</small><progress max="'+Math.max(items.length,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
+    '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
     recommendationSummary(result)+'<div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
     '<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
