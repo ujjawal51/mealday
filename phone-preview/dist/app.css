@@ -1018,3 +1018,8 @@ body[data-view=week] .week-bottom .button.green svg{width:23px;height:23px;paddi
 body[data-view=week] .week-bottom .icon-only{width:44px;min-width:44px;min-height:44px;border:1px solid #e4e8dc;border-radius:50%;color:#93bb3f;background:#fff}
 body[data-view=week] .meal-open:focus-visible,body[data-view=week] .overview-card:focus-visible{outline:2px solid #81ad28;outline-offset:4px;border-radius:12px}
 @media(max-width:350px){body[data-view=week] main{padding:20px 14px 105px}body[data-view=week] .meal-open img{width:52px;height:56px}body[data-view=week] .meal-name{font-size:13px}body[data-view=week] .overview-card{padding:10px}body[data-view=week] .overview-card strong{font-size:15px}}
+
+body[data-view=week] .meal-list{gap:16px}
+body[data-view=week] .meal-row{min-height:0;padding:9px 10px}
+body[data-view=week] .meal-open{min-height:56px}
+body[data-view=week] .meal-open img{width:56px;height:56px}
