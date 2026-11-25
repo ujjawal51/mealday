@@ -15,6 +15,8 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const screen = $('#screen');
 const dialog = $('#dialog');
 const toast = $('#toast');
+const feedbackAttempts=new WeakMap();
+const feedbackDraftKey='mealday.feedback-draft.v1';
 const onboardingMotion=createOnboardingMotion(window);
 let previousWizardStep=-1;
 let wizardStory=null,storyCardsPaused=false;
@@ -539,8 +541,7 @@ document.addEventListener('click',async event=>{
   else if(action==='privacy')showPrivacy();
   else if(action==='export-backup'){downloadKitchen();}
   else if(action==='rate-app'||action==='request-feature')openFeedback(action==='rate-app'?'rating':'feature');
-  else if(action==='download-feedback'){const draft=readFeedback();downloadFile('mealday-feedback.txt',feedbackText(draft),'text/plain;charset=utf-8');}
-  else if(action==='contact')openDialog('Contact us','Mealday project support','<p>Report a problem or ask the Mealday team a question through the project’s support page.</p><a class="button green wide" href="https://github.com/ujjawal51/mealday/issues/new" target="_blank" rel="noopener noreferrer">Open project support</a><p class="quick-help">GitHub may ask you to sign in. Do not include passwords or private kitchen data in a public issue.</p>');
+  else if(action==='contact')openFeedback('support');
   else if(action==='subscription')openDialog('Manage subscription','No billing is connected to this version.','<p>This Mealday preview does not sell or manage paid subscriptions. No subscription can be cancelled or changed here.</p>'+button('Done','close','green wide'));
   else if(action==='terms')openDialog('Terms of service','Mealday preview information','<div class="privacy-copy"><p>Mealday helps you plan meals and organise a grocery list. Prices and nutrition totals are estimates; recipe photographs are representative.</p><p>Check ingredients, allergens and food labels before cooking. Store availability, ordering and payments are not included in this preview.</p><p>Your kitchen is stored on your device unless you sign in to a connected backup server. See Privacy policy for details. There is no paid subscription on this version.</p></div>'+button('Done','close','green wide'));
   else if(action==='reset-suggestions')openDialog('Reset suggested meal history?','Start fresh with your next suggestions.','<p>This clears previous plan suggestions. Your current plan, favourites, ratings, notes and cooking history are kept.</p>'+button('Cancel','close')+' '+button('Reset suggestions','confirm-suggestions','danger'));
@@ -613,8 +614,9 @@ document.addEventListener('click',async event=>{
 document.addEventListener('submit',async event=>{
   const form=event.target;
   if(form.id==='feedback-form'){
-    event.preventDefault();const data=new FormData(form),draft={kind:String(data.get('kind')),rating:Number(data.get('rating')||0),message:String(data.get('message')||'').trim().slice(0,2000)};
-    try{localStorage.setItem('mealday.feedback-draft.v1',JSON.stringify(draft));openDialog('Feedback draft saved','Saved on this device; it has not been sent.','<textarea class="control" rows="7" readonly aria-label="Your feedback draft">'+esc(feedbackText(draft))+'</textarea><div class="dialog-settings-actions">'+button('Download draft','download-feedback','green wide')+'<a class="button ghost wide" href="https://github.com/ujjawal51/mealday/issues/new" target="_blank" rel="noopener noreferrer">Open project support</a></div>');}catch{notify('Could not save this draft. Please allow browser storage.');}return;
+    event.preventDefault();
+    await submitFeedback(form);
+    return;
   }
   if(form.id==='reminder-form'){
     event.preventDefault();const data=new FormData(form),day=Number(data.get('day')),time=String(data.get('time'));
@@ -1063,9 +1065,64 @@ function settings(){
  section('Account',settingRow(deletingAccount?'Deleting account…':'Delete my account','delete-account'))+
  '<details class="settings-extra"><summary>Kitchen &amp; backup</summary><div class="setting-list">'+settingRow('Edit your name','edit-name')+settingRow('Profile & food preferences','edit-setup')+settingRow('Cooking history','go-history')+settingRow('Review setup · '+steps.length+' steps','review-setup')+settingRow('Welcome screen','go-home')+settingRow('Backup & login','cloud-account')+settingRow('Download kitchen backup','export-backup')+settingRow('Share meal plan','share-plan')+settingRow('Reset this kitchen','settings-reset')+'</div></details></div>';
 }
-function readFeedback(){try{return JSON.parse(localStorage.getItem('mealday.feedback-draft.v1')||'null')||{};}catch{return {};}}
-function feedbackText(draft){return 'Mealday '+(draft.kind==='rating'?'feedback':'feature request')+'\n'+(draft.rating?'Rating: '+draft.rating+'/5\n':'')+'\n'+(draft.message||'');}
-function openFeedback(kind){const draft=readFeedback();openDialog(kind==='rating'?'Rate Mealday':'Request a feature','Prepare a feedback draft on this device.','<form id="feedback-form"><input type="hidden" name="kind" value="'+kind+'">'+(kind==='rating'?'<label class="field">Your rating<select class="control" name="rating">'+[5,4,3,2,1].map(n=>'<option value="'+n+'" '+(draft.rating===n?'selected':'')+'>'+n+' out of 5</option>').join('')+'</select></label>':'')+'<label class="field">'+(kind==='rating'?'Your feedback':'What would you like Mealday to do?')+'<textarea class="control" name="message" maxlength="2000" rows="5" '+(kind==='feature'?'required':'')+'>'+esc(draft.kind===kind?draft.message||'':'')+'</textarea></label><p class="quick-help">Save and download your draft, or copy it to project support. Saving does not send feedback.</p><button class="button green wide" type="submit">Save feedback draft</button></form>');}
+function readFeedbackDraft(){
+  try{return localStorage.getItem(feedbackDraftKey)||'';}catch{return '';}
+}
+function openFeedback(kind){
+  const raw=readFeedbackDraft();
+  let draft={};
+  try{const saved=JSON.parse(raw);if(saved?.kind===kind)draft=saved;}catch{}
+  const isRating=kind==='rating',isSupport=kind==='support';
+  const title=isRating?'Rate Mealday':isSupport?'Contact us':'Request a feature';
+  const question=isRating?'Your feedback (optional)':isSupport?'How can we help?':'What would you like Mealday to do?';
+  openDialog(title,'Your submission goes privately to the Mealday team.',
+    '<form id="feedback-form"><input type="hidden" name="kind" value="'+kind+'">'+
+    (isRating?'<label class="field">Your rating<select class="control" name="rating" required><option value="">Choose a rating</option>'+[5,4,3,2,1].map(n=>'<option value="'+n+'" '+(draft.rating===n?'selected':'')+'>'+n+' out of 5</option>').join('')+'</select></label>':'')+
+    '<label class="field">'+question+'<textarea class="control" name="message" maxlength="2000" rows="5" '+(isRating?'':'required')+'>'+esc(draft.message||'')+'</textarea></label>'+
+    (isSupport?'<label class="field">Reply email (optional)<input class="control" name="replyEmail" type="email" autocomplete="email" maxlength="254"></label><p class="quick-help">Add your email if you’d like a reply. Keep passwords and payment details out of your message.</p>':'')+
+    '<p class="notice" role="alert" hidden></p><button class="button green wide" type="submit">'+(isSupport?'Send message':'Send feedback')+'</button></form>');
+  if(draft.kind)feedbackAttempts.set($('#feedback-form',dialog),{draft:raw});
+}
+async function submitFeedback(form){
+  const submit=form.querySelector('button[type="submit"]');
+  if(submit.disabled)return;
+  const error=form.querySelector('[role="alert"]'),data=new FormData(form);
+  const kind=data.get('kind'),message=String(data.get('message')||'').trim();
+  error.hidden=true;
+  if(kind!=='rating'&&!message){error.textContent='Enter a message before sending.';error.hidden=false;return;}
+  const payload={kind,message,rating:kind==='rating'?Number(data.get('rating')):null,replyEmail:String(data.get('replyEmail')||'').trim()};
+  const fingerprint=JSON.stringify(payload),previous=feedbackAttempts.get(form);
+  const label=submit.textContent,fields=form.querySelectorAll('textarea, input, select');
+  submit.disabled=true;submit.textContent='Sending…';
+  fields.forEach(field=>{field.disabled=true;});
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),15000);
+  let failure='Delivery could not be confirmed. Please try again.';
+  try{
+    const submissionId=previous?.fingerprint===fingerprint?previous.id:crypto.randomUUID();
+    feedbackAttempts.set(form,{fingerprint,id:submissionId,draft:previous?.draft});
+    const response=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...payload,submissionId}),credentials:'omit',signal:controller.signal});
+    if(response.status===409)feedbackAttempts.set(form,{draft:previous?.draft});
+    if(!response.ok){
+      failure=response.status===429?'Too many submissions. Please try again later.':'Your message could not be sent. Please try again.';
+      throw Error(failure);
+    }
+    const result=await response.json();
+    if(response.status!==201||result?.reference!==submissionId)throw Error(failure);
+    if(previous?.draft&&readFeedbackDraft()===previous.draft){try{localStorage.removeItem(feedbackDraftKey);}catch{}}
+    const title=kind==='support'?'Message sent':'Feedback sent';
+    if(dialog.open&&form.isConnected){
+      openDialog(title,'Thanks for helping us improve Mealday.','<p>Reference: <strong>'+esc(result.reference)+'</strong></p>'+button('Done','close','green wide'));
+    }else notify(title+'. Reference: '+result.reference);
+  }catch{
+    if(dialog.open&&form.isConnected){error.textContent=failure;error.hidden=false;}else notify(failure);
+  }finally{
+    clearTimeout(timer);
+    fields.forEach(field=>{field.disabled=false;});
+    submit.disabled=false;submit.textContent=label;
+  }
+}
 
 function downloadFile(name,content,type){
  const url=URL.createObjectURL(new Blob([content],{type})),link=document.createElement('a');link.href=url;link.download=name;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
@@ -1084,7 +1141,7 @@ function sharePlan(){
   openDialog('Share your plan','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(text)+'</textarea>');
 }
 function showPrivacy(){
-  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Google verifies sign-ins; Mealday session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>Plan sharing uses Android sharing or a copyable text view. Calendar reminders are downloaded as a file for you to open and save in your calendar. A downloaded backup contains your kitchen data; keep it private. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
+  openDialog('Privacy policy','Mealday Android','<div class="privacy-copy"><p>Mealday stores your cooking preferences, plans, pantry, shopping checkmarks, saved recipes, cooking history, recipe ratings and notes on this device. Cooking history is stored separately from the current plan. The planner runs on this device. Google verifies sign-ins; Mealday session cookies are HttpOnly. When you sign in to a connected backup server, your kitchen data is sent to that server and stored in its MongoDB database. Guest data is imported only when you choose Import guest kitchen. Signing out restores the guest kitchen; pending account changes are retained locally for later sign-in.</p><p>App ratings, feature requests and support messages are stored in a private database for the Mealday team. If you provide a reply email in Contact us, the team can use it to respond. Submissions are independent of your Mealday account.</p><p>Plan sharing uses Android sharing or a copyable text view. Calendar reminders are downloaded as a file for you to open and save in your calendar. A downloaded backup contains your kitchen data; keep it private. External recipe source links open in your browser.</p><p>Use Reset this kitchen in Settings to clear data stored by Mealday.</p></div>');
 }
 function resetDialog(){
   openDialog('Reset this kitchen?','','<p class="notice">This resets your current kitchen. If it belongs to an account, the reset will sync to that account when connected. Other account and guest recovery copies on this browser are retained.</p>'+button('Cancel','close')+' '+button('Reset kitchen','confirm-reset','danger'));

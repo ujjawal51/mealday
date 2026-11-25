@@ -17,6 +17,18 @@ export async function connectStore(uri,dbName){
   return {
     close:()=>client.close(),
     ping:()=>db.command({ping:1}),
+    async saveFeedback(submission){
+      const inbox=db.collection('feedback_submissions');
+      try{
+        await inbox.insertOne({...submission,createdAt:new Date(),status:'new'},{writeConcern:{w:'majority'}});
+        return true;
+      }catch(error){
+        if(error.code!==11000)throw error;
+        const previous=await inbox.findOne({_id:submission._id},{readConcern:{level:'majority'}});
+        if(!previous)throw error;
+        return Object.entries(submission).every(([key,value])=>previous[key]===value);
+      }
+    },
     async reservePriceCredits(day,cost,limit){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!Number.isInteger(cost)||cost<1||!Number.isInteger(limit)||limit<cost)return false;
       const usage=db.collection('price_api_usage'),id='reef:'+day;

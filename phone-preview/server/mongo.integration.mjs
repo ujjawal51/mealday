@@ -38,6 +38,14 @@ try{
  const {MongoClient}=await import('mongodb');const inspector=new MongoClient(process.env.MONGODB_TEST_URI);await inspector.connect();
  try{
   const db=inspector.db(name);
+  const submission={_id:randomUUID(),kind:'support',rating:null,message:'Private support fixture',replyEmail:'test@example.com'};
+  assert.deepEqual(await Promise.all([store.saveFeedback(submission),store.saveFeedback(submission)]),[true,true]);
+  assert.equal(await store.saveFeedback({...submission,message:'Conflicting retry'}),false);
+  const inbox=db.collection('feedback_submissions');
+  assert.equal(await inbox.countDocuments({_id:submission._id}),1);
+  const saved=await inbox.findOne({_id:submission._id});
+  assert.deepEqual(saved,{...submission,createdAt:saved.createdAt,status:'new'});
+  assert.ok(saved.createdAt instanceof Date);
   await store.createUser({_id:'other',email:'keep@example.com'});await store.saveKitchen('other',0,{note:'keep'});
   await db.collection('accounts').insertMany([{userId:'one',private:'remove'},{userId:'other',private:'keep'}]);
   await db.collection('plan_history').insertMany([{userId:'one',recipeId:'rice'},{userId:'other',recipeId:'rice'}]);
