@@ -1,0 +1,169 @@
+{
+  "source": "AI-generated meal illustrations",
+  "generatedDate": "2026-11-24",
+  "stylePrompt": "Square editorial food illustration, natural daylight, off-white ceramic on pale warm stone; actual recipe ingredients only; no text, logos, watermark or extra garnish.",
+  "images": [
+    {
+      "id": "air-potato",
+      "path": "/recipes/air-potato.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 231446,
+      "sha256": "1efbca2fbf602e77504f810936859581c2b45d0d7b1570c0ad154218b1b78417",
+      "illustration": true
+    },
+    {
+      "id": "breakfast-oats",
+      "path": "/recipes/breakfast-oats.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 130480,
+      "sha256": "531ef7282586b4e276e9046a236eeb9c5fea57ddad6263c607e783b5c5f8bbd3",
+      "illustration": true
+    },
+    {
+      "id": "breakfast-toast",
+      "path": "/recipes/breakfast-toast.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 255164,
+      "sha256": "cf9be338210b6a9a518c7c4657f9b821643cf7ab43de460ee8a1e00726db7702",
+      "illustration": true
+    },
+    {
+      "id": "cheese-wrap",
+      "path": "/recipes/cheese-wrap.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 212500,
+      "sha256": "44e0807035f1e8d554e97c381afe5b46ef4ddf026f12233c7ca050ecf0209b05",
+      "illustration": true
+    },
+    {
+      "id": "cheesy-pasta",
+      "path": "/recipes/cheesy-pasta.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 208228,
+      "sha256": "f77950d10c579e778efc21d1a1a192a80001d044dbebe02bbe45c1f964f8bbad",
+      "illustration": true
+    },
+    {
+      "id": "chicken-rice",
+      "path": "/recipes/chicken-rice.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 202878,
+      "sha256": "4001d269eaed4bac058a00c04585796fb31ae50cf2142a9b69edb12c876d54d6",
+      "illustration": true
+    },
+    {
+      "id": "chickpea-salad",
+      "path": "/recipes/chickpea-salad.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 182582,
+      "sha256": "7438505ba4d52f160d763f8a9f780973393e1784e540ccae9751d619ec8da0aa",
+      "illustration": true
+    },
+    {
+      "id": "egg-toast",
+      "path": "/recipes/egg-toast.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 194470,
+      "sha256": "cf528fa4d9b9b8dd60f1f67b748893d120f037b0030253d10ac88188ece423eb",
+      "illustration": true
+    },
+    {
+      "id": "fresh-wrap",
+      "path": "/recipes/fresh-wrap.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 190282,
+      "sha256": "b453561224b013d90adb734048f3bbc1d742aa834fa3c74f349057ee964b9ea9",
+      "illustration": true
+    },
+    {
+      "id": "lentil-rice",
+      "path": "/recipes/lentil-rice.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 176342,
+      "sha256": "8acee89a81f485aac6a493b761ab67633c8a4daba43e57d450d17f3a48f61ffa",
+      "illustration": true
+    },
+    {
+      "id": "lentil-soup",
+      "path": "/recipes/lentil-soup.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 155086,
+      "sha256": "8cdfe32741acebf01b04892ebc2587f3c2a5a67faf67f2ebcf91df31f9f4c28b",
+      "illustration": true
+    },
+    {
+      "id": "microwave-potato",
+      "path": "/recipes/microwave-potato.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 192380,
+      "sha256": "b6d778a57a89ae5be61b0d9be176f31dff95287b8e676cff19f244dd7bfb3c0f",
+      "illustration": true
+    },
+    {
+      "id": "potato-salad",
+      "path": "/recipes/potato-salad.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 173074,
+      "sha256": "94e236b706edaee022f86b62f62e71af6b93709dc355fe76b9d8cd8e36cac23c",
+      "illustration": true
+    },
+    {
+      "id": "rice-egg",
+      "path": "/recipes/rice-egg.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 183228,
+      "sha256": "def864908bd6016741625c8194ee243e38bc06ed05195fbf22670ff1e6e13dd7",
+      "illustration": true
+    },
+    {
+      "id": "roast-bowl",
+      "path": "/recipes/roast-bowl.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 210554,
+      "sha256": "c32aaad3b2c6911469dc6a54f5feeabd82813b56af8dd7ea613af1331f86be75",
+      "illustration": true
+    },
+    {
+      "id": "simple-rice",
+      "path": "/recipes/simple-rice.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 182068,
+      "sha256": "28b56b002dc6f912b89b2b275582e3ccfc8a06022bf6c2abe3913e01e3d662b5",
+      "illustration": true
+    },
+    {
+      "id": "tomato-pasta",
+      "path": "/recipes/tomato-pasta.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 229710,
+      "sha256": "07228f9470dccc9a3a569e0cc3c8b77b666d9060e8ec24628c64d37798ec70e0",
+      "illustration": true
+    },
+    {
+      "id": "tuna-wrap",
+      "path": "/recipes/tuna-wrap.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 139296,
+      "sha256": "780d649f78f5ea1ce6a99daad81a87812cbfd3c88f905718186aa9591d2b99be",
+      "illustration": true
+    }
+  ]
+}

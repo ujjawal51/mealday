@@ -16,7 +16,7 @@ test('Full recipe import keeps quantities, steps, existing records and photo/nut
  assert.equal(documents.filter(doc=>doc.nutrition.complete).length,376);
  assert.ok(documents.filter(doc=>!doc.nutrition.complete).every(doc=>doc.nutrition.totals===null));
  assert.equal(new Set(documents.map(d=>d.id)).size,420);
- assert.equal(documents.filter(doc=>doc.photo.status==='missing').length,18);
+ assert.equal(documents.filter(doc=>doc.photo.status==='missing').length,0);
  const f=fixture([{id:documents[0].id,name:'My edited recipe',privateNote:'keep'},{id:'personal',name:'Personal recipe'}]);
  const first=await seedRecipes(f.db);assert.equal(first.inserted,419);assert.equal(first.present,420);
  assert.deepEqual(f.index(),{keys:{id:1},options:{unique:true}});
@@ -33,7 +33,7 @@ test('Existing 402 recipe database gains exactly 18 legacy recipes without chang
  assert.deepEqual(result,{catalogue:420,inserted:18,existing:402,present:420});
  for(const [id,before]of originals)assert.equal(JSON.stringify(f.rows.get(id)),before);
  const pasta=f.rows.get('tomato-pasta');assert.equal(pasta.data.items[0][0],'pasta');assert.equal(pasta.data.items[0][1],90);assert.ok(pasta.data.steps.length>=2);
- assert.equal(pasta.photo.status,'missing');assert.equal(pasta.photo.path,'/recipe-image-unavailable.svg');
+ assert.equal(pasta.photo.status,'illustrative');assert.equal(pasta.photo.path,'/recipes/tomato-pasta.webp');
  assert.equal((await seedRecipes(f.db)).inserted,0);
 });
 

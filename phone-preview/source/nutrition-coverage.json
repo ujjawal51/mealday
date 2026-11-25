@@ -265,7 +265,7 @@
       "totals": {
         "kcal": 554.655,
         "protein": 21.36,
-        "carbs": 91.205,
+        "carbs": 91.20500000000001,
         "fat": 13.354299999999999
       },
       "referenceAssumptions": []
@@ -693,29 +693,29 @@
     },
     {
       "id": "draft-tabbouleh-complete",
-      "name": "Parsley & bulgur tabbouleh + Cumin chickpeas + Cucumber",
+      "name": "Parsley & bulgur tabbouleh + Red Lentil Dal + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 517.7495022001865,
-        "protein": 18.405499999999996,
-        "carbs": 81.34749999999998,
-        "fat": 16.928821968346895
+        "kcal": 562.1495022001866,
+        "protein": 24.7055,
+        "carbs": 92.3875,
+        "fat": 14.240821968346891
       },
       "referenceAssumptions": []
     },
     {
       "id": "draft-fattoush-complete",
-      "name": "Fattoush-style crispy pita salad + Cumin chickpeas + Cucumber",
+      "name": "Fattoush-style crispy pita salad + Red Lentil Dal + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 490.8080403232348,
-        "protein": 17.205499999999997,
-        "carbs": 76.2255,
-        "fat": 15.00386474244737
+        "kcal": 535.2080403232347,
+        "protein": 23.5055,
+        "carbs": 87.26549999999999,
+        "fat": 12.315864742447369
       },
       "referenceAssumptions": []
     },
@@ -763,15 +763,15 @@
     },
     {
       "id": "draft-bulgur-pilaf-complete",
-      "name": "Tomato bulgur pilaf + Cumin chickpeas + Cucumber",
+      "name": "Tomato bulgur pilaf + Red Lentil Dal + Cucumber",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 574.2073093847588,
-        "protein": 20.836,
-        "carbs": 99.07099999999998,
-        "fat": 14.497786129497609
+        "kcal": 618.6073093847588,
+        "protein": 27.136,
+        "carbs": 110.11100000000002,
+        "fat": 11.809786129497606
       },
       "referenceAssumptions": []
     },
@@ -937,8 +937,8 @@
       "complete": true,
       "totals": {
         "kcal": 728.6073093847588,
-        "protein": 28.352399999999996,
-        "carbs": 116.42049999999999,
+        "protein": 28.3524,
+        "carbs": 116.4205,
         "fat": 19.11403612949761
       },
       "referenceAssumptions": []
@@ -1003,7 +1003,7 @@
       "complete": true,
       "totals": {
         "kcal": 584.255,
-        "protein": 23.496,
+        "protein": 23.496000000000002,
         "carbs": 88.821,
         "fat": 16.5823
       },
@@ -2302,15 +2302,15 @@
     },
     {
       "id": "kaggle-7381",
-      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread) + Roti + Cucumber side",
+      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread) + Cucumber side",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 439.49628532653185,
-        "protein": 13.7058,
-        "carbs": 66.7672,
-        "fat": 13.001053543725321
+        "kcal": 182.35628532653183,
+        "protein": 6.9548000000000005,
+        "carbs": 27.121199999999998,
+        "fat": 5.089053543725323
       },
       "referenceAssumptions": []
     },
@@ -3092,8 +3092,8 @@
       "totals": {
         "kcal": 478.08365469237947,
         "protein": 41.361799999999995,
-        "carbs": 38.288,
-        "fat": 17.558693064748805
+        "carbs": 38.288000000000004,
+        "fat": 17.5586930647488
       },
       "referenceAssumptions": []
     },
@@ -5555,15 +5555,15 @@
     },
     {
       "id": "quality-batata-hummus",
-      "name": "Batata Harra & Rustic Hummus Plate + Arabic pita",
+      "name": "Batata Harra & Rustic Hummus Plate + Cucumber side + Arabic pita",
       "missing": [],
       "missingIds": [],
       "complete": true,
       "totals": {
-        "kcal": 663.6751165693312,
-        "protein": 22.7408,
-        "carbs": 103.09400000000001,
-        "fat": 19.740650290648325
+        "kcal": 675.6751165693312,
+        "protein": 23.2608,
+        "carbs": 105.998,
+        "fat": 19.828650290648326
       },
       "referenceAssumptions": []
     },

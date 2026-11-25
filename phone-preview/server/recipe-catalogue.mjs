@@ -18,9 +18,10 @@ export function catalogueDocuments(){
     const photoPath=recipePhotos[recipe.id]||(legacy?'/recipe-image-unavailable.svg':null);
     if(!photoPath)throw Error('Missing recipe photo mapping: '+recipe.id);
     recipe.imageUrl=photoPath;
+    if(recipePhotos[recipe.id])recipe.photoStatus='generated';
     const nutrition=calculateNutrition(items);
     return {id:recipe.id,name:recipe.name,cuisine:recipe.cuisine,data:recipe,ingredients,published:true,
-      photo:{path:photoPath,storage:'bundled-file',status:legacy?'missing':'illustrative'},
+      photo:{path:photoPath,storage:'bundled-file',status:photoPath==='/recipe-image-unavailable.svg'?'missing':'illustrative'},
       nutrition:{...nutrition,dataVersion:nutritionDataVersion,source:nutritionSource,per:'serving',status:nutrition.complete?'ingredient-based-estimate':'incomplete'},
       importSource:legacy?'mealday-original-repository-v1':CATALOGUE_SOURCE};
   });

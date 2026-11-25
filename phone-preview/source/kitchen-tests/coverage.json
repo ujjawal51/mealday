@@ -3,7 +3,7 @@
   "total": 402,
   "kitchenTested": 0,
   "pending": 402,
-  "deskReviewed": 183,
+  "deskReviewed": 185,
   "structuralBlockers": 0,
   "recipes": [
     {
@@ -29,7 +29,7 @@
     {
       "id": "desi-chaat-complete",
       "name": "Chana chaat lunchbox + Roti + Cucumber",
-      "version": "84ca78d90b72a19fa9303214bedafe1b05378addfe06173d012d9e3903024ddf",
+      "version": "7e04a35e56afd0556ebb31cdff409cb4b0164aba189890ddd2f40158e51268c8",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -278,22 +278,22 @@
     },
     {
       "id": "draft-tabbouleh-complete",
-      "name": "Parsley & bulgur tabbouleh + Cumin chickpeas + Cucumber",
-      "version": "0179e74b087cd881c730d4de466e0d1a64d3f655065701d89bad57b137d39ad4",
+      "name": "Parsley & bulgur tabbouleh + Red Lentil Dal + Cucumber",
+      "version": "d7c6a4ef3015b59266a19173d46ae26c908a258d34c5c8772d1b22bc61629325",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
-      "deskReviewed": false,
-      "estimatedMinutes": 40,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
       "structuralIssues": []
     },
     {
       "id": "draft-fattoush-complete",
-      "name": "Fattoush-style crispy pita salad + Cumin chickpeas + Cucumber",
-      "version": "a9835ba68904195afe5a8e1079bb1c9a9f6b8bda3be2514b2a5ab6612dbfeaa9",
+      "name": "Fattoush-style crispy pita salad + Red Lentil Dal + Cucumber",
+      "version": "5f025a68ab2402f934bceee8bd9fe65da6f200120951b702a6f8af5e651d1130",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
-      "deskReviewed": false,
-      "estimatedMinutes": 30,
+      "deskReviewed": true,
+      "estimatedMinutes": 50,
       "structuralIssues": []
     },
     {
@@ -328,12 +328,12 @@
     },
     {
       "id": "draft-bulgur-pilaf-complete",
-      "name": "Tomato bulgur pilaf + Cumin chickpeas + Cucumber",
-      "version": "95cfad27f7cbb955bd0f6ba0a60163765b08e6148727c80cd284d1714ee77223",
+      "name": "Tomato bulgur pilaf + Red Lentil Dal + Cucumber",
+      "version": "b55486ab68ce5af4bf04ca049eec7ce7d01c1368155cdb8d8e082410a3600aa9",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
-      "deskReviewed": false,
-      "estimatedMinutes": 40,
+      "deskReviewed": true,
+      "estimatedMinutes": 60,
       "structuralIssues": []
     },
     {
@@ -349,7 +349,7 @@
     {
       "id": "draft-hummus-chicken-bowl-complete",
       "name": "Warm chicken & hummus bowl + Rice + Cucumber",
-      "version": "0c763bddffbdce76e8090c7719f56378d3aea1143cb6759e089a313a5f7d12b1",
+      "version": "214ec68e6a992d1af91680449950dce6fdf083041f710a7e0b9dab3f18bcd662",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": true,
@@ -439,7 +439,7 @@
     {
       "id": "draft-aloo-gobi-complete",
       "name": "Aloo & courgette sabzi with Roti + Red Lentil Dal + Cucumber",
-      "version": "a2f040e7f2ea1eabb055a90c6b1fcd030d9a5c469aca1433acd5b8d1b862c9a0",
+      "version": "1d02025048c25ce2e915a52d612743a15af6678470472c597b51b764fc15120e",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -479,7 +479,7 @@
     {
       "id": "draft-cucumber-raita-chana-complete",
       "name": "Chana & cucumber raita bowl + Roti + Cucumber",
-      "version": "51bae03941cd86f182f7f9c67360db2bbf54c1424d90524198062d0b23cda5a4",
+      "version": "df5be5ab0828e8591d9effccc8d038fca80182d0e35954f5625c7e925f759350",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -1268,12 +1268,12 @@
     },
     {
       "id": "kaggle-7381",
-      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread) + Roti + Cucumber side",
-      "version": "ad3945a44c754a9b9d5c7229fffcaaa75d35a9c263ae4db64fa5d96acbb7bcd4",
+      "name": "Muttai Parotta Recipe ( Ande Ka Paratha / Egg Filled Flat Bread) + Cucumber side",
+      "version": "6ff7423958e34fcaa06425bdd581d7fca6df10d6a9b23f1d54bcbc7a65fedfca",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
-      "estimatedMinutes": 55,
+      "estimatedMinutes": 50,
       "structuralIssues": []
     },
     {
@@ -1369,7 +1369,7 @@
     {
       "id": "kaggle-10015",
       "name": "Bhaat Na Rasawala Muthia Dhokla | Gujarati Rasiya Dhokla + Cucumber side",
-      "version": "a6e36fc6f0a587bc967f5423c880c082475a08509641cb27ca0deae6b958ed2f",
+      "version": "1a792215c46412f656219b79b134361b6c96f52e3db03fca5a21ea5bc005edb2",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -1699,7 +1699,7 @@
     {
       "id": "draft-shawarma-chicken",
       "name": "Chicken Shawarma Wrap + Cucumber side",
-      "version": "e189b98215d16de3096ed9c64248258a5a58c95813c5b4e4cc9cdef5c97ec93a",
+      "version": "613939a30f0b86e9d47dcb2369a7c716d105e46790cb84be490e8014caf11ee6",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -3228,12 +3228,12 @@
     },
     {
       "id": "quality-batata-hummus",
-      "name": "Batata Harra & Rustic Hummus Plate + Arabic pita",
-      "version": "8d5d034e2c622cfb987503e334d126de10874780c631717bd62d56554b819a85",
+      "name": "Batata Harra & Rustic Hummus Plate + Cucumber side + Arabic pita",
+      "version": "aa531741815b0bb47493d511e898844e50400161a92d6b4bda5e27baf607e2e7",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
-      "deskReviewed": true,
-      "estimatedMinutes": 30,
+      "deskReviewed": false,
+      "estimatedMinutes": 35,
       "structuralIssues": []
     },
     {
@@ -3619,7 +3619,7 @@
     {
       "id": "target-em-beef-oat-kofta",
       "name": "Baked Bzar Beef & Oat Kofta with Regag bread",
-      "version": "2c3125e75e52634d678299bdf487e3ecb41e23dc714f3d01b6bc28aac50e9005",
+      "version": "c76dce4bff150f8db732415888f2cbc111f1eac366bc002c9c277587e65ebb29",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,
@@ -3679,7 +3679,7 @@
     {
       "id": "target-ar-zaatar-chickpea-manakish",
       "name": "Zaatar Manakish with Chickpea Spread + Cucumber side",
-      "version": "3a55f7a0553a9061be3bf83fc1a93ae5d7be76329f7523d7fe5fe2b9839f5b12",
+      "version": "2d6293bf276b62d42b52874f5ee923d3923e6454447e3a351b824f5e01aeb074",
       "status": "kitchen-test-pending",
       "currentCookTests": 0,
       "deskReviewed": false,

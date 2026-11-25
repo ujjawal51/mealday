@@ -79,7 +79,7 @@ function slots(x: any,p: Profile): Slot[] {
   });
 }
 function summary(r: Recipe) {
-  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes,componentNames:r.componentNames,mealComplete:r.mealComplete,imageUrl:source(r.imageUrl)||((r.imageUrl?.startsWith('/')&&!r.imageUrl.startsWith('//'))?r.imageUrl:undefined)};
+  return {id:r.id,name:r.name,minutes:recipeTotalMinutes(r),cuisine:r.cuisine||'UAE mix',diet:r.diet,meals:r.mealTypes,componentNames:r.componentNames,mealComplete:r.mealComplete,photoStatus:r.photoStatus,imageUrl:source(r.imageUrl)||((r.imageUrl?.startsWith('/')&&!r.imageUrl.startsWith('//'))?r.imageUrl:undefined)};
 }
 function ingredientCost(r: Recipe) {
   const cost=r.items.reduce((sum,[id,amount])=>{
