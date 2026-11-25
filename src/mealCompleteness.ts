@@ -1,18 +1,22 @@
 import type {Ingredient,Recipe} from './engine';
 import {mealRoles} from './completeMeals';
 import {recipeTotalMinutes} from './recipeTiming';
+function mergeAmounts(items:Recipe['items']):Recipe['items']{const quantities=new Map<string,number>();for(const [id,n] of items)quantities.set(id,Math.round(((quantities.get(id)||0)+n)*1e9)/1e9);return [...quantities];}
 export function completeMealRoles(r:Recipe,stock:Record<string,Ingredient>){
  const roles=mealRoles(r,stock);
- const starch=r.items.some(([id,n])=>{const i=stock[id];return i&&/rice|bread|pita|regag|rigag|khameer|wheat|bulgur|couscous|freekeh|roti|chapati|pasta|wrap|vermicelli|oat|poha|semolina|millet|sorghum|ragi|quinoa|barley|noodle|cornmeal/i.test(i.name)&&n>=(/slice|wrap|piece|regag|pita/i.test(i.unit)?1:25);});
- return {...roles,starch,vegetables:r.items.reduce((n,[id,amount])=>n+(stock[id]?.category==='Vegetables'&&stock[id]?.unit==='g'?amount:0),0)>=80};
+ const cerealFlour=r.items.some(([id,n])=>{const i=stock[id];return i&&n>=25&&/flour|maida/i.test(i.name)&&!(/chickpea|gram|besan|lentil|almond|coconut|chestnut/i.test(i.name))&&(/wheat|rice|maida|all.purpose/i.test(i.name)||[i.allergen,...(i.allergens||[])].includes('Gluten'));});
+ const potato=r.cuisine!=='South Asian'&&r.items.some(([id,n])=>/potato/i.test(stock[id]?.name||'')&&stock[id]?.unit==='g'&&n>=150);
+ const starch=cerealFlour||potato||r.items.some(([id,n])=>{const i=stock[id];return i&&/rice|bread|pita|regag|rigag|khameer|wheat|bulgur|couscous|freekeh|roti|chapati|pasta|wrap|vermicelli|oat|poha|semolina|millet|sorghum|ragi|quinoa|barley|noodle|cornmeal/i.test(i.name)&&n>=(/slice|wrap|piece|regag|pita/i.test(i.unit)?1:25);});
+ return {...roles,starch,vegetables:r.items.reduce((n,[id,amount])=>n+(stock[id]?.category==='Vegetables'&&stock[id]?.unit==='g'&&!(potato&&/potato/i.test(stock[id].name))?amount:0),0)>=80};
 }
 // Deterministic, cuisine-aware serving suggestions. Never write over source documents.
-export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredient>):Recipe[]{return rows.map(original=>{
+export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredient>):Recipe[]{return rows.map(input=>{
+ const original={...input,items:mergeAmounts(input.items)};
  if(!original.mealTypes?.some(m=>m==='lunch'||m==='dinner'))return original;
  const checked=completeMealRoles(original,stock);
  if(original.mealAssemblyVersion===2&&checked.starch&&checked.protein&&checked.vegetables){const parts=original.componentNames||[original.name];return {...original,mealComplete:true,componentNames:original.name===parts.join(' + ')||original.name===parts[0]?parts:[original.name,...parts.slice(1)]};}
  let r={...original,items:original.items.map(pair=>[...pair] as [string,number]),steps:[...original.steps]},time=recipeTotalMinutes(original);
- let names=[...(original.componentNames||[original.name])],added=0;
+ let names=[...(original.componentNames||[original.name])],added=0,needsHob=false;
  const ready=(id:string,unit:string,pattern:RegExp)=>stock[id]?.unit===unit&&stock[id]?.kind==='plant'&&pattern.test(stock[id].name);
  const canRoti=ready('quality-roti','pieces',/roti/i),canRice=ready('rice','g',/rice/i),canChickpeas=ready('chickpeas','g',/chickpea/i)&&/drained|canned|cooked/i.test(stock.chickpeas.name);
  // Upgrade only the exact, identifiable Mealday v1 side instructions and quantities.
@@ -38,7 +42,7 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
   r.steps.push('Warm the measured ready-made regag bread according to the packet and serve alongside the main dish. This Mealday pairing uses regag in place of pita.');added+=5;
  }
  const roles=completeMealRoles(r,stock);
- const append=(name:string,items:[string,number][],step:string,minutes:number)=>{if(items.some(([id])=>!stock[id]))return false;r.items.push(...items);r.steps.push(step);names.push(name);added+=minutes;return true;};
+ const append=(name:string,items:[string,number][],step:string,minutes:number,hob=true)=>{if(items.some(([id])=>!stock[id]))return false;r.items.push(...items);r.steps.push(step);names.push(name);added+=minutes;needsHob||=hob;return true;};
  if(!roles.protein){
   if(r.cuisine==='South Asian'&&ready('lentils','g',/red lentil/i))append('Red lentil dal',[['lentils',60],['cumin',1],['oil',5],['tomato',60]],'For the dal, rinse 60 g dry red lentils per person. Warm the measured oil, cumin and chopped tomato; add lentils and water according to the packet. Simmer until fully tender, adding water as needed. Allow 30 minutes and serve alongside the main.',30);
   else if(canChickpeas)append(r.cuisine==='Emirati'?'Dango-inspired chickpeas':'Cumin chickpeas',[['chickpeas',120],['cumin',1],['oil',5]],'For the chickpea side, use 120 g drained canned chickpeas per person. Warm the measured oil and cumin, add chickpeas and a splash of water, and heat thoroughly. Allow 10 minutes. This is a quick meal pairing, not a kitchen-tested traditional recipe.',10);
@@ -49,11 +53,11 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
   else if(r.cuisine==='Emirati'&&/thareed/i.test(r.name)&&ready('regag','pieces',/regag/i))append('Regag bread',[['regag',1]],'Warm one ready-made regag bread per person according to the packet. Serve with the stew, or break it into the stew just before eating.',5);
   else if(canRice)append('Rice',[['rice',60]],'Rinse 60 g dry rice per person. Cook with water according to the packet, allowing about 20 minutes; serve alongside the main dish.',20);
  }
- if(!completeMealRoles(r,stock).vegetables&&ready('cucumber','g',/cucumber/i))append('Cucumber side',[['cucumber',80]],'Wash and slice 80 g cucumber per person. Serve as a fresh side with the other meal components.',5);
+ if(!completeMealRoles(r,stock).vegetables&&ready('cucumber','g',/cucumber/i))append('Cucumber side',[['cucumber',80]],'Wash and slice 80 g cucumber per person. Serve as a fresh side with the other meal components.',5,false);
  const complete=completeMealRoles(r,stock),ok=complete.starch&&complete.protein&&complete.vegetables;
  const total=time+added;
  if(!Number.isFinite(total)||total<=0||total>1440||!ok)return {...original,mealComplete:false};
- if(added||time!==recipeTotalMinutes(original))r.appliances=[...new Set([...r.appliances,'Hob'])];
+ if(needsHob||time!==recipeTotalMinutes(original))r.appliances=[...new Set([...r.appliances,'Hob'])];
  // Make existing staple/vegetable components visible without adding more food.
  const allNames=names.join(' ');
  if(r.items.some(([id,n])=>id==='quality-roti'&&n>=1)&&!/roti|chapati/i.test(allNames))names.push('Roti');
@@ -62,6 +66,6 @@ export function prepareCompleteMeals(rows:Recipe[],stock:Record<string,Ingredien
  if(r.items.some(([id,n])=>id==='regag'&&n>=1)&&!/regag|bread|thareed/i.test(allNames))names.push('Regag bread');
  if(r.items.some(([id,n])=>id==='cucumber'&&n>=80)&&!/cucumber|salad/i.test(allNames))names.push('Cucumber side');
  const changed=names.length>1&&JSON.stringify(names)!==JSON.stringify(original.componentNames);
- return {...r,name:changed&&names.join(' + ').length<=500?names.join(' + '):r.name,time:total,timing:{prepMinutes:0,cookMinutes:total,waitMinutes:0,estimated:true},mealAssemblyVersion:2,mealComplete:true,componentNames:names,qualityReview:added||time!==recipeTotalMinutes(original)?undefined:r.qualityReview,
+ return {...r,items:mergeAmounts(r.items),name:changed&&names.join(' + ').length<=500?names.join(' + '):r.name,time:total,timing:{prepMinutes:0,cookMinutes:total,waitMinutes:0,estimated:true},mealAssemblyVersion:2,mealComplete:true,componentNames:names,qualityReview:added||time!==recipeTotalMinutes(original)?undefined:r.qualityReview,
   ...(added?{authorship:(r.authorship||'Mealday')+'; Mealday complete meal pairing; quantities per person, total elapsed time estimated; kitchen testing pending'}:{})};
 });}

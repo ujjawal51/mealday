@@ -10,7 +10,6 @@ import {createCookingTimer,timerText} from './cooking-timer.js';
 import {COOKING_HISTORY_KEY,emptyHistory,loadHistory,hasCooked,recordCook,undoCookedMark,historyEntries} from './cooking-history.js';
 import {filterSavedRecipes} from './recipe-filters.js';
 import {calculateNutrition,nutritionSource} from './nutrition.js';
-import {recipePhotos} from './recipe-photos.js';
 import {personalizedApi as api} from './lazy-api.js';
 const $ = (selector, root = document) => root.querySelector(selector);
 const screen = $('#screen');
@@ -110,7 +109,7 @@ function catalogueNotice(){
   return '<p class="notice" role="status">'+(lastCatalogueMode==='cached-offline'?'Showing your last synced recipe catalogue.':'Showing packaged offline recipes.')+' Recent changes may be missing. '+button('Retry live recipes','refresh-recipes','ghost small')+'</p>';
 }
 function photo(meal){
-  return publicImage(meal.imageUrl||recipePhotos[meal.id]);
+  return publicImage(meal.imageUrl&&meal.imageUrl!=='/recipe-image-unavailable.svg'?meal.imageUrl:'/recipes/'+meal.id+'.webp');
 }
 function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minutes)+' min</span><span>'+esc(meal.cuisine)+'</span><span>'+esc(cap(meal.diet))+'</span></div>';}
 function initNavigation(){
@@ -417,7 +416,7 @@ function renderRecipeDetail(r){
     button('Cook step-by-step','guide-start','guide-start ghost','right')+'<ol>'+r.steps.map(step=>'<li>'+esc(step)+'</li>').join('')+'</ol>':
     '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><p>'+esc(r.steps[guidedStep])+'</p><div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
 
-  screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">Main dish illustration</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
+  screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">'+(r.photoStatus==='generated'?'AI meal illustration':'Meal illustration')+'</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
     button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(r.componentNames?.[0]||r.name)+'</h1>'+mealComponents(r)+
     renderNutrition(r)+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>Cook time: '+esc(r.minutes)+' min <span aria-hidden="true">&nbsp; | &nbsp;</span> Serves: '+people+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+

@@ -60,6 +60,7 @@ jobs:
           RECIPE_SCREENSHOT=1 node phone-preview/server/recipe-detail.browser.mjs
           node phone-preview/server/filter-flow.browser.mjs
           COMPLETE_MEAL_SCREENSHOT=1 node phone-preview/server/complete-meals.browser.mjs
+          node phone-preview/server/recipe-image-coverage.browser.mjs
   deployment-smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: account-tests
@@ -75,6 +76,7 @@ jobs:
           node --input-type=module <<'NODE'
           import assert from 'node:assert/strict';
           import {readFile} from 'node:fs/promises';
+          import {createHash} from 'node:crypto';
           const html=await readFile('phone-preview/dist/index.html','utf8');
           const entry=html.match(/src="\/(client-[a-f0-9]+\.js)"/)[1];
           const origin='https://mealday.onrender.com';
@@ -104,5 +106,14 @@ jobs:
           console.log('LULU_CONFIGURED '+supplier.configured+' (configuration only; no paid provider request)');
           const privateRead=await fetch(origin+'/api/account',{headers:externalHeaders,signal:AbortSignal.timeout(10000)});
           assert.equal(privateRead.status,403,'Cross-site private account reads must remain blocked.');
+          const catalogue=await (await fetch(origin+'/api/catalogue',{signal:AbortSignal.timeout(20000)})).json();
+          assert(catalogue.recipes.every(r=>r.imageUrl&&!r.imageUrl.includes('unavailable')),'Published recipes still have missing images.');
+          const assets=JSON.parse(await readFile('phone-preview/source/generated-recipe-images.json','utf8')).images;
+          for(let i=0;i<assets.length;i+=3)await Promise.all(assets.slice(i,i+3).map(async asset=>{
+            assert.equal(catalogue.recipes.find(r=>r.id===asset.id)?.imageUrl,asset.path);
+            const image=await fetch(origin+asset.path,{signal:AbortSignal.timeout(20000)});assert(image.ok);assert.match(image.headers.get('content-type'),/^image\/webp/);
+            assert.equal(createHash('sha256').update(Buffer.from(await image.arrayBuffer())).digest('hex'),asset.sha256);
+          }));
+          console.log('IMAGE_DEPLOYMENT_VERIFIED '+assets.length+' new illustrations; '+catalogue.recipes.length+' published meals have images.');
           console.log('DEPLOYMENT_VERIFIED '+entry+' MongoDB connected; external recipe links allowed; private account reads protected');
           NODE

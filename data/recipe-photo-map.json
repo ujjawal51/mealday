@@ -1,1 +1,20 @@
-{}
+{
+  "air-potato": "/recipes/air-potato.webp",
+  "breakfast-oats": "/recipes/breakfast-oats.webp",
+  "breakfast-toast": "/recipes/breakfast-toast.webp",
+  "cheese-wrap": "/recipes/cheese-wrap.webp",
+  "cheesy-pasta": "/recipes/cheesy-pasta.webp",
+  "chicken-rice": "/recipes/chicken-rice.webp",
+  "chickpea-salad": "/recipes/chickpea-salad.webp",
+  "egg-toast": "/recipes/egg-toast.webp",
+  "fresh-wrap": "/recipes/fresh-wrap.webp",
+  "lentil-rice": "/recipes/lentil-rice.webp",
+  "lentil-soup": "/recipes/lentil-soup.webp",
+  "microwave-potato": "/recipes/microwave-potato.webp",
+  "potato-salad": "/recipes/potato-salad.webp",
+  "rice-egg": "/recipes/rice-egg.webp",
+  "roast-bowl": "/recipes/roast-bowl.webp",
+  "simple-rice": "/recipes/simple-rice.webp",
+  "tomato-pasta": "/recipes/tomato-pasta.webp",
+  "tuna-wrap": "/recipes/tuna-wrap.webp"
+}
