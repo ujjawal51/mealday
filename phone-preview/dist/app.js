@@ -108,8 +108,9 @@ function catalogueNotice(){
   if(lastCatalogueMode==='live')return '';
   return '<p class="notice" role="status">'+(lastCatalogueMode==='cached-offline'?'Showing your last synced recipe catalogue.':'Showing packaged offline recipes.')+' Recent changes may be missing. '+button('Retry live recipes','refresh-recipes','ghost small')+'</p>';
 }
+const generatedPhotoIds=new Set(["air-potato","breakfast-oats","breakfast-toast","cheese-wrap","cheesy-pasta","chicken-rice","chickpea-salad","egg-toast","fresh-wrap","lentil-rice","lentil-soup","microwave-potato","potato-salad","rice-egg","roast-bowl","simple-rice","tomato-pasta","tuna-wrap"]);
 function photo(meal){
-  return publicImage(meal.imageUrl&&meal.imageUrl!=='/recipe-image-unavailable.svg'?meal.imageUrl:'/recipes/'+meal.id+'.webp');
+  return publicImage(!meal.imageUrl||meal.imageUrl==='/recipe-image-unavailable.svg'&&generatedPhotoIds.has(meal.id)?'/recipes/'+meal.id+'.webp':meal.imageUrl);
 }
 function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minutes)+' min</span><span>'+esc(meal.cuisine)+'</span><span>'+esc(cap(meal.diet))+'</span></div>';}
 function initNavigation(){
