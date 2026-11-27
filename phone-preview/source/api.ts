@@ -1,5 +1,6 @@
 import backup from './catalogue-backup.json';
 import {matchedMealStyles} from './meal-styles.mjs';
+import {swapBasketImpact} from '../dist/meal-carryover.js';
 import {calculateNutrition} from '../dist/nutrition.js';
 import {
   assertPlanPreferences, assertWithinBudget, basket, canonicalIngredients,
@@ -175,7 +176,8 @@ export async function api(request:Request,url:URL) {
       if(path==='/api/swaps') return json({choices:choices.slice(0,18).map(x=>({...summary(x.recipe),total:x.cost,change:x.change}))});
       const choice=choices.find(x=>x.recipe.id===body.recipeId);
       if(!choice) return json({error:'This swap exceeds your budget or does not match your preferences.'},422);
-      return json(planResult(choice.plan,p,kitchen));
+      const result=planResult(choice.plan,p,kitchen);
+      return json({...result,swapImpact:swapBasketImpact(basket(plan,p,kitchen),result.items)});
     }
     return json({error:'This endpoint is unavailable.'},404);
   } catch (error) {
