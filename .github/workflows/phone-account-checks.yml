@@ -53,6 +53,7 @@ jobs:
       - name: Test the phone onboarding account flow
         run: |
           node phone-preview/server/onboarding-account.browser.mjs
+          node phone-preview/server/quick-start.browser.mjs
           node phone-preview/server/store-prices.browser.mjs
           node phone-preview/server/lulu-prices.browser.mjs
           SHOPPING_SCREENSHOT=1 node phone-preview/server/shopping-list.browser.mjs

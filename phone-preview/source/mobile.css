@@ -853,3 +853,16 @@ body[data-view="account"] #main{padding:0;max-width:560px}
 @media(prefers-reduced-motion:reduce){.setup-account{animation:none}}
 
 .google-signin{width:100%;display:grid;justify-items:center;gap:10px}.google-signin-status{font-size:14px;color:#707668;line-height:1.6;text-align:center;margin:10px 0}.google-signin-status:empty{display:none}
+
+.quick-start-page{max-width:540px;margin:0 auto;padding:20px 18px 36px}
+.quick-start-page header .section-caption{margin-top:20px}
+.quick-start-page header h1{margin:6px 0;font-size:clamp(25px,8vw,36px);line-height:1.1}
+.quick-start-page header p:last-child{color:#5c6651;margin:8px 0 18px}
+.quick-start-fields{min-width:0;padding:14px;display:grid;gap:12px}
+.quick-start-fields legend{font-weight:700;padding:0 6px}
+.quick-start-fields input,.quick-start-fields select{width:100%;min-width:0}
+.quick-start-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:12px}
+.quick-start-fields summary{font-weight:700;padding:8px 0}
+.quick-start-fields .choice-chips input{width:auto}
+.quick-start-page [role=alert] p{margin:5px 0}
+.estimate-disclaimer{display:block;white-space:normal;line-height:1.35;margin-top:6px}

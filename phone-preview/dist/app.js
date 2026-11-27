@@ -124,13 +124,14 @@ function initNavigation(){
 function render(){
   onboardingMotion.cancel();
   document.body.dataset.view=view;
-  $('.nav').hidden=['welcome','setup','recipe','account','shopping','add-grocery'].includes(view);
+  $('.nav').hidden=['welcome','quick-start','setup','recipe','account','shopping','add-grocery'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
     const active=b.dataset.view===view||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
     if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   }
   screen.setAttribute('aria-busy',String(busy&&view!=='setup'));
   if(view==='welcome')screen.innerHTML=welcome();
+  if(view==='quick-start')screen.innerHTML=quickStart();
   if(view==='setup'){
     if(busy)screen.innerHTML=renderGeneration();
     else renderWizard();
@@ -165,7 +166,7 @@ function week(){
   const extras=state.extraGroceries||[],total=items.length+extras.length;
   const bought=items.filter(item=>state.checked.includes(item.key)).length+extras.filter(i=>i.checked).length;
   return '<header class="plan-greeting"><p class="plan-salutation">Good '+(new Date().getHours()<12?'morning':new Date().getHours()<18?'afternoon':'evening')+'</p><h1>'+(p.name?'Chef '+esc(p.name)+'!':'My week')+'</h1>'+button('Planned for '+esc(p.shop),'go-plan','shop-pill','shopping')+'</header>'+
-    '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Est. cost</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress></div>'+
+    '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Grocery estimate</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress><small class="estimate-disclaimer">Catalogue estimate · delivery not included</small></div>'+
     '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
     recommendationSummary(result)+'<div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
@@ -189,7 +190,7 @@ async function generate(profile=state.profile){
   if(!dialog.open)render();
   try{
     const seed=state.seed+1;
-    const onboarding=view==='setup'||view==='account';
+    const onboarding=['quick-start','setup','account'].includes(view);
     if(onboarding)await new Promise(resolve=>setTimeout(resolve,40));
     const result=await request('/api/plan',{profile,pantry:state.pantry,seed});
     if(attempt!==requestId)return;
@@ -206,7 +207,7 @@ async function generate(profile=state.profile){
   }catch(err){
     error=err.message;
     if(dialog.open){const message=$('#form-error',dialog);if(message){message.hidden=false;message.textContent=error;}else notify(error);}
-  }finally{busy=false;if(['week','setup','plan'].includes(view))render();}
+  }finally{busy=false;if(['week','quick-start','setup','plan'].includes(view))render();}
 }
 function dropdown(name,values,value){
   return '<select class="control" name="'+name+'">'+values.map(v=>'<option '+(String(v)===String(value)?'selected':'')+' value="'+esc(v)+'">'+esc((name==='minutes'||name==='wizard-minutes')?(v===1440?'Plan ahead':v+' minutes'):v)+'</option>').join('')+'</select>';
@@ -334,7 +335,7 @@ function shopping(){
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
  return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
- (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
+ (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
 }
 function addGrocery(){
@@ -465,7 +466,7 @@ async function applySwap(id,buttonNode){
   finally{busy=false;render();}
 }
 function setView(target,hash=true){
-  view=Object.hasOwn(labels,target)||['welcome','setup','recipe','account','add-grocery'].includes(target)?target:'week';
+  view=Object.hasOwn(labels,target)||['welcome','quick-start','setup','recipe','account','add-grocery'].includes(target)?target:'week';
   if(hash&&location.hash!=='#'+view)history.replaceState(null,'','#'+view);
   render();
   window.scrollTo(0,0);
@@ -512,6 +513,12 @@ document.addEventListener('click',async event=>{
   else if(action==='cloud-local'||action==='cloud-remote'){try{await cloudBackup.resolve(action==='cloud-local');dialog.close();}catch(e){notify(e.message);}}
   else if(action==='grocery-add')setView('add-grocery');
   else if(action==='grocery-cancel')setView('shopping');
+  else if(action==='quick-start'){error='';quickDraft=structuredClone(state.profile);quickAdvanced=false;setView('quick-start',false);}
+  else if(action==='quick-cancel'){if(!busy){error='';setView(state.result?'week':'welcome',false);}}
+  else if(action==='quick-fewer'){if(!busy&&quickDraft.days.length>1){
+    quickDraft={...quickDraft,days:quickDraft.days.slice(0,shorterDayCount(quickDraft))};await generate(quickDraft);
+  }}
+  else if(action==='quick-more-time'){if(!busy&&quickDraft.minutes<30){quickDraft={...quickDraft,minutes:30};await generate(quickDraft);}}
   else if(action==='start-setup'){beginWizard(false);}
   else if(action==='review-setup'){beginWizard(true);}
   else if(action==='preview-slide'){selectSlide(Number(id));}
@@ -613,6 +620,22 @@ document.addEventListener('click',async event=>{
 });
 document.addEventListener('submit',async event=>{
   const form=event.target;
+  if(form.id==='quick-start-form'){
+    event.preventDefault();if(busy)return;
+    const data=new FormData(form);
+    const next={...quickDraft};
+    for(const field of ['shop','city','diet','cuisine'])next[field]=String(data.get(field));
+    for(const field of ['people','budget','minutes'])next[field]=Number(data.get(field));
+    next.cuisines=[next.cuisine];
+    for(const field of ['allergies','appliances','mealTypes'])next[field]=data.getAll(field);
+    next.days=data.getAll('days').map(Number);
+    quickAdvanced=Boolean(form.querySelector('details')?.open);
+    quickDraft=next;
+    if(!next.days.length||!next.mealTypes.length||!next.appliances.length){
+      error='Choose at least one cooking day, meal and appliance.';quickAdvanced=true;render();return;
+    }
+    await generate(next);return;
+  }
   if(form.id==='feedback-form'){
     event.preventDefault();
     await submitFeedback(form);
@@ -722,7 +745,7 @@ async function finishOnboarding(){
   const p=structuredClone(wizardDraft);error='';wizardStory=null;
   setView('setup',false);
   await generate({...p,minutes:Number(p.minutes),cuisine:p.cuisines[0]});
-  if(error){savePendingSetup();setView('account',false);}
+  if(error){clearPendingSetup();quickDraft={...p,cuisine:p.cuisines[0]};quickAdvanced=true;setView('quick-start',false);}
 }
 function onboardingAccount(){
   const c=cloudBackup.info(),p=wizardDraft||state.profile,formMode=setupAccountMode!=='choice',signup=setupAccountMode==='register';
@@ -803,7 +826,7 @@ function welcome(){
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','start-setup','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+'</div></div></div>';
+  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','quick-start','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+button('Guided setup','start-setup')+'</div></div></div>';
 }
 let previewAutoplayPaused=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),previewHovered=false;
 const previewSlideshow=createPreviewSlideshow({count:productPreviews.length,initial:previewSlide,
@@ -1027,6 +1050,31 @@ async function nextWizard(){
   if(step<steps.length-1){step++;renderWizard(false);return;}
   wizardStory='benefits';renderStory();
 }
+let quickDraft=null,quickAdvanced=false;
+function shorterDayCount(p){
+  const matches=Number(error.match(/^Only (\d+) different /)?.[1]);
+  return matches>0&&matches<p.days.length?matches:p.days.length-1;
+}
+function quickStart(){
+  const p=quickDraft||structuredClone(state.profile);
+  const field=(title,name,values,selected)=>'<label class="field">'+title+dropdown(name,values,selected)+'</label>';
+  const multi=(title,name,values,selected)=>'<fieldset class="quick-section"><legend>'+title+'</legend>'+chips(name,values,selected)+'</fieldset>';
+  const cuisine='<label class="field">Cuisine<select name="cuisine" class="control">'+styles.map(([value,,label])=>'<option value="'+esc(value)+'" '+(value===p.cuisine?'selected':'')+'>'+esc(label||value)+'</option>').join('')+'</select></label>';
+  const hint=error?'<div class="notice" role="alert"><strong>Let’s adjust your plan</strong><p>'+esc(error.replace(/ after recent-history exclusions/,'').replace(' or allow recently suggested meals in Plan settings',''))+'</p><p>Your budget, diet and exclusions stay as entered. Edit the time or days below.</p></div>':'';
+  return '<section class="quick-start-page"><header>'+button('Back','quick-cancel','ghost small','back',busy?'disabled':'')+'<p class="section-caption">MEALDAY · QUICK START</p><h1>Plan your first week</h1><p>See your meals and grocery estimate without signing up.</p></header>'+
+    hint+'<form id="quick-start-form" class="plan-form"><fieldset class="surface-card quick-start-fields" '+(busy?'disabled':'')+'><legend>Your dinner plan</legend>'+
+    '<label class="field">People<input class="control" name="people" type="number" min="1" max="12" step="1" required value="'+esc(p.people)+'"></label>'+cuisine+
+    '<label class="field">Weekly budget (AED)<input class="control" name="budget" type="number" min="20" max="5000" step="0.01" required value="'+esc(p.budget)+'"></label>'+
+    '<p class="quick-help">Default: 5 weekday dinners · 30 minutes · hob. Change any of these below.</p>'+
+    '<details class="optional-preferences" '+(quickAdvanced||error?'open':'')+'><summary>Diet, allergies &amp; cooking preferences</summary><div class="optional-fields">'+
+    '<div class="quick-start-grid">'+field('City','city',places,p.city)+field('Store (estimates only)','shop',supermarkets,p.shop)+field('Maximum cooking time','minutes',[15,20,30,45,60,90,120,240,1440],p.minutes)+field('Diet','diet',foodTypes.map(x=>x[0]),p.diet)+'</div>'+
+    multi('Ingredients to avoid','allergies',allergyOptions.filter(x=>x[0]!=='None').map(x=>[x[0],x[0]]),p.allergies)+'<p class="quick-help">Always check ingredient labels.</p>'+
+    multi('Appliances','appliances',appliances.map(x=>[x[0],x[0]]),p.appliances)+multi('Cooking days','days',DAYS.map((name,i)=>[i,name]),p.days)+
+    multi('Meals to plan','mealTypes',[['breakfast','Breakfast'],['lunch','Lunch'],['dinner','Dinner']],p.mealTypes)+'</div></details>'+
+    '<button type="submit" class="button green wide">'+(busy?'Building your plan…':'Build my week')+'</button>'+
+    (error&&p.minutes<30?button('Try up to 30 minutes','quick-more-time','ghost wide'):'')+
+    (error&&p.days.length>1?button('Try '+shorterDayCount(p)+(shorterDayCount(p)===1?' day':' days'),'quick-fewer','ghost wide'):'')+'</fieldset></form></section>';
+}
 function planSettings(){
   const p=state.profile;
   const group=(title,name,values,selected)=>'<fieldset class="surface-card plan-section pref-choices"><legend>'+esc(title)+'</legend>'+chips(name,values,selected||[])+'</fieldset>';
@@ -1060,7 +1108,7 @@ function settings(){
  return '<div class="phone-settings simple-settings"><header class="settings-heading"><p>Your account</p><h1>settings</h1></header>'+
  section('App',settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
  section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
- section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact')+settingRow('Manage subscription','subscription'))+
+ section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact','Send a private message'))+
  section('Legal',settingRow('Privacy policy','privacy')+settingRow('Terms of service','terms'))+
  section('Account',settingRow(deletingAccount?'Deleting account…':'Delete my account','delete-account'))+
  '<details class="settings-extra"><summary>Kitchen &amp; backup</summary><div class="setting-list">'+settingRow('Edit your name','edit-name')+settingRow('Profile & food preferences','edit-setup')+settingRow('Cooking history','go-history')+settingRow('Review setup · '+steps.length+' steps','review-setup')+settingRow('Welcome screen','go-home')+settingRow('Backup & login','cloud-account')+settingRow('Download kitchen backup','export-backup')+settingRow('Share meal plan','share-plan')+settingRow('Reset this kitchen','settings-reset')+'</div></details></div>';
@@ -1191,7 +1239,7 @@ function openCloudAccount(){
 dialog.addEventListener('cancel',event=>{if(deletingAccount)event.preventDefault();});
 cloudBackup.init().then(()=>{
   const pending=pendingSetup();
-  if(pending){wizardDraft=pending;step=steps.length-1;editing=false;setView('account',false);}
+  if(pending&&view==='welcome'){wizardDraft=pending;step=steps.length-1;editing=false;setView('account',false);}
 });
 window.addEventListener("online",()=>cloudBackup.refresh());
 window.addEventListener("focus",()=>{if(!dialog.open&&!['recipe','setup'].includes(view))cloudBackup.refresh();});
