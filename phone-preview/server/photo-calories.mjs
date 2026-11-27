@@ -26,7 +26,7 @@ function requestFor(provider,accountId,image){
   url:'https://api.cloudflare.com/client/v4/accounts/'+accountId+'/ai/run/'+cfModel,
   // The model-specific Cloudflare tutorial attaches the image at the top level.
   payload:{stream:false,max_tokens:240,temperature:0.1,image:jpeg,messages:[
-   {role:'system',content:instructions+' Output one JSON object only. Format: {"food":boolean,"name":string,"portion":string,"minKcal":integer,"maxKcal":integer}. Do not add commentary.'},
+   {role:'system',content:instructions+' Reply with exactly one valid JSON object with keys food, name, portion, minKcal, maxKcal. Use a JSON boolean for food, strings for name and portion, and whole numbers for minKcal and maxKcal. Do not include units in the numbers, Markdown or commentary.'},
    {role:'user',content:'Estimate the food in this photo.'}
   ]}
  };
@@ -35,14 +35,30 @@ function requestFor(provider,accountId,image){
   text:{format:{type:'json_schema',name:'meal_photo_estimate',strict:true,schema}}
  }};
 }
-function responseValue(provider,data){
- if(provider==='cloudflare'&&data.success!==true)throw Error('Provider response failed');
- if(provider==='openai'&&data.status&&data.status!=='completed')throw Error('Provider response incomplete');
- const content=provider==='cloudflare'?data.result?.response:data.output?.flatMap(item=>item.type==='message'&&item.role==='assistant'?item.content||[]:[]).find(x=>x.type==='output_text')?.text;
- if(provider==='cloudflare'&&content!==null&&typeof content==='object'&&!Array.isArray(content))return content;
+const record=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+function cloudflareResponse(data){
+ if(data.success!==true)throw Error('Provider response failed');
+ const result=data.result;
+ if(record(result)){
+  if(Object.hasOwn(result,'response'))return {value:result.response,shape:'nested'};
+  if(Object.hasOwn(result,'food'))return {value:result,shape:'direct_object'};
+ }
+ if(typeof result==='string')return {value:result,shape:'direct_text'};
+ return {value:null,shape:'unknown'};
+}
+function modelJSON(content,allowExplanation=false){
  if(typeof content!=='string'||content.length>4096)throw Error('Invalid provider output');
  const clean=content.trim(),fence=clean.match(/^```(?:json)?\s*([\s\S]+?)\s*```$/i);
- return JSON.parse(fence?fence[1]:clean);
+ if(!allowExplanation||fence||clean.startsWith('{')&&clean.endsWith('}'))return JSON.parse(fence?fence[1]:clean);
+ // Allow one JSON object with surrounding prose or Markdown, not multiple objects
+ // or an array. Never guess a calorie value from an unstructured sentence.
+ const first=clean.indexOf('{'),last=clean.lastIndexOf('}');
+ if(first<0||last<=first||/[\[\]{}]/.test(clean.slice(0,first)+clean.slice(last+1)))throw Error('Invalid provider output');
+ return JSON.parse(clean.slice(first,last+1));
+}
+function openAIResponse(data){
+ if(data.status&&data.status!=='completed')throw Error('Provider response incomplete');
+ return modelJSON(data.output?.flatMap(item=>item.type==='message'&&item.role==='assistant'?item.content||[]:[]).find(x=>x.type==='output_text')?.text);
 }
 export function createPhotoCalories({provider='openai',key='',accountId='',pilotEmail='',limit=0,fetcher=fetch,reserve=async()=>false,diagnostic=entry=>console.warn(JSON.stringify(entry))}={}){
  if(!['openai','cloudflare'].includes(provider)||!key||!Number.isInteger(limit)||limit<1||limit>1000)return null;
@@ -53,7 +69,7 @@ export function createPhotoCalories({provider='openai',key='',accountId='',pilot
   async estimate(userId,value){
    const image=validateMealImage(value),day=new Date().toISOString().slice(0,10);
    if(!await reserve(userId,day,limit))throw error(429,'Photo estimate limit reached. You can still log meals manually.');
-   let output,stage='request',httpStatus=null,code=null;const started=performance.now();
+   let output,stage='request',httpStatus=null,code=null,outputShape=null;const started=performance.now();
    try{
     const {url,payload}=requestFor(provider,accountId,image);
     const r=await fetcher(url,{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},
@@ -66,9 +82,14 @@ export function createPhotoCalories({provider='openai',key='',accountId='',pilot
     if(r.status===429)throw error(429,'Photo estimate quota reached. Use a recipe or enter calories manually.');
     if(!r.ok||!data)throw Error('Provider unavailable');
     stage=data.success===false?'provider':'parse';
-    output=responseValue(provider,data);
+    if(provider==='cloudflare'){
+     const {value,shape}=cloudflareResponse(data);
+     outputShape=shape;
+     output=record(value)?value:modelJSON(value,true);
+     if(!record(output)||typeof output.food!=='boolean')throw Error('Missing food decision');
+    }else output=openAIResponse(data);
    }catch(err){
-    if(provider==='cloudflare')diagnostic({event:'photo_estimate_miss',provider,stage:err.name==='TimeoutError'?'timeout':stage,httpStatus,code,ms:Math.round(performance.now()-started)});
+    if(provider==='cloudflare')diagnostic({event:'photo_estimate_miss',provider,stage:err.name==='TimeoutError'?'timeout':stage,httpStatus,code,ms:Math.round(performance.now()-started),...(outputShape?{outputShape}:{})});
     if(err.status===429)throw err;
     throw error(503,unavailable);
    }
