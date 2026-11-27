@@ -11,6 +11,16 @@ try{
  await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
  assert.equal(await store.reservePriceCredits('2026-11-23',1,6),false);
  assert.equal(await store.reservePriceCredits('2026-11-24',1,6),true);
+ // Increasing the pilot's limit retains today's usage and keeps the default cap unchanged.
+ const scanDay='2026-11-27';
+ for(let i=0;i<3;i++)assert.equal(await store.reservePhotoCalories('pilot',scanDay,3),true);
+ assert.equal(await store.reservePhotoCalories('pilot',scanDay,3),false);
+ const pilotAttempts=await Promise.all(Array.from({length:10},()=>store.reservePhotoCalories('pilot',scanDay,10,10)));
+ assert.equal(pilotAttempts.filter(Boolean).length,7);
+ assert.equal(await store.reservePhotoCalories('pilot',scanDay,10,10),false);
+ assert.equal(await store.reservePhotoCalories('pilot','2026-11-28',10,10),true);
+ const defaultAttempts=await Promise.all(Array.from({length:6},()=>store.reservePhotoCalories('standard','2026-11-28',10)));
+ assert.equal(defaultAttempts.filter(Boolean).length,3);
  assert.equal(await store.createUser({_id:'one',email:'a@example.com'}),true);
  assert.equal(await store.createUser({_id:'two',email:'a@example.com'}),false);
  assert.equal((await store.userByEmail('a@example.com'))._id,'one');

@@ -12,7 +12,7 @@ test('Photo intake checks type and size, then returns only an editable bounded f
  assert.throws(()=>photoEstimateOutput({food:false}),/No meal/);
  assert.throws(()=>photoEstimateOutput({food:true,name:'Rice',portion:'1 cup',minKcal:500,maxKcal:300}));
  let calls=0;
- const adapter=createPhotoCalories({key:'test-secret',limit:2,reserve:async(user,day,limit)=>{assert.equal(user,'test-user');assert.equal(limit,2);return true;},
+ const adapter=createPhotoCalories({key:'test-secret',limit:2,reserve:async(user,day,limit,perUserLimit)=>{assert.equal(user,'test-user');assert.equal(limit,2);assert.equal(perUserLimit,3);return true;},
  fetcher:async(url,init)=>{
   calls++;assert.equal(url,'https://api.openai.com/v1/responses');const body=JSON.parse(init.body);
   assert.equal(body.store,false);assert.equal(body.input[0].content[0].image_url,'data:image/jpeg;base64,'+jpg);
@@ -49,14 +49,14 @@ test('Recipe calorie entries require complete nutrient data and a valid portion'
 
 test('Cloudflare pilot requires an explicit account, secret, verified user and small cap', async t=>{
  const accountId='0123456789abcdef0123456789abcdef',pilotEmail='pilot@example.invalid',secret='test-only';
- const base={provider:'cloudflare',key:secret,accountId,pilotEmail,limit:5};
+ const base={provider:'cloudflare',key:secret,accountId,pilotEmail,limit:10};
  for(const override of [{key:''},{accountId:'wrong'},{pilotEmail:''},{limit:0},{limit:21},{provider:'unknown'}]){
   assert.equal(createPhotoCalories({...base,...override}),null);
  }
  let calls=0,reservations=0;
  const success={food:true,name:'Dal and rice',portion:'One small plate',minKcal:320,maxKcal:490};
- const photoCalories=createPhotoCalories({...base,reserve:async(userId,day,cap)=>{
-  reservations++;assert.equal(userId,'pilot');assert.match(day,/^\d{4}-\d{2}-\d{2}$/);assert.equal(cap,5);return true;
+ const photoCalories=createPhotoCalories({...base,reserve:async(userId,day,cap,perUserCap)=>{
+  reservations++;assert.equal(userId,'pilot');assert.match(day,/^\d{4}-\d{2}-\d{2}$/);assert.equal(cap,10);assert.equal(perUserCap,10);return true;
  },fetcher:async(url,init)=>{
   calls++;assert.equal(url,'https://api.cloudflare.com/client/v4/accounts/'+accountId+'/ai/run/@cf/meta/llama-3.2-11b-vision-instruct');
   assert.equal(init.headers.Authorization,'Bearer '+secret);assert.equal(init.redirect,'error');
