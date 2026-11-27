@@ -1087,3 +1087,14 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 .quick-start-fields .choice-chips input{width:auto}
 .quick-start-page [role=alert] p{margin:5px 0}
 .estimate-disclaimer{display:block;white-space:normal;line-height:1.35;margin-top:6px}
+
+/* Whole-pack swap totals and explicitly confirmed next-week pantry. */
+.carryover-card{padding:14px;margin:12px 0;}
+.carryover-card h2,.carryover-card h3{font-size:1rem;margin:0 0 6px;}
+.carryover-card p{margin:6px 0 12px;}
+.carryover-rows{display:grid;gap:10px;margin:14px 0;max-height:38vh;overflow-y:auto;}
+.carryover-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(72px,105px);gap:8px;align-items:center;border-bottom:1px solid #dfe7df;padding:4px;}
+.carryover-row small{display:block;color:#4f5e50;}
+.carryover-row .control{width:100%;min-height:44px;}
+.swap-impact-list{padding-left:20px;max-height:32vh;overflow:auto;}
+.swap-impact-list li{margin-bottom:8px;}

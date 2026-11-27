@@ -101,6 +101,7 @@ export function createPersonalizedApi(baseApi=catalogueApi,clock=()=>Date.now())
           }
         }
       }
+      if(url.pathname==='/api/plan'&&best.swapImpact){const {swapImpact,...weekly}=best;best=weekly;}
       return json({...best,meals:best.meals.map(r=>({...r,recommendationReason:recommendationReason(r.id,signals)})),recommendationInfo:{status:'applied',ratings:signals.ratings.size,saved:signals.saved.size,recentCooks:signals.cooked.size,recentMeals:new Set([...signals.previous,...signals.planned.keys()]).size,recentRemaining:best.meals.filter(r=>recencyPenalty(r.id,signals)>0).length,lowRatedRemaining:best.meals.filter(r=>(signals.ratings.get(r.id)||5)<=2).length}});
     }catch{
       return json({...original,recommendationInfo:{status:'unavailable'}});
