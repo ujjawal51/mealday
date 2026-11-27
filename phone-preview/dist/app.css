@@ -1098,3 +1098,24 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 .carryover-row .control{width:100%;min-height:44px;}
 .swap-impact-list{padding-left:20px;max-height:32vh;overflow:auto;}
 .swap-impact-list li{margin-bottom:8px;}
+
+/* Mealday discovery and the recipe-to-plan handoff. */
+.cuisine-discover{margin:16px 0 24px;}
+.cuisine-heading{display:flex;gap:8px;align-items:flex-end;justify-content:space-between;margin-bottom:10px;}
+.cuisine-heading p{color:#456042;font-size:.69rem;font-weight:800;letter-spacing:.12em;margin:0 0 4px;}
+.cuisine-heading h2{font-size:clamp(1.15rem,4vw,1.55rem);line-height:1.12;margin:0;}
+.cuisine-discover-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.cuisine-tile{text-align:left;display:flex;flex-direction:column;border:1px solid #dce4d8;border-radius:16px;background:#fcfdf8;color:#243726;overflow:hidden;padding:0;width:100%;cursor:pointer;}
+.cuisine-tile:hover,.cuisine-tile[aria-pressed=true]{border-color:#4a7645;background:#eef5e7;}
+.cuisine-tile[aria-pressed=true]{outline:1px solid #4a7645;}
+.cuisine-tile:focus-visible{outline:2px solid #254b35;outline-offset:2px;}
+.cuisine-tile img{width:100%;height:auto;aspect-ratio:1.56;object-fit:cover;display:block;}
+.cuisine-tile span{padding:9px 10px;display:grid;gap:3px;width:100%;}
+.cuisine-tile small{color:#465a47;line-height:1.28;}
+.recipe-plan-entry{margin:12px 0;text-align:center;}
+.recipe-plan-entry p{font-size:.84rem;color:#4c5c4a;margin:6px 0 0;}
+.placement-days{display:grid;gap:8px;}
+.placement-days>div{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px;border:1px solid #dbe4d7;border-radius:12px;}
+.placement-days span{min-width:0;display:grid;gap:3px;}
+.placement-days small{color:#4c5c4a;overflow-wrap:anywhere;}
+@media(min-width:720px){.cuisine-discover-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}

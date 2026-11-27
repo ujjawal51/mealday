@@ -72,7 +72,7 @@ try{storedCookingHistory=JSON.parse(localStorage.getItem(COOKING_HISTORY_KEY)||'
 let cookingHistory=loadHistory(storedCookingHistory,state.cooked,[...(state.result?.meals||[]),...(state.favorites||[])]);
 let options=null, view=state.result?'week':'welcome', day=state.profile.days[0], busy=false, error='', toastTimer, requestId=0, recipeSequence=0;
 let library={q:'',cuisine:'',diet:'',saved:false,rows:[],count:0,next:null,loading:false,error:''};
-let libraryDelay, carryoverPlan=null, carryoverFormRows=[], swapIndex=null,shoppingFilter='all',shoppingPricesOpen=false;
+let libraryDelay, placementPreview=null, carryoverPlan=null, carryoverFormRows=[], swapIndex=null,shoppingFilter='all',shoppingPricesOpen=false;
 let detail=null, detailTab='ingredients', guidedStep=null, recipeOrigin='week', recipeScroll=0, recipeSequenceId=0;
 const cookingTimer=createCookingTimer({onTick:updateTimerDisplay,onComplete:()=>notify('Your 5-minute timer finished.')});
 let cloudApplying=false,deletingAccount=false;
@@ -267,15 +267,28 @@ async function preferences(){
     sets.map(([label,name,values])=>'<fieldset><legend>'+label+'</legend>'+chips(name,values,p[name])+'</fieldset>').join('')+
     '<p class="subtle">Check packaged ingredients if you have an allergy.</p><p class="notice" hidden id="form-error" role="alert"></p><div class="bottom">'+button('Cancel','close')+'<button class="button primary">Generate plan</button></div></form>');
 }
+const cuisineCollections=[
+  ['Emirati','Emirati','Local comfort food','uae-salona'],
+  ['Arab','Arab','Levantine & Arabic classics','arab-adas-complete'],
+  ['South Asian','Desi','Roti, dals & family dinners','mealday-quick-paneer-bhurji'],
+  ['Turkish','Turkish','Pide, pilafs & mezze','mealday-quick-turkish-menemen']
+];
+function cuisineTiles(){
+ return '<section class="cuisine-discover" aria-labelledby="cuisine-discover-title"><div class="cuisine-heading"><div><p>RECIPE COLLECTIONS</p><h2 id="cuisine-discover-title">Explore by cuisine</h2></div>'+button('All cuisines','cuisine-tile','ghost small','','data-id="" aria-pressed="'+(!library.cuisine&&!library.saved)+'"')+'</div><div class="cuisine-discover-grid">'+
+  cuisineCollections.map(([value,label,desc,img])=>'<button type="button" class="cuisine-tile" data-action="cuisine-tile" data-id="'+esc(value)+'" aria-pressed="'+(value===library.cuisine&&!library.saved)+'"><img src="/recipes/'+img+'.webp" alt="" loading="lazy" width="768" height="768"><span><strong>'+esc(label)+'</strong><small>'+esc(desc)+'</small></span></button>').join('')+'</div></section>';
+}
+function syncCuisineTiles(){
+ for(const tile of screen.querySelectorAll('[data-action="cuisine-tile"]'))tile.setAttribute('aria-pressed',String(!library.saved&&tile.dataset.id===library.cuisine));
+}
 function renderRecipes(snapshot=false){
   if(!snapshot){
     screen.innerHTML=heading('Recipe library','Find something you’ll enjoy making at home.')+
       '<div class="filter-row"><input class="control" type="search" id="search" aria-label="Search recipes" placeholder="Search recipes" value="'+esc(library.q)+'">'+
       '<select class="control" id="cuisine" aria-label="Filter cuisine"><option value="">All cuisines</option>'+['Emirati','Arab','South Asian','Turkish'].map(c=>'<option '+(c===library.cuisine?'selected':'')+'>'+c+'</option>').join('')+'</select>'+
       '<select class="control" id="diet" aria-label="Filter diet"><option value="">All diets</option>'+['Vegan','Vegetarian','Pescatarian','Non-vegetarian'].map(d=>'<option '+(d===library.diet?'selected':'')+'>'+d+'</option>').join('')+'</select>'+
-      button(library.saved?'Show all':'Saved recipes','saved','ghost','heart')+'</div><div id="recipe-results" aria-live="polite"></div>';
+      button(library.saved?'Show all':'Saved recipes','saved','ghost','heart')+'</div>'+cuisineTiles()+'<div id="recipe-results" aria-live="polite"></div>';
   }
-  const holder=$('#recipe-results');if(!holder)return;
+  const holder=$('#recipe-results');if(!holder)return;syncCuisineTiles();
   const rows=library.saved?filterSavedRecipes(state.favorites,library):library.rows;
   const empty=library.saved?(state.favorites.length?'No saved recipes match your search and filters.':'Save recipes you like to find them here.'):'No recipes matched. Try another search or filter.';
   const clearFilters=library.saved&&state.favorites.length&&!rows.length&&(library.q||library.cuisine||library.diet)?button('Clear filters','clear-recipe-filters','ghost small'):'';
@@ -460,6 +473,7 @@ function renderRecipeDetail(r){
 
   screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">'+(r.photoStatus==='generated'?'AI meal illustration':'Meal illustration')+'</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
     button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(recipeLabel(r.id,r.componentNames?.[0]||r.name))+'</h1>'+mealComponents(r)+
+    (index<0?'<div class="recipe-plan-entry">'+button('Add to my plan','place-recipe','green wide','plus')+'<p>Pick a day and preview the grocery change before saving.</p></div>':'')+
     renderNutrition(r)+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>Cook time: '+esc(r.minutes)+' min <span aria-hidden="true">&nbsp; | &nbsp;</span> Serves: '+people+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+
     '<div class="recipe-tabs" role="group" aria-label="Recipe sections">'+['ingredients','instructions'].map(tab=>button(cap(tab),'recipe-tab','recipe-tab','','data-id="'+tab+'" aria-pressed="'+(detailTab===tab)+'"')).join('')+'</div>'+
@@ -492,6 +506,55 @@ async function swaps(index){
       data.choices.length?data.choices.map(r=>'<article class="swap-option"><div><strong>'+esc(recipeLabel(r.id,r.name))+'</strong><p>'+esc(r.minutes)+' min · AED '+money(r.total)+' estimated week</p><small>'+esc(swapCostText(-Math.round(r.change*100)))+'</small>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose','apply-swap','primary small','check','data-id="'+esc(r.id)+'"')+'</article>').join(''):'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
   }catch(err){if(dialog.open&&swapIndex===index)openDialog('Swap this meal','','<p class="notice">'+esc(err.message)+'</p>');}
 }
+function saveSwapResult(result){
+ const impact=result.swapImpact;
+ const removed=new Map((state.carryoverCandidates||[]).map(row=>[row.key,row]));
+ for(const row of impact?.rows||[])if(row.removed)removed.set(row.key,{key:row.key,name:row.name,unit:row.unit});
+ state={...state,checked:keepChecked(state.result,result,state.checked),result,lastSwapEstimate:impact?.savedCents,carryoverCandidates:[...removed.values()].slice(-100),planHistory:rememberPlan(result)};
+ persist();
+}
+function placeRecipe(){
+ if(!detail||busy)return;
+ placementPreview=null;
+ if(!state.result?.plan?.length){
+  openDialog('Add to my plan','Build a week first. Then you can place this meal into a day you choose.',button('Plan my week','placement-preferences','green wide'));return;
+ }
+ const slots=state.result.plan.map((slot,i)=>({slot,i})).filter(({slot})=>detail.meals?.includes(slot.meal));
+ if(!slots.length){
+  openDialog('No matching meal slot','This recipe is not listed for any meal type in your current plan.',button('Open plan preferences','placement-preferences','green wide'));return;
+ }
+ openDialog('Add to my plan',recipeLabel(detail.id,detail.name),
+  '<p>Choose a meal to replace. Your cooking preferences, allergies and budget still apply.</p><div class="placement-days">'+
+  slots.map(({slot,i})=>'<div><span><strong>'+esc(DAYS[slot.day]+' · '+cap(slot.meal))+'</strong><small>'+esc(recipeLabel(state.result.meals[i]?.id,state.result.meals[i]?.name||'Planned meal'))+'</small></span>'+button('Preview','preview-placement','ghost small','','data-index="'+i+'" aria-label="'+esc('Preview '+DAYS[slot.day]+' '+slot.meal)+'"')+'</div>').join('')+
+  '</div><p id="placement-error" class="notice" role="alert" hidden></p>');
+}
+async function previewPlacement(index,control){
+ if(busy||!detail||!state.result?.plan?.[index])return;
+ const previous=state.result, profile=state.profile, pantry=state.pantry, recipe=detail;
+ const slot=previous.plan[index];
+ busy=true;control.disabled=true;
+ try{
+  const result=await request('/api/swap',{profile,pantry,plan:previous.plan,index,recipeId:recipe.id});
+  if(!dialog.open||!control.isConnected||previous!==state.result||profile!==state.profile||pantry!==state.pantry||recipe!==detail)return;
+  if(!result.swapImpact)throw Error('The grocery estimate is unavailable. Try again.');
+  placementPreview={previous,profile,pantry,recipe,result};
+  const impact=result.swapImpact;
+  openDialog('Review plan change',DAYS[slot.day]+' · '+cap(slot.meal),
+   '<p>Replace <strong>'+esc(previous.meals[index]?.name||'your current meal')+'</strong> with <strong>'+esc(recipeLabel(recipe.id,recipe.name))+'</strong>.</p>'+
+   '<div class="surface-card carryover-card"><strong>'+esc(swapCostText(impact.savedCents))+'</strong><p>Estimated weekly groceries: AED '+priceMoney(impact.beforeCents/100)+' → AED '+priceMoney(impact.afterCents/100)+'. Not a checkout price.</p></div>'+
+   button('Confirm this meal','confirm-placement','green wide','check')+button('Choose a different day','place-recipe','ghost wide'));
+ }catch(error){
+  const tip=$('#placement-error',dialog);if(control.isConnected&&tip){tip.hidden=false;tip.textContent=error.message;}
+ }finally{busy=false;control.disabled=false;}
+}
+function confirmPlacement(){
+ const preview=placementPreview;placementPreview=null;
+ if(!preview||busy||state.result!==preview.previous||state.profile!==preview.profile||state.pantry!==preview.pantry||detail!==preview.recipe){notify('Your plan changed. Preview the meal again.');return;}
+ saveSwapResult(preview.result);
+ dialog.close();detail=null;setView('week');
+ openDialog('Meal added to your plan','Your grocery list was updated.',
+  button('View grocery list','placement-groceries','green wide','shopping')+button('Back to plan','close','ghost wide'));
+}
 async function applySwap(id,buttonNode){
   if(busy)return;
   const index=swapIndex,previous=state.result;
@@ -500,10 +563,7 @@ async function applySwap(id,buttonNode){
     const result=await request('/api/swap',{profile:state.profile,pantry:state.pantry,plan:state.result.plan,index,recipeId:id});
     if(state.result!==previous)throw Error('Your plan changed. Open the swap again.');
     const impact=result.swapImpact;
-    const removed=new Map((state.carryoverCandidates||[]).map(row=>[row.key,row]));
-    for(const row of impact?.rows||[])if(row.removed)removed.set(row.key,{key:row.key,name:row.name,unit:row.unit});
-    state={...state,checked:keepChecked(state.result,result,state.checked),result,lastSwapEstimate:impact?.savedCents,carryoverCandidates:[...removed.values()].slice(-100),planHistory:rememberPlan(result)};
-    persist();dialog.close();if(view==='recipe')leaveRecipe();if(impact)showSwapImpact(impact);else notify('Meal swapped. Grocery list updated.');
+    saveSwapResult(result);dialog.close();if(view==='recipe')leaveRecipe();if(impact)showSwapImpact(impact);else notify('Meal swapped. Grocery list updated.');
   }catch(err){buttonNode.disabled=false;notify(err.message);}
   finally{busy=false;render();}
 }
@@ -638,6 +698,16 @@ document.addEventListener('click',async event=>{
     screen.querySelector('.rating-star[data-id="'+id+'"]')?.focus({preventScroll:true});
   }
   else if(action==='review-leftovers')reviewLeftovers();
+  else if(action==='place-recipe')placeRecipe();
+  else if(action==='preview-placement')await previewPlacement(Number(index),b);
+  else if(action==='confirm-placement')confirmPlacement();
+  else if(action==='placement-preferences'){dialog.close();detail=null;setView('plan');}
+  else if(action==='placement-groceries'){dialog.close();setView('shopping');}
+  else if(action==='cuisine-tile'){
+    clearTimeout(libraryDelay);const wasSaved=library.saved;library.saved=false;library.cuisine=id||'';
+    if(wasSaved)renderRecipes();else {$('#cuisine').value=library.cuisine;syncCuisineTiles();}
+    await loadRecipes();
+  }
   else if(action==='swaps')await swaps(Number(index));
   else if(action==='apply-swap')await applySwap(id,b);
   else if(action==='close'){if(!deletingAccount)dialog.close();}
