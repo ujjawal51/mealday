@@ -3,6 +3,7 @@ import {publicImage} from './catalogue-schema.js';
 import {illustratedPhotoIds} from './illustrated-photo-ids.js';
 import {recipeLabel} from './recipe-labels.js';
 import {carryoverRows,confirmLeftovers} from './meal-carryover.js';
+import {groceryProviders,shopListLines} from './shop-this-list.js';
 import {mountGoogleSignIn} from './google-signin.js';
 import {createOnboardingMotion} from './onboarding-motion.js';
 import {savingsComparison} from './savings.js';
@@ -365,9 +366,30 @@ function shopping(){
  }).join('');
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
- return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
+ return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('Shop this list','shop-this-list','ghost wide','shopping',shopListLines(items,state.checked,extras).length?'':'disabled')+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
  (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+nextWeekShortcut()+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
+}
+function openShopThisList(){
+ const lines=shopListLines(shoppingItems(),state.checked,state.extraGroceries||[]);
+ if(!lines.length){notify('No groceries left to buy.');return;}
+ openDialog('Shop this list','Copy the groceries you still need, then open a store.',
+  '<div class="shop-handoff"><p>Add the items manually. Each store confirms prices, stock and delivery at checkout. Mealday does not fill or place an order.</p>'+
+  '<label for="shop-copy-text">To-buy list ('+lines.length+')</label><textarea class="control" id="shop-copy-text" rows="5" readonly>'+esc(lines.join('\n'))+'</textarea>'+
+  button('Copy to-buy list','shop-copy','green wide','copy')+'<p class="shop-copy-status" role="status" aria-live="polite"></p>'+
+  '<div class="shop-provider-links">'+groceryProviders.map(p=>'<a class="button ghost wide" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Open '+esc(p.name)+'</a>').join('')+'</div></div>');
+}
+async function copyShopList(){
+ const input=$('#shop-copy-text',dialog),status=$('.shop-copy-status',dialog);
+ if(!input||!status)return;
+ try{
+  if(window.MealdayAndroid?.copy)window.MealdayAndroid.copy(input.value);
+  else if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(input.value);
+  else throw Error('Clipboard not available');
+  status.textContent='To-buy list copied.';
+ }catch{
+  input.focus();input.select();status.textContent='List selected. Use your device’s Copy command.';
+ }
 }
 function openCheckoutComparison(){
   openDialog('Compare with my checkout','Manual comparison · nothing is saved or sent.',
@@ -543,6 +565,8 @@ document.addEventListener('click',async event=>{
   else if(action==='shopping-prices'){shoppingPricesOpen=!shoppingPricesOpen;screen.innerHTML=shopping();}
   else if(action==='compare-checkout'&&view==='shopping'&&state.result){openCheckoutComparison();}
   else if(action==='shopping-share'){await shareGroceries();}
+  else if(action==='shop-this-list')openShopThisList();
+  else if(action==='shop-copy')await copyShopList();
   else if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
   else if(action==='setup-account-back'){if(setupAccountBusy)return;error='';setupAccountMode='choice';wizardStory='benefits';setView('setup',false);}
   else if(action==='setup-account-guest'||action==='setup-account-continue'){await finishOnboarding();}

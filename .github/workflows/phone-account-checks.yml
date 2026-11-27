@@ -63,6 +63,7 @@ jobs:
           COMPLETE_MEAL_SCREENSHOT=1 node phone-preview/server/complete-meals.browser.mjs
           node phone-preview/server/recipe-image-coverage.browser.mjs
           node phone-preview/server/meal-carryover.browser.mjs
+          node phone-preview/server/shop-this-list.browser.mjs
   deployment-smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: account-tests
