@@ -68,7 +68,8 @@ export function createPhotoCalories({provider='openai',key='',accountId='',pilot
   allowed:(email,verified)=>provider==='openai'||(verified===true&&typeof email==='string'&&email.trim().toLowerCase()===normalizedEmail),
   async estimate(userId,value){
    const image=validateMealImage(value),day=new Date().toISOString().slice(0,10);
-   if(!await reserve(userId,day,limit))throw error(429,'Photo estimate limit reached. You can still log meals manually.');
+   // Cloudflare is a verified single-account pilot; keep the standard per-user cap for other providers.
+   if(!await reserve(userId,day,limit,provider==='cloudflare'?limit:3))throw error(429,'Photo estimate limit reached. You can still log meals manually.');
    let output,stage='request',httpStatus=null,code=null,outputShape=null;const started=performance.now();
    try{
     const {url,payload}=requestFor(provider,accountId,image);

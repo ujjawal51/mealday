@@ -14,7 +14,7 @@ try{
  const provider=process.env.MEALDAY_PHOTO_PROVIDER||'openai';
  const photoCalories=createPhotoCalories({provider,key:provider==='cloudflare'?process.env.CLOUDFLARE_API_TOKEN:process.env.MEALDAY_PHOTO_OPENAI_KEY,
    accountId:process.env.CLOUDFLARE_ACCOUNT_ID,pilotEmail:process.env.MEALDAY_PHOTO_PILOT_EMAIL,
-   limit:Number(process.env.MEALDAY_PHOTO_DAILY_LIMIT||0),reserve:(userId,day,limit)=>store.reservePhotoCalories(userId,day,limit)});
+   limit:Number(process.env.MEALDAY_PHOTO_DAILY_LIMIT||0),reserve:(userId,day,limit,perUserLimit)=>store.reservePhotoCalories(userId,day,limit,perUserLimit)});
  const server=createServer(createApp({...config,store,luluPrices,photoCalories,googleAuth:createGoogleAuth()}));
  server.requestTimeout=30000;server.headersTimeout=15000;
  server.listen(config.port,config.host,()=>console.log('Mealday ready at '+config.origin+' · Latest phone UI · MongoDB connected'));
