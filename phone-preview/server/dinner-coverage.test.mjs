@@ -37,3 +37,16 @@ test('The release import is insert-only and runs once, while preserving edits an
  await installDinnerCoverage(db,async()=>{throw Error('Must not re-read the catalogue after the import has completed');});
  assert.equal(added.published,false);assert.equal(added.data.name,'Reviewer edit');assert.equal(recipeRows.length,original.length+18);
 });
+
+test('Public Bissara keeps the dinner slot and corrects only known legacy labels',async()=>{
+ const id='target-ar-bissara', row=structuredClone(original.find(r=>r.id===id)), old='Fava Bissara Breakfast with Pita';
+ row.data.name=old; row.data.componentNames=[old,'Cucumber side'];
+ const before=structuredClone(row);
+ const get=async()=> (await liveCatalogue({publishedRecipes:async()=>[row]})).recipes[0];
+ const r=await get();
+ assert(r.mealTypes.includes('dinner'));assert.doesNotMatch(r.name,/Breakfast/);
+ assert.equal(r.componentNames[0],'Fava Bissara with Pita');
+ assert.deepEqual(row,before);
+ row.data.name='Custom Breakfast Bissara';row.data.componentNames=[row.data.name,'Cucumber side'];
+ assert.equal((await get()).name,row.data.name);
+});

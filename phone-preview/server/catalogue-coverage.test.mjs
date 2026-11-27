@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {dinnerCoverageDocuments} from './dinner-coverage.mjs';
 import {catalogueDocuments} from './recipe-catalogue.mjs';
 import {publicSnapshot,publicRecipe} from '../dist/catalogue-schema.js';
 import {api,installLiveCatalogue} from '../dist/api.js';
@@ -9,10 +10,11 @@ import {prepareCompleteMeals} from '../dist/meal-completeness.js';
 const backup=JSON.parse(await readFile(new URL('../source/catalogue-backup.json',import.meta.url))),manifest=JSON.parse(await readFile(new URL('../source/generated-recipe-images.json',import.meta.url)));
 const profile={city:'Dubai',shop:'LuLu',people:1,budget:200,minutes:90,cuisine:'UAE mix',cuisines:['UAE mix'],diet:'Any',days:[0],mealTypes:['dinner'],allergies:[],appliances:['Hob','Oven','Microwave','Air fryer'],priorities:[]};
 async function plan(p,pantry={}){const u=new URL('https://mealday.test/api/plan'),r=await api(new Request(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:p,pantry,seed:1})}),u);return {status:r.status,data:await r.json()};}
-test('All 420 meals including 174 Desi recipes and 18 legacy dishes have real unique image assets',async()=>{
- const snapshot=publicSnapshot(catalogueDocuments());assert.equal(snapshot.recipes.length,420);assert.equal(snapshot.recipes.filter(r=>r.cuisine==='South Asian').length,174);assert.equal(new Set(snapshot.recipes.map(r=>r.imageUrl)).size,420);
+test('All 438 meals including 18 new quick recipes have unique image assets',async()=>{
+ const base=catalogueDocuments(),stock=publicSnapshot(base).ingredients;
+ const snapshot=publicSnapshot([...base,...dinnerCoverageDocuments(stock)]);assert.equal(snapshot.recipes.length,438);assert.equal(snapshot.recipes.filter(r=>r.cuisine==='South Asian').length,186);assert.equal(new Set(snapshot.recipes.map(r=>r.imageUrl)).size,438);
  for(const r of snapshot.recipes){assert.equal(r.imageUrl,'/recipes/'+r.id+'.webp');const bytes=await readFile(new URL('../dist'+r.imageUrl,import.meta.url));assert.equal(bytes.subarray(0,4).toString(),'RIFF');assert.equal(bytes.subarray(8,12).toString(),'WEBP');}
- assert.equal(manifest.images.length,18);for(const a of manifest.images){const bytes=await readFile(new URL('../dist'+a.path,import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),a.sha256);assert.equal(bytes.length,a.bytes);assert(a.width>=512&&a.width===a.height);}
+ assert.equal(manifest.images.length,36);assert.equal(manifest.images.filter(a=>a.id.startsWith('mealday-quick-')).length,18);for(const a of manifest.images){const bytes=await readFile(new URL('../dist'+a.path,import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),a.sha256);assert.equal(bytes.length,a.bytes);assert(a.width>=512&&a.width===a.height);}
 });
 test('MongoDB placeholders resolve to generated images while source records and custom photos remain intact',()=>{
  const d=catalogueDocuments().find(d=>d.id==='tomato-pasta');d.data.imageUrl='/recipe-image-unavailable.svg';d.photo.path='/recipe-image-unavailable.svg';d.photo.status='missing';const before=JSON.stringify(d),r=publicRecipe(d);assert.equal(r.data.imageUrl,'/recipes/tomato-pasta.webp');assert.equal(r.data.photoStatus,'generated');assert.equal(JSON.stringify(d),before);

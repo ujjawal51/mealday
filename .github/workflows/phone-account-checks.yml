@@ -109,6 +109,8 @@ jobs:
           assert.equal(privateRead.status,403,'Cross-site private account reads must remain blocked.');
           const catalogue=await (await fetch(origin+'/api/catalogue',{signal:AbortSignal.timeout(20000)})).json();
           assert(catalogue.recipes.every(r=>r.imageUrl&&!r.imageUrl.includes('unavailable')),'Published recipes still have missing images.');
+          const bissara=catalogue.recipes.find(r=>r.id==='target-ar-bissara');
+          assert(bissara?.mealTypes.includes('dinner')&&!/Breakfast/i.test([bissara.name,...bissara.componentNames].join(' ')),'Bissara dinner still has a breakfast label.');
           const assets=JSON.parse(await readFile('phone-preview/source/generated-recipe-images.json','utf8')).images;
           for(let i=0;i<assets.length;i+=3)await Promise.all(assets.slice(i,i+3).map(async asset=>{
             assert.equal(catalogue.recipes.find(r=>r.id===asset.id)?.imageUrl,asset.path);
