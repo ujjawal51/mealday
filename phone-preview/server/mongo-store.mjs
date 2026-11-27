@@ -40,6 +40,15 @@ export async function connectStore(uri,dbName){
       try{await usage.updateOne({_id:id},{$setOnInsert:{spent:0}},{upsert:true});}catch(error){if(error.code!==11000)throw error;}
       return (await usage.updateOne({_id:id,spent:{$lte:limit-cost}},{$inc:{spent:cost}})).modifiedCount===1;
     },
+    async reservePhotoCalories(userId,day,limit){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!Number.isInteger(limit)||limit<1||limit>1000)return false;
+      const usage=db.collection('photo_calorie_usage');
+      const consume=async(id,cap)=>{
+        try{await usage.updateOne({_id:id},{$setOnInsert:{count:0}},{upsert:true});}catch(error){if(error.code!==11000)throw error;}
+        return (await usage.updateOne({_id:id,count:{$lt:cap}},{$inc:{count:1}})).modifiedCount===1;
+      };
+      return await consume('user:'+day+':'+userId,3)&&await consume('total:'+day,limit);
+    },
     storePriceRecords:(shop,city,keys)=>db.collection('store_price_records').find({shop,city,ingredientId:{$in:keys}},{projection:{_id:0}}).limit(2001).toArray(),
     publishedRecipes:()=>db.collection('recipes').find({published:true},{projection:{_id:0,id:1,data:1,ingredients:1,photo:1,published:1}}).sort({id:1}).limit(2001).toArray(),
     userByEmail:email=>users.findOne({email}),

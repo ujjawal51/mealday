@@ -1,3 +1,4 @@
+import {loadCalorieTracker} from './lazy-calories.js';
 import {ingredientPicture} from './ingredient-pictures.js';
 import {publicImage} from './catalogue-schema.js';
 import {illustratedPhotoIds} from './illustrated-photo-ids.js';
@@ -25,6 +26,7 @@ let previousWizardStep=-1;
 let wizardStory=null,storyCardsPaused=false;
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const ICONS = {
+  camera:'<rect x="2.5" y="6.5" width="19" height="14" rx="3"/><path d="M7 6.5l2-3h6l2 3"/><circle cx="12" cy="13.5" r="3.25"/>',
   week:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m-14 5h2m4 0h2"/>',
   recipes:'<path d="M4 4h7c2 0 3 1 3 3v14c0-2-1-3-3-3H4zm16 0h-3c-2 0-3 1-3 3v14c0-2 1-3 3-3h3z"/>',
   shopping:'<path d="M3 9h18l-2 11H5L3 9Zm4 0 4-6m6 6-4-6m-5 9v5m4-5v5m4-5v5"/>',
@@ -54,7 +56,7 @@ const ICONS = {
   gear:'<path d="M10 3h4l.6 2.5 1.6.9 2.5-.7 2 3.4-1.9 1.8v2.2l1.9 1.8-2 3.4-2.5-.7-1.6.9L14 21h-4l-.6-2.5-1.6-.9-2.5.7-2-3.4 1.9-1.8v-2.2L3.3 9.1l2-3.4 2.5.7 1.6-.9L10 3Z"/><circle cx="12" cy="12" r="3"/>',
 };
 Object.assign(ICONS,{cloud:'<path d="M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 4.5 4.5 0 1 1 0 9Z"/>',download:'<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>',bell:'<path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5Zm5 3h4"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18m0-18c5 5 5 13 0 18"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/>'});
-const labels = {week:'Plan',recipes:'Meals',shopping:'Shopping',pantry:'Kitchen',plan:'Preferences',settings:'Settings',history:'Cooking history'};
+const labels = {week:'Plan',recipes:'Meals',shopping:'Shopping',pantry:'Kitchen',plan:'Preferences',calories:'Camera',settings:'Settings',history:'Cooking history'};
 function icon(name){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
 const esc = value => String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const money = amount => new Intl.NumberFormat('en-AE',{minimumFractionDigits:0,maximumFractionDigits:2}).format(amount);
@@ -80,6 +82,21 @@ const cloudBackup=createCloudBackup({snapshot:()=>({state:structuredClone(state)
   cloudApplying=true;state=data.state;cookingHistory=loadHistory(data.history);persist();persistHistory();cloudApplying=false;detail=null;guidedStep=null;library.rows=[];library.count=0;
   setView(state.result?'week':'welcome',false);
 },changed:()=>{if(['settings','account'].includes(view))render();}});
+let calorieTracker=null;
+async function openCalories(){
+ if(calorieTracker)return calorieTracker;
+ const factory=await loadCalorieTracker();
+ if(!calorieTracker)calorieTracker=factory({screen,escape:esc,request,account:()=>cloudBackup.info().account,notify});
+ return calorieTracker;
+}
+function renderCalories(){
+ if(calorieTracker){calorieTracker.show();return;}
+ screen.innerHTML='<section class="calorie-card"><h1>Calorie tracker</h1><p>Opening your meal log…</p></section>';
+ openCalories().then(t=>{if(view==='calories')void t.enter();}).catch(()=>{
+  if(view==='calories')screen.innerHTML='<section class="calorie-card"><h1>Calorie tracker</h1><p>Could not load the tracker.</p>'+button('Try again','retry-calories','green')+'</section>';
+ });
+}
+
 function persist(){try{localStorage.setItem(key,JSON.stringify(state));if(!cloudApplying)cloudBackup.localChanged();}catch{notify('Browser storage is unavailable. Changes work until this page closes.');}}
 function persistHistory(){try{localStorage.setItem(COOKING_HISTORY_KEY,JSON.stringify(cookingHistory));if(!cloudApplying)cloudBackup.localChanged();return true;}catch{notify('Cooking history could not be saved. Keep this page open and allow browser storage.');return false;}}
 function logCook(recipe){cookingHistory=recordCook(cookingHistory,recipe,new Date().toISOString(),crypto.randomUUID());persistHistory();}
@@ -121,7 +138,7 @@ function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minu
 function initNavigation(){
   for(const b of document.querySelectorAll('.nav button')) {
     const name=b.dataset.view;
-    b.innerHTML=icon(name==='plan'?'settings':name==='settings'?'gear':name==='recipes'?'plate':name)+'<span>'+labels[name]+'</span>';
+    b.innerHTML=icon(name==='calories'?'camera':name==='plan'?'settings':name==='settings'?'gear':name==='recipes'?'plate':name)+'<span>'+labels[name]+'</span>';
   }
 }
 function render(){
@@ -145,6 +162,7 @@ function render(){
   if(view==='add-grocery')screen.innerHTML=addGrocery();
   if(view==='pantry')screen.innerHTML=pantry();
   if(view==='plan')screen.innerHTML=planSettings();
+  if(view==='calories')renderCalories();
   if(view==='settings')screen.innerHTML=settings();
   if(view==='history')screen.innerHTML=cookingHistoryPage();
   if(view==='account'){
@@ -590,6 +608,7 @@ async function applySwap(id,buttonNode){
   finally{busy=false;render();}
 }
 function setView(target,hash=true){
+  if(view==='calories'&&target!=='calories')calorieTracker?.leave();
   view=Object.hasOwn(labels,target)||['welcome','quick-start','setup','recipe','account','add-grocery'].includes(target)?target:'week';
   if(hash&&location.hash!=='#'+view)history.replaceState(null,'','#'+view);
   render();
@@ -618,8 +637,10 @@ function startTimer(){
 }
 document.addEventListener('click',async event=>{
   const b=event.target.closest('button');if(!b||b.disabled)return;
-  if(b.dataset.view){setView(b.dataset.view);$('#main').focus({preventScroll:true});return;}
+  if(b.dataset.view){setView(b.dataset.view);if(b.dataset.view==='calories'){const camera=$('#quick-cal-camera');if(camera){camera.value='';camera.click();}if(calorieTracker)void calorieTracker.enter();return;}$('#main').focus({preventScroll:true});return;}
+  if(b.dataset.calorie){await calorieTracker?.click(b);return;}
   const {action,id,index}=b.dataset;
+  if(action==='retry-calories'){renderCalories();return;}
   if(action==='shopping-filter'){shoppingFilter=['all','todo','bought'].includes(id)?id:'all';screen.innerHTML=shopping();screen.querySelector('[data-action="shopping-filter"][data-id="'+shoppingFilter+'"]').focus({preventScroll:true});}
   else if(action==='shopping-reset'){const ids=new Set(shoppingItems().map(i=>i.key));state.checked=state.checked.filter(key=>!ids.has(key));for(const item of state.extraGroceries||[])item.checked=false;persist();screen.innerHTML=shopping();notify('Bought items reset.');}
   else if(action==='shopping-prices'){shoppingPricesOpen=!shoppingPricesOpen;screen.innerHTML=shopping();}
@@ -775,6 +796,7 @@ document.addEventListener('submit',async event=>{
     }
     await generate(next);return;
   }
+  if(form.id==='calorie-form'){event.preventDefault();calorieTracker?.save(form);return;}
   if(form.id==='leftover-form'){
     event.preventDefault();
     if(busy||!form.isConnected)return;
@@ -849,6 +871,8 @@ document.addEventListener('submit',async event=>{
 });
 document.addEventListener('change',event=>{
   const el=event.target;
+  if(el.id==='quick-cal-camera'){const file=el.files?.[0];if(file)void openCalories().then(t=>{if(view==='calories')t.change(el);}).catch(()=>notify('Could not open the calorie tracker.'));return;}
+  if(el.dataset.calorie){calorieTracker?.change(el);return;}
   if(el.id==='store-price-location'){priceLocation=el.value;refreshStorePrices(true);return;}
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
   if(el.dataset.extra){const item=state.extraGroceries?.find(x=>x.id===el.dataset.extra);if(item){item.checked=el.checked;persist();screen.innerHTML=shopping();}return;}
@@ -857,6 +881,7 @@ document.addEventListener('change',event=>{
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
+ if(event.target.dataset?.calorie==='recipe-search'){calorieTracker?.search(event.target);return;}
   if(event.target.form?.id==='checkout-comparison'){event.target.form.querySelector('output').textContent='';return;}
   if(event.target.form?.id==='extra-grocery-form'){event.target.form.querySelector('button[type=submit]').disabled=!event.target.form.elements.namedItem('item').value.trim();return;}
   if(event.target.id==='recipe-note'&&detail){updateJournal(detail.id,{note:event.target.value});return;}
@@ -1287,7 +1312,7 @@ function settings(){
  const reminder=state.reminder,account=cloudBackup.info().account;
  return '<div class="phone-settings simple-settings"><header class="settings-heading"><p>Your account</p><h1>settings</h1></header>'+
  '<div class="settings-profile"><div><h2>'+esc(state.profile.name?'Hi, '+state.profile.name:'Your kitchen')+'</h2><p>Shopping at '+esc(state.profile.shop||'your preferred supermarket')+'</p></div>'+button('','edit-name','ghost icon-only','edit','aria-label="Edit your name"')+'<span class="settings-profile-badge">'+(account?'Signed in':'Guest')+'</span></div>'+
- section('App',settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
+ section('App',settingRow('Plan preferences','go-plan','Diet, appliances, and grocery budget')+settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
  section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
  section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact','Send a private message'))+
  section('Legal',settingRow('Privacy policy','privacy')+settingRow('Terms of service','terms'))+
