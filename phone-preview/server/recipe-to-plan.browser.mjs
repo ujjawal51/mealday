@@ -41,9 +41,12 @@ try{
  await page.getByRole('button',{name:'Add to my plan',exact:true}).click();
  await page.getByRole('button',{name:'Preview Monday dinner',exact:true}).click();};
  const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')));
+ assert.equal(await page.getByRole('heading',{name:/^Paneer rice plate/}).count(),0);
+ await page.getByRole('button',{name:'Show all recipes',exact:true}).click();
  await choose('Paneer rice plate');
  await page.getByRole('alert').filter({hasText:/does not match your preferences/}).waitFor();assert.equal((await stored()).result.plan[0].recipeId,'starting');
  await page.getByRole('button',{name:'Close',exact:true}).click();await page.getByRole('button',{name:'Back from recipe',exact:true}).click();
+ await page.getByRole('button',{name:'Use my preferences',exact:true}).click();
  await choose('Chana cucumber rice bowl');await page.getByRole('heading',{name:'Review plan change',exact:true}).waitFor();
  assert.match(await page.getByRole('dialog').innerText(),/Estimated weekly groceries/);
  assert.equal((await stored()).result.plan[0].recipeId,'starting');
@@ -54,6 +57,23 @@ try{
  let saved=await stored();assert.equal(saved.result.plan[0].recipeId,'replacement');
  assert.equal(saved.result.items.find(x=>x.key==='chickpeas').required,160);
  await page.reload();assert.equal((await stored()).result.plan[0].recipeId,'replacement');
+ await page.getByRole('button',{name:'Meals',exact:true}).click();
+ await page.getByRole('heading',{name:'Recently viewed',exact:true}).waitFor();
+ assert.match(await page.locator('.recent-recipe-rail').innerText(),/Chana cucumber rice bowl/);
+ assert.doesNotMatch(await page.locator('.recent-recipe-rail').innerText(),/Paneer/);
+ await page.getByRole('button',{name:'Settings',exact:true}).click();
+ await page.getByRole('heading',{name:'Hi, Test family',exact:true}).waitFor();
+ assert.match(await page.locator('.settings-profile').innerText(),/Shopping at LuLu.*Guest/s);
+ await page.getByRole('button',{name:'Rate Mealday',exact:true}).click();
+ await page.getByRole('heading',{name:'Enjoying Mealday?',exact:true}).waitFor();
+ if(process.env.RATING_SCREENSHOT)await page.screenshot({path:process.env.RATING_SCREENSHOT,fullPage:false});
+ await page.getByRole('button',{name:'Not today',exact:true}).click();
+ assert.equal(await page.getByRole('dialog').count(),0);
+ await page.getByRole('button',{name:'Rate Mealday',exact:true}).click();
+ await page.getByRole('button',{name:'Sure!',exact:true}).click();
+ await page.getByRole('heading',{name:'Rate Mealday',exact:true}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Send feedback',exact:true}).count(),1);
+ await page.getByRole('button',{name:'Close',exact:true}).click();
  for(const width of [320,768]){await page.setViewportSize({width,height:844});await page.getByRole('button',{name:'Meals',exact:true}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow at '+width);}
  console.log('Recipe to plan: original cuisine tiles, milk restriction, explicit weekly quote confirmation, persisted replacement and updated grocery quantities at phone widths.');
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}

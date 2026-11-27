@@ -75,7 +75,7 @@ test('Settings actions open real controls and saved-meal reset preserves notes a
  await click('close');await click('cloud-account');assert.match(dialog.innerHTML,/Download kitchen backup/);assert.match(dialog.innerHTML,/Check cloud connection/);
  await click('close');
  await click('reset-suggestions');assert.match(dialog.innerHTML,/confirm-suggestions/);await click('confirm-suggestions');
- await click('rate-app');assert.match(dialog.innerHTML,/feedback-form/);await click('close');
+ await click('rate-app');assert.match(dialog.innerHTML,/Enjoying Mealday/);await click('rating-continue');assert.match(dialog.innerHTML,/feedback-form/);await click('close');
  await click('request-feature');assert.match(dialog.innerHTML,/What would you like Mealday/);await click('close');
  await click('subscription');assert.match(dialog.innerHTML,/No billing is connected/);await click('close');
  await click('delete-account');assert.equal(dialog.open,false);assert.doesNotMatch(dialog.innerHTML,/delete-account-form/);

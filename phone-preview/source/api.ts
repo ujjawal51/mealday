@@ -3,7 +3,7 @@ import {matchedMealStyles} from './meal-styles.mjs';
 import {swapBasketImpact} from '../dist/meal-carryover.js';
 import {calculateNutrition} from '../dist/nutrition.js';
 import {
-  assertPlanPreferences, assertWithinBudget, basket, canonicalIngredients,
+  assertPlanPreferences, assertWithinBudget, basket, canonicalIngredients, compatible,
   dishKey, generateDayPlan, initialProfile, recipes, stock, total,
   type Profile, type Recipe, type Slot,
   replaceCatalogue,
@@ -136,6 +136,13 @@ async function readBody(request:Request) {
     return x;
   } catch { throw new InputError('Invalid request data.'); }
 }
+function browsingMatch(url:URL){
+ const diet=url.searchParams.get('planDiet')||'Any',avoid=(url.searchParams.get('avoid')||'').split(',').filter(Boolean);
+ if(!diets.includes(diet)||avoid.some(item=>!allergies.includes(item)))throw new InputError('Choose valid recipe filters.');
+ if(diet==='Any'&&!avoid.length)return (_r:Recipe)=>true;
+ const p={...initialProfile,diet,allergies:avoid,minutes:1440,appliances};
+ return (r:Recipe)=>compatible(r,p);
+}
 export async function api(request:Request,url:URL) {
   const path=url.pathname,method=request.method;
   try {
@@ -144,14 +151,16 @@ export async function api(request:Request,url:URL) {
       pantry:Object.entries(pantryCatalog).filter(([id])=>id!=='water').map(([id,i])=>({id,name:i.name,unit:i.unit})).sort((a,b)=>a.name.localeCompare(b.name))});
     if(path==='/api/saved-recipes'&&method==='GET'){
       const ids=[...new Set((url.searchParams.get('ids')||'').split(',').filter(Boolean))].slice(0,500);
-      return json({recipes:ids.filter(id=>catalog.has(id)).map(id=>summary(catalog.get(id)!)),missing:ids.filter(id=>!catalog.has(id))});
+      const match=browsingMatch(url);
+      return json({recipes:ids.filter(id=>catalog.has(id)&&match(catalog.get(id)!)).map(id=>summary(catalog.get(id)!)),missing:ids.filter(id=>!catalog.has(id))});
     }
     if (path==='/api/recipes' && method==='GET') {
       const q=(url.searchParams.get('q')||'').trim().slice(0,100).toLowerCase();
       const cuisine=url.searchParams.get('cuisine'), diet=url.searchParams.get('diet');
       const offset=Math.min(10000,Math.max(0,Number.parseInt(url.searchParams.get('offset')||'0',10)||0));
       const byDiet:Record<string,string>={Vegan:'vegan',Vegetarian:'vegetarian',Pescatarian:'fish','Non-vegetarian':'meat'};
-      const matches=[...catalog.values()].filter(r=>(!q||r.name.toLowerCase().includes(q))&&(!cuisine||r.cuisine===cuisine)&&(!diet||r.diet===byDiet[diet]));
+      const match=browsingMatch(url);
+      const matches=[...catalog.values()].filter(r=>match(r)&&(!q||r.name.toLowerCase().includes(q))&&(!cuisine||r.cuisine===cuisine)&&(!diet||r.diet===byDiet[diet]));
       return json({recipes:matches.slice(offset,offset+18).map(summary), count:matches.length, next:offset+18<matches.length?offset+18:null});
     }
     if (path.startsWith('/api/recipe/') && method==='GET') {

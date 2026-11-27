@@ -10,8 +10,11 @@ const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePa
 try{
  const context=await browser.newContext({viewport:{width:390,height:844}});await context.addInitScript(value=>localStorage.setItem('mealday.android.v1',JSON.stringify(value)),state);
  const page=await context.newPage();await page.goto(origin);await page.getByRole('button',{name:'Plan preferences',exact:true}).click();
- await page.locator('[name=diet]').selectOption('Vegan');await page.locator('[name=minutes]').selectOption('30');
- await page.locator('[name=allergies][value=Milk]').check();await page.locator('[name=allergies][value=Gluten]').check();
+ const tile=(name,key)=>page.locator('label.preference-choice').filter({has:page.locator('input[name="'+name+'"][value="'+key+'"]')});
+ await tile('diet','Vegan').click();assert.equal(await page.locator('[name=diet][value=Vegan]').isChecked(),true);await page.locator('[name=minutes]').selectOption('30');
+ await tile('allergies','Milk').click();await tile('allergies','Gluten').click();
+ const none=page.locator('.no-allergies');assert.equal(await none.getAttribute('aria-pressed'),'false');await none.click();assert.equal(await page.locator('[name=allergies]:checked').count(),0);
+ await tile('allergies','Milk').click();await tile('allergies','Gluten').click();
  await page.locator('.optional-preferences>summary').click();await page.locator('[name=cuisines][value="UAE mix"]').uncheck();await page.locator('[name=cuisines][value=Arab]').check();await page.locator('[name=priorities][value=Quick]').check();
  await page.getByRole('button',{name:'Apply & rebuild plan',exact:true}).click();await page.waitForSelector('body[data-view=week]',{timeout:60000});
  let saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')));
@@ -19,7 +22,7 @@ try{
  assert.equal(await page.locator('.meal-tag').first().innerText(),'Speedy meals');
  // An infeasible combination reports no match and retains the last saved plan.
  const before=JSON.stringify(saved.result);await page.getByRole('button',{name:'Plan preferences',exact:true}).click();
- await page.locator('[name=appliances][value=Hob]').uncheck();await page.locator('[name=appliances][value=Oven]').check();
+ await tile('appliances','Hob').click();await tile('appliances','Oven').click();
  await page.locator('[name=minutes]').selectOption('15');await page.locator('.optional-preferences>summary').click();
  await page.locator('[name=priorities][value=Quick]').uncheck();await page.locator('[name=priorities][value=Protein]').check();
  await page.getByRole('button',{name:'Apply & rebuild plan',exact:true}).click();await page.getByRole('alert').waitFor();assert.match(await page.getByRole('alert').innerText(),/No .*recipes match/);
