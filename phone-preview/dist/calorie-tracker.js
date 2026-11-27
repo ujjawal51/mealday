@@ -17,7 +17,7 @@ function endingWeek(day){
  return Array.from({length:7},(_,i)=>{const d=new Date(date);d.setDate(d.getDate()-6+i);return localDay(d);});
 }
 export function createCalorieTracker({screen,escape:esc,request,account,notify}){
- let step='capture',manualBack='capture',day=localDay(),photo=null,objectUrl='',estimate=null,scanError='',token=0,scanAbort=null,availability=null,recipe=null,results=[],searchToken=0,lookupTimer,scope='',editId=null,draft=empty(),entryError='',statusText='';
+ let step='journal',manualBack='journal',day=localDay(),photo=null,objectUrl='',estimate=null,scanError='',token=0,scanAbort=null,availability=null,recipe=null,results=[],searchToken=0,lookupTimer,availabilitySeq=0,photoSeq=0,scope='',editId=null,draft=empty(),entryError='',statusText='';
  const active=()=>document.body.dataset.view==='calories';
  const storeKey=()=> 'mealday.calories.v1:'+encodeURIComponent(account()?.id||'guest');
  const $=q=>screen.querySelector(q);
@@ -27,9 +27,9 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
  function rows(){try{return calorieRows(JSON.parse(localStorage.getItem(storeKey())||'[]'));}catch{return [];}}
  function write(next){try{localStorage.setItem(storeKey(),JSON.stringify(next.slice(0,500)));return true;}catch{notify('Could not save calories on this device.');return false;}}
  function abortScan(){scanAbort?.abort();scanAbort=null;token++;}
- function release(){abortScan();if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl='';photo=null;estimate=null;scanError='';}
+ function release(){photoSeq++;abortScan();if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl='';photo=null;estimate=null;scanError='';}
  function resetDraft(){clearTimeout(lookupTimer);searchToken++;draft=empty();editId=null;recipe=null;results=[];entryError='';}
- function leave(){release();resetDraft();step='capture';statusText='';availability=null;day=localDay();}
+ function leave(){release();resetDraft();step='journal';statusText='';availability=null;day=localDay();availabilitySeq++;}
  function go(next){step=next;show();window.scrollTo(0,0);$('h1')?.focus({preventScroll:true});}
  function head(title,kicker,back=''){
   return '<header class="scan-head">'+(back?btn('Back',back,'icon-only','back','aria-label="Back"'):'')+
@@ -40,7 +40,7 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
   return '<ol class="scan-steps" aria-label="Photo logging steps">'+['Photo','Review','Log'].map((x,i)=>'<li '+(i===activeStep?'aria-current="step"':'')+'><b>'+(i+1)+'</b>'+x+'</li>').join('')+'</ol>';
  }
  function capture(){
-  return head('Scan a meal','Your kitchen')+track(0)+
+  return head('Scan a meal','Calorie tracker')+track(0)+
    '<div class="scan-viewfinder" aria-hidden="true"><div class="scan-frame"></div><div class="scan-plate">'+icon('plate')+'</div><span>Centre your whole plate</span></div>'+
    '<div class="scan-capture"><p>Use good light and include the whole portion.</p>'+btn('Take photo','camera','shutter','camera')+
    '<div class="scan-secondary">'+btn('Choose photo','upload','secondary','image')+btn('Enter manually','manual','secondary','edit')+'</div></div>'+
@@ -51,7 +51,7 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
   return head('Review your photo','Scan a meal','capture')+track(1)+image()+
    '<section class="scan-sheet"><h2>Does the whole meal fit?</h2><p>If anything is cut off, retake the photo.</p>'+
    (ready?btn('Estimate with AI','estimate','primary')+'<small>Only tapping Estimate with AI sends this photo to OpenAI. Use a food-only photo.</small>':
-   '<div class="scan-notice" role="status">'+(!availability?'Checking photo estimate availability…':availability.configured?'Sign in to use automatic photo estimates.':'Automatic photo estimates aren’t available right now.')+' You can still log this meal.</div>')+
+   '<div class="scan-notice" role="status">'+(!availability?'Checking photo estimate availability…':availability.configured?'Sign in to use automatic photo estimates.':'Automatic photo estimates aren’t available right now. The photo alone won’t calculate calories.')+' You can still log this meal.</div>')+
    '<div class="scan-secondary">'+btn('Retake','camera')+btn('Choose photo','upload','secondary','image')+'</div>'+
    '<div class="scan-secondary">'+btn('Use a Mealday recipe','recipes','secondary','book')+btn('Enter manually','manual','secondary','edit')+'</div></section>';
  }
@@ -71,15 +71,16 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
  }
  function recipeChoices(){
   if(recipe)return '<div class="scan-recipe-selection"><h2>'+esc(recipe.name)+'</h2><label class="field">Servings eaten<input class="control" type="number" min=".1" max="12" step=".1" data-calorie="servings" value="1"></label>'+
-   (recipe.nutrition?.complete?btn('Use recipe calories','use-recipe','primary'):'<p>Complete nutrition isn’t available for this recipe.</p>'+btn('Enter manually','manual','secondary'))+'</div>';
+   (recipeCalories(recipe.nutrition,1)?'<output class="scan-range" aria-live="polite" data-kcal-preview>'+recipeCalories(recipe.nutrition,1)+' estimated kcal</output>'+btn('Use recipe calories','use-recipe','primary'):'<p>Complete nutrition isn’t available for this recipe.</p>'+btn('Enter manually','manual','secondary'))+'</div>';
   return results.map(r=>btn(esc(r.name),'recipe','recipe-option', 'plate','data-id="'+esc(r.id)+'"')).join('');
  }
+ let recipeBack='journal';
  function recipes(){
-  return head('Find your meal','Recipe estimate',objectUrl?'review':'capture')+
+  return head('Find your meal','Recipe estimate',recipeBack)+
    '<section class="scan-sheet"><h2>Mealday recipes</h2><p>Calories are estimated from the recipe and the servings you ate.</p><label class="field">Find a recipe<input class="control" type="search" data-calorie="recipe-search" placeholder="e.g. Lentil soup"></label><div class="calorie-matches" aria-live="polite">'+recipeChoices()+'</div></section>';
  }
  function edit(){
-  const back=editId?'journal':draft.source==='Photo estimate'?'result':draft.source==='Recipe estimate'?'recipes':objectUrl?'review':manualBack;
+  const back=editId?'journal':draft.source==='Photo estimate'?'result':draft.source==='Recipe estimate'?'recipe-back':objectUrl&&manualBack!=='recipes'?'review':manualBack==='recipes'?'recipe-back':manualBack;
   return head(editId?'Edit meal':'Confirm meal','Your food log',back)+track(2)+
    '<section class="scan-sheet '+(objectUrl?'with-thumb':'')+'">'+(objectUrl?image('thumb'):'')+'<span class="scan-badge">'+esc(draft.source)+'</span>'+
    '<form id="calorie-form"><label class="field">Meal name<input class="control" name="meal" maxlength="100" required value="'+esc(draft.name)+'" placeholder="e.g. Paneer bhurji"></label>'+
@@ -96,18 +97,21 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
  }
  function journal(){
   const all=rows(),logged=all.filter(r=>r.day===day),total=logged.reduce((n,r)=>n+r.kcal,0),today=localDay();
-  return head('Food log','Your kitchen','capture')+
+  return head('Food log','Calorie tracker')+
    (statusText?'<p class="scan-saved" role="status">'+icon('check')+esc(statusText)+'</p>':'')+
    '<div class="journal-date"><strong>'+esc(day===today?'Today':displayDay(day,{weekday:'long',month:'short',day:'numeric'}))+'</strong>'+
    '<label class="scan-date-label">Pick a date<input type="date" data-calorie="day" aria-label="Log date" max="'+today+'" value="'+esc(day)+'"></label></div>'+
    '<div class="journal-week" aria-label="Recent days">'+endingWeek(today).map(d=>btn(esc(displayDay(d,{weekday:'short'}))+'<b>'+esc(displayDay(d,{day:'numeric'}))+'</b>','journal-day','day','',
    'data-id="'+d+'" aria-label="'+esc(displayDay(d,{weekday:'long',month:'short',day:'numeric'}))+'" aria-pressed="'+(d===day)+'"')).join('')+'</div>'+
    '<section class="journal-total"><div><p>ENERGY LOGGED</p><strong>'+total.toLocaleString()+'</strong><span> kcal</span></div><span class="journal-total-icon">'+icon('plate')+'</span></section>'+
+   '<section class="scan-sheet tracker-actions"><h2>Log a meal</h2>'+btn('Scan a meal','capture','primary','camera')+
+   '<p class="tracker-availability" role="status" '+(availabilityText()?'':'hidden')+'>'+esc(availabilityText())+'</p>'+
+   '<div class="scan-secondary">'+btn('Find a recipe','recipes','secondary','book')+btn('Add manually','manual','secondary','edit')+'</div></section>'+
    '<section class="scan-sheet"><h2>Logged meals</h2>'+
    (logged.length?'<ul class="journal-meals">'+logged.map(r=>'<li><div><strong>'+esc(r.name)+'</strong><small>'+esc([r.mealType,r.portion,r.source].filter(Boolean).join(' · '))+'</small></div><b>'+r.kcal+' kcal</b>'+
    btn('Edit','edit','icon-only','edit','data-id="'+esc(r.id)+'" aria-label="'+esc('Edit '+r.name)+'"')+'</li>').join('')+'</ul>':
    '<div class="journal-empty">'+icon('plate')+'<p>No meals logged for this day.</p></div>')+
-   '<div class="scan-secondary">'+btn('Scan a meal','capture','primary','camera')+btn('Add manually','manual','secondary','edit')+'</div><small>Saved on this device. Photos aren’t included in the log.</small></section>';
+   '<small>Saved on this device. Photos aren’t included in the log.</small></section>';
  }
  function show(){
   const key=storeKey();if(scope&&scope!==key)leave();scope=key;
@@ -115,20 +119,34 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
   screen.innerHTML='<section class="calorie-flow" data-stage="'+step+'">'+screenHtml+hiddenInputs+
    (step==='edit'&&editId?btn('Remove meal','ask-remove','danger'):'')+'</section>';
  }
- async function enter(openCamera=false){
+ function availabilityText(){return availability?.configured===false?'Automatic photo estimates are off. Use a recipe or add calories manually.':availability?.configured&&!availability.signedIn?'Sign in to get automatic photo estimates.':'';}
+ function updateAvailability(){if(step==='review')show();else if(step==='journal'){const p=$('.tracker-availability');if(p){p.textContent=availabilityText();p.hidden=!p.textContent;}}}
+ async function enter(){
   show();
-  if(openCamera)$('#cal-camera')?.click();
-  const expected=scope;
+  const expected=scope,seq=++availabilitySeq;
+  const current=()=>active()&&scope===expected&&storeKey()===expected&&seq===availabilitySeq;
   try{
    const response=await fetch('/api/calories/status',{credentials:'same-origin'});
    const data=response.ok?await response.json():{configured:false,signedIn:false};
-   if(active()&&scope===expected&&storeKey()===expected){availability=data;if(step==='review')show();}
-  }catch{if(active()&&scope===expected&&storeKey()===expected&&!availability){availability={configured:false,signedIn:false};if(step==='review')show();}}
+   if(current()){availability=data;updateAvailability();}
+  }catch{if(current()&&!availability){availability={configured:false,signedIn:false};updateAvailability();}}
  }
- function includePhoto(file){
+ function syncAccount(){if(active()&&scope!==storeKey())void enter();}
+ async function includePhoto(file){
   if(!file)return;
-  if(!/^image\/(?:jpeg|png|webp|heic|heif|avif)$/i.test(file.type)||file.size>15*1024*1024){notify('Choose a JPG, PNG, WebP or supported phone photo under 15 MB.');return;}
-  release();resetDraft();photo=file;objectUrl=URL.createObjectURL(file);go('review');void enter();
+  const known=/^image\/(?:jpeg|png|webp|heic|heif|avif)$/i.test(file.type)||(!file.type&&/\.(?:jpe?g|png|webp|heic|heif|avif)$/i.test(file.name));
+  if(!known||file.size>15*1024*1024||!file.size){notify('Choose a JPG, PNG, WebP or supported phone photo under 15 MB.');return;}
+  const seq=++photoSeq,expected=storeKey(),expectedStep=step,nextUrl=URL.createObjectURL(file),preview=new Image();
+  const loaded=new Promise(resolve=>{preview.onload=()=>resolve(true);preview.onerror=()=>resolve(false);});
+  preview.src=nextUrl;
+  const ok=preview.decode?await preview.decode().then(()=>true,()=>false):await loaded;
+  if(!active()||seq!==photoSeq||storeKey()!==expected||step!==expectedStep||!ok){
+   URL.revokeObjectURL(nextUrl);
+   if(active()&&seq===photoSeq&&storeKey()===expected&&step===expectedStep&&!ok)notify('This photo could not be opened. Try a JPG or PNG.');
+   return;
+  }
+  release();resetDraft();photo=file;objectUrl=nextUrl;go('review');
+  if(!availability)void enter();
  }
  async function encodeImage(url){
   const image=new Image();image.src=url;
@@ -156,14 +174,15 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
  async function click(button){
   const action=button.dataset.calorie,id=button.dataset.id;if(!action||!active())return false;
   if(scope!==storeKey()){show();return true;}
-  if(action==='camera'||action==='upload'){$(action==='camera'?'#cal-camera':'#cal-upload')?.click();return true;}
+  if(action==='camera'||action==='upload'){const input=$(action==='camera'?'#cal-camera':'#cal-upload');if(input){input.value='';input.click();}return true;}
   if(action==='capture'){release();resetDraft();statusText='';go('capture');}
   if(action==='review'&&objectUrl){abortScan();go('review');}
   if(action==='journal'){release();resetDraft();statusText='';go('journal');}
   if(action==='cancel-scan'){abortScan();go('review');}
   if(action==='estimate')await runEstimate();
-  if(action==='manual'){manualBack=step==='journal'?'journal':'capture';resetDraft();go('edit');}
-  if(action==='recipes'){recipe=null;results=[];go('recipes');}
+  if(action==='manual'){manualBack=step==='journal'?'journal':step==='recipes'?'recipes':'capture';resetDraft();go('edit');}
+  if(action==='recipe-back')go('recipes');
+  if(action==='recipes'){resetDraft();recipeBack=step==='journal'?'journal':objectUrl?'review':'capture';go('recipes');}
   if(action==='result'&&estimate)go('result');
   if(action==='journal-day'&&/^\d{4}-\d{2}-\d{2}$/.test(id)&&id<=localDay()){day=id;statusText='';go('journal');}
   if(action==='use-photo'&&estimate){draft={...empty(),name:estimate.name,kcal:Math.round((estimate.minKcal+estimate.maxKcal)/2),portion:estimate.portion,source:'Photo estimate'};go('edit');}
@@ -186,13 +205,15 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
  }
  function change(el){
   if(!active())return;
-  if(el.dataset.calorie==='photo')includePhoto(el.files?.[0]);
+  if(el.dataset.calorie==='photo')void includePhoto(el.files?.[0]);
   if(el.dataset.calorie==='day'&&/^\d{4}-\d{2}-\d{2}$/.test(el.value)&&el.value<=localDay()){
    day=el.value;statusText='';go('journal');
   }
  }
  function search(el){
-  if(!active()||el.dataset.calorie!=='recipe-search')return;
+  if(!active())return;
+  if(el.dataset.calorie==='servings'){const kcal=recipeCalories(recipe?.nutrition,Number(el.value));const out=$('[data-kcal-preview]');if(out)out.textContent=kcal?kcal+' estimated kcal':'Enter 0.1 to 12 servings.';return;}
+  if(el.dataset.calorie!=='recipe-search')return;
   clearTimeout(lookupTimer);const seq=++searchToken,q=el.value.trim(),expected=scope;
   recipe=null;results=[];
   if(q.length<2){$('.calorie-matches').innerHTML='';return;}
@@ -218,5 +239,5 @@ export function createCalorieTracker({screen,escape:esc,request,account,notify})
   if(control){void click(control);return true;}
   return false;
  }
- return {show,enter,leave,click,change,search,save,back};
+ return {show,enter,leave,syncAccount,click,change,search,save,back};
 }
