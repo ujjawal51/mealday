@@ -11,7 +11,10 @@ try{
  const creditLimit=Number(process.env.REEF_DAILY_CREDITS||20);
  if(!Number.isInteger(creditLimit)||creditLimit<0||creditLimit>1000)throw Error('Set REEF_DAILY_CREDITS to an integer from 0 to 1000.');
  const luluPrices=createLuluPrices({key:process.env.REEF_API_KEY||'',reserve:(cost,day)=>store.reservePriceCredits(day,cost,creditLimit)});
- const photoCalories=createPhotoCalories({key:process.env.MEALDAY_PHOTO_OPENAI_KEY||'',limit:Number(process.env.MEALDAY_PHOTO_DAILY_LIMIT||0),reserve:(userId,day,limit)=>store.reservePhotoCalories(userId,day,limit)});
+ const provider=process.env.MEALDAY_PHOTO_PROVIDER||'openai';
+ const photoCalories=createPhotoCalories({provider,key:provider==='cloudflare'?process.env.CLOUDFLARE_API_TOKEN:process.env.MEALDAY_PHOTO_OPENAI_KEY,
+   accountId:process.env.CLOUDFLARE_ACCOUNT_ID,pilotEmail:process.env.MEALDAY_PHOTO_PILOT_EMAIL,
+   limit:Number(process.env.MEALDAY_PHOTO_DAILY_LIMIT||0),reserve:(userId,day,limit)=>store.reservePhotoCalories(userId,day,limit)});
  const server=createServer(createApp({...config,store,luluPrices,photoCalories,googleAuth:createGoogleAuth()}));
  server.requestTimeout=30000;server.headersTimeout=15000;
  server.listen(config.port,config.host,()=>console.log('Mealday ready at '+config.origin+' · Latest phone UI · MongoDB connected'));

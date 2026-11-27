@@ -46,3 +46,67 @@ test('Recipe calorie entries require complete nutrient data and a valid portion'
  assert.equal(localDay(new Date(2026,10,27,23,0)),'2026-11-27');
  assert.equal(calorieRows([{id:'x',name:'Breakfast',kcal:300,day:'2026-11-27',source:'Manual'}]).length,1);
 });
+
+test('Cloudflare pilot requires an explicit account, secret, verified user and small cap', async t=>{
+ const accountId='0123456789abcdef0123456789abcdef',pilotEmail='pilot@example.invalid',secret='test-only';
+ const base={provider:'cloudflare',key:secret,accountId,pilotEmail,limit:5};
+ for(const override of [{key:''},{accountId:'wrong'},{pilotEmail:''},{limit:0},{limit:21},{provider:'unknown'}]){
+  assert.equal(createPhotoCalories({...base,...override}),null);
+ }
+ let calls=0,reservations=0;
+ const success={food:true,name:'Dal and rice',portion:'One small plate',minKcal:320,maxKcal:490};
+ const photoCalories=createPhotoCalories({...base,reserve:async(userId,day,cap)=>{
+  reservations++;assert.equal(userId,'pilot');assert.match(day,/^\d{4}-\d{2}-\d{2}$/);assert.equal(cap,5);return true;
+ },fetcher:async(url,init)=>{
+  calls++;assert.equal(url,'https://api.cloudflare.com/client/v4/accounts/'+accountId+'/ai/run/@cf/meta/llama-3.2-11b-vision-instruct');
+  assert.equal(init.headers.Authorization,'Bearer '+secret);assert.equal(init.redirect,'error');
+  const request=JSON.parse(init.body);
+  assert.equal(request.messages[1].content[1].image_url.url,'data:image/jpeg;base64,'+jpg);
+  assert.equal(request.stream,false);
+  assert.equal(request.max_tokens,240);
+  assert(!('store' in request));
+  return Response.json({success:true,result:{response:JSON.stringify(success)}});
+ }});
+ const ownerCookie='a'.repeat(43),guestCookie='b'.repeat(43),unverifiedCookie='c'.repeat(43);
+ const users=[{id:'pilot',email:pilotEmail,verified:true},{id:'other',email:'other@example.invalid',verified:true},{id:'pending',email:pilotEmail,verified:false}];
+ let signed=0;
+ const store={session:async()=>({userId:users[signed].id,email:users[signed].email}),
+   userByEmail:async()=>({_id:users[signed].id,emailVerifiedAt:users[signed].verified?new Date():null})};
+ const server=createServer();server.listen(0,'127.0.0.1');await once(server,'listening');
+ const origin='http://127.0.0.1:'+server.address().port; server.on('request',createApp({store,origin,photoCalories}));
+ t.after(()=>new Promise(r=>{server.closeAllConnections();server.close(r);}));
+ const cookie=key=>key?{'Cookie':'mealday_session='+key}:{};
+ const status=async key=>(await fetch(origin+'/api/calories/status',{headers:cookie(key)})).json();
+ const submit=key=>fetch(origin+'/api/calories/estimate',{method:'POST',headers:{origin,'content-type':'application/json',...cookie(key)},body:JSON.stringify({image:jpg})});
+ assert.deepEqual(await status(),{configured:false,signedIn:false});
+ assert.equal((await submit()).status,401);
+ signed=1;
+ assert.deepEqual(await status(guestCookie),{configured:false,signedIn:true});
+ assert.equal((await submit(guestCookie)).status,403);
+ signed=2;
+ assert.equal((await submit(unverifiedCookie)).status,403);
+ assert.equal(calls,0);assert.equal(reservations,0);
+ signed=0;
+ assert.deepEqual(await status(ownerCookie),{configured:true,signedIn:true,provider:'cloudflare'});
+ const response=await submit(ownerCookie);
+ assert.equal(response.status,200);const {food:_,...expected}=success;assert.deepEqual(await response.json(),expected);
+ assert.equal(calls,1);assert.equal(reservations,1);
+});
+
+test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fallback',async()=>{
+ const base={provider:'cloudflare',key:'test-only',accountId:'0123456789abcdef0123456789abcdef',pilotEmail:'pilot@example.invalid',limit:5,reserve:async()=>true};
+ const cases=[
+  [()=>new Response(null,{status:429}),429],
+  [()=>new Response(null,{status:403}),503],
+  [()=>{throw Error('timeout or network');},503],
+  [()=>Response.json({success:true,result:{response:'Food detected, missing JSON'}}),503],
+  [()=>Response.json({success:false,result:{response:'{}'}}),503],
+  [()=>Response.json({success:true,result:{response:'{"food":false,"name":"","portion":"","minKcal":0,"maxKcal":0}'}}),422],
+  [()=>Response.json({success:true,result:{response:'{"food":true,"name":"Rice","portion":"1 cup","minKcal":400,"maxKcal":300}'}}),422],
+ ];
+ for(const [payload,status] of cases){
+  let calls=0;
+  const adapter=createPhotoCalories({...base,fetcher:async url=>{calls++;assert.match(url,/^https:\/\/api\.cloudflare\.com\//);return payload();}});
+  await assert.rejects(adapter.estimate('pilot',jpg),{status});assert.equal(calls,1);
+ }
+});
