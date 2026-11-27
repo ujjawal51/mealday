@@ -1412,6 +1412,7 @@ function resetKitchen(){
 window.mealdayBack=()=>{
   if(dialog.open){if(!deletingAccount)dialog.close();return true;}
   if(view==='add-grocery'){setView('shopping',false);return true;}
+  if(view==='calories'&&calorieTracker?.back())return true;
   if(view==='account'){if(setupAccountBusy)return true;wizardStory='benefits';setupAccountMode='choice';setView('setup',false);return true;}
   if(view==='setup'){backWizard();return true;}
   if(view==='recipe'){leaveRecipe();return true;}

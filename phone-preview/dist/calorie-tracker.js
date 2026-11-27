@@ -1,125 +1,222 @@
 import {localDay,validCalorie,calorieRows,recipeCalories} from './calorie-log.js';
+const mealTypes=['Breakfast','Lunch','Dinner','Snack'];
+const empty=()=>({name:'',kcal:'',source:'Manual',portion:'',mealType:'Dinner'});
+const glyphs={
+ camera:'<path d="M4 7h4l2-3h4l2 3h4a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="14" r="4"/>',
+ image:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m4 18 5-5 3 3 4-4 5 5"/>',
+ book:'<path d="M5 3h14v18H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm1 5h10m-10 4h10m-10 4h7"/>',
+ plate:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/>',
+ edit:'<path d="m4 20 5-1L20 8l-4-4L5 15l-1 5Zm10-14 4 4"/>',
+ back:'<path d="m14 6-6 6 6 6M8 12h12"/>',
+ check:'<path d="m4 12 5 5L20 6"/>',
+};
+const icon=name=>'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">'+glyphs[name]+'</svg>';
+const displayDay=(day,opts)=>new Date(day+'T12:00:00').toLocaleDateString(undefined,opts);
+function endingWeek(day){
+ const date=new Date(day+'T12:00:00');
+ return Array.from({length:7},(_,i)=>{const d=new Date(date);d.setDate(d.getDate()-6+i);return localDay(d);});
+}
 export function createCalorieTracker({screen,escape:esc,request,account,notify}){
- let day=localDay(),photo=null,objectUrl='',estimate=null,photoBusy=false,token=0,availability=null,recipe=null,recipeList=[],searchToken=0,lookupTimer,scope='',editId=null,draft={name:'',kcal:'',source:'Manual'};
+ let step='capture',manualBack='capture',day=localDay(),photo=null,objectUrl='',estimate=null,scanError='',token=0,scanAbort=null,availability=null,recipe=null,results=[],searchToken=0,lookupTimer,scope='',editId=null,draft=empty(),entryError='',statusText='';
  const active=()=>document.body.dataset.view==='calories';
  const storeKey=()=> 'mealday.calories.v1:'+encodeURIComponent(account()?.id||'guest');
- const input=(selector)=>screen.querySelector(selector);
+ const $=q=>screen.querySelector(q);
+ const btn=(label,action,variant='secondary',symbol='',attrs='')=>'<button type="button" class="scan-btn '+variant+'" data-calorie="'+action+'" '+attrs+'>'+(symbol?icon(symbol):'')+'<span>'+label+'</span></button>';
+ const image=(klass='')=>'<img class="scan-photo '+klass+'" src="'+esc(objectUrl)+'" alt="Selected meal photo">';
+ const hiddenInputs='<input type="file" data-calorie="photo" id="cal-camera" accept="image/*" capture="environment" hidden><input type="file" data-calorie="photo" id="cal-upload" accept="image/*" hidden>';
  function rows(){try{return calorieRows(JSON.parse(localStorage.getItem(storeKey())||'[]'));}catch{return [];}}
  function write(next){try{localStorage.setItem(storeKey(),JSON.stringify(next.slice(0,500)));return true;}catch{notify('Could not save calories on this device.');return false;}}
- function release(){if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl='';photo=null;estimate=null;photoBusy=false;token++;}
- function leave(){release();clearTimeout(lookupTimer);searchToken++;draft={name:'',kcal:'',source:'Manual'};editId=null;recipe=null;recipeList=[];}
+ function abortScan(){scanAbort?.abort();scanAbort=null;token++;}
+ function release(){abortScan();if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl='';photo=null;estimate=null;scanError='';}
+ function resetDraft(){clearTimeout(lookupTimer);searchToken++;draft=empty();editId=null;recipe=null;results=[];entryError='';}
+ function leave(){release();resetDraft();step='capture';statusText='';availability=null;day=localDay();}
+ function go(next){step=next;show();window.scrollTo(0,0);$('h1')?.focus({preventScroll:true});}
+ function head(title,kicker,back=''){
+  return '<header class="scan-head">'+(back?btn('Back',back,'icon-only','back','aria-label="Back"'):'')+
+   '<div><p>'+esc(kicker)+'</p><h1 tabindex="-1">'+title+'</h1></div>'+
+   (step==='capture'?btn('Food log','journal','pill','book'):'')+'</header>';
+ }
+ function track(activeStep){
+  return '<ol class="scan-steps" aria-label="Photo logging steps">'+['Photo','Review','Log'].map((x,i)=>'<li '+(i===activeStep?'aria-current="step"':'')+'><b>'+(i+1)+'</b>'+x+'</li>').join('')+'</ol>';
+ }
+ function capture(){
+  return head('Scan a meal','Your kitchen')+track(0)+
+   '<div class="scan-viewfinder" aria-hidden="true"><div class="scan-frame"></div><div class="scan-plate">'+icon('plate')+'</div><span>Centre your whole plate</span></div>'+
+   '<div class="scan-capture"><p>Use good light and include the whole portion.</p>'+btn('Take photo','camera','shutter','camera')+
+   '<div class="scan-secondary">'+btn('Choose photo','upload','secondary','image')+btn('Enter manually','manual','secondary','edit')+'</div></div>'+
+   '<div class="scan-recipe-link">'+btn('Use a Mealday recipe','recipes','text','book')+'</div>';
+ }
+ function review(){
+  const ready=availability?.configured&&availability.signedIn;
+  return head('Review your photo','Scan a meal','capture')+track(1)+image()+
+   '<section class="scan-sheet"><h2>Does the whole meal fit?</h2><p>If anything is cut off, retake the photo.</p>'+
+   (ready?btn('Estimate with AI','estimate','primary')+'<small>Only tapping Estimate with AI sends this photo to OpenAI. Use a food-only photo.</small>':
+   '<div class="scan-notice" role="status">'+(!availability?'Checking photo estimate availability…':availability.configured?'Sign in to use automatic photo estimates.':'Automatic photo estimates aren’t available right now.')+' You can still log this meal.</div>')+
+   '<div class="scan-secondary">'+btn('Retake','camera')+btn('Choose photo','upload','secondary','image')+'</div>'+
+   '<div class="scan-secondary">'+btn('Use a Mealday recipe','recipes','secondary','book')+btn('Enter manually','manual','secondary','edit')+'</div></section>';
+ }
+ function progress(){
+  return head('Estimating calories','Scan a meal')+track(1)+'<div class="scan-processing">'+image()+'<div class="scan-line"></div></div>'+
+   '<section class="scan-sheet" role="status" aria-live="polite"><h2>Looking at your meal…</h2><p>We’re estimating from what’s visible. You’ll review the serving and calories before saving.</p></section>'+btn('Cancel','cancel-scan','secondary');
+ }
+ function result(){
+  return head('Scan result','Scan a meal','review')+track(1)+image('compact')+
+   '<section class="scan-sheet estimate-sheet"><span class="scan-badge">AI estimate</span><h2>'+esc(estimate.name)+'</h2><p>'+esc(estimate.portion)+'</p>'+
+   '<div class="scan-range"><strong>'+esc(estimate.minKcal)+'–'+esc(estimate.maxKcal)+'</strong><span>estimated kcal</span></div>'+
+   '<p>Portions and hidden ingredients can change this estimate.</p>'+btn('Review &amp; edit','use-photo','primary')+btn('Retake photo','camera','text','camera')+'</section>';
+ }
+ function failure(){
+  return head('Scan unavailable','Scan a meal','review')+(objectUrl?image('compact'):'')+'<section class="scan-sheet"><h2>Couldn’t estimate this photo</h2><p role="alert">'+esc(scanError)+'</p>'+
+   btn('Try again','estimate','primary')+'<div class="scan-secondary">'+btn('Retake','camera')+btn('Enter manually','manual','secondary','edit')+'</div>'+btn('Use a Mealday recipe','recipes','text','book')+'</section>';
+ }
+ function recipeChoices(){
+  if(recipe)return '<div class="scan-recipe-selection"><h2>'+esc(recipe.name)+'</h2><label class="field">Servings eaten<input class="control" type="number" min=".1" max="12" step=".1" data-calorie="servings" value="1"></label>'+
+   (recipe.nutrition?.complete?btn('Use recipe calories','use-recipe','primary'):'<p>Complete nutrition isn’t available for this recipe.</p>'+btn('Enter manually','manual','secondary'))+'</div>';
+  return results.map(r=>btn(esc(r.name),'recipe','recipe-option', 'plate','data-id="'+esc(r.id)+'"')).join('');
+ }
+ function recipes(){
+  return head('Find your meal','Recipe estimate',objectUrl?'review':'capture')+
+   '<section class="scan-sheet"><h2>Mealday recipes</h2><p>Calories are estimated from the recipe and the servings you ate.</p><label class="field">Find a recipe<input class="control" type="search" data-calorie="recipe-search" placeholder="e.g. Lentil soup"></label><div class="calorie-matches" aria-live="polite">'+recipeChoices()+'</div></section>';
+ }
+ function edit(){
+  const back=editId?'journal':draft.source==='Photo estimate'?'result':draft.source==='Recipe estimate'?'recipes':objectUrl?'review':manualBack;
+  return head(editId?'Edit meal':'Confirm meal','Your food log',back)+track(2)+
+   '<section class="scan-sheet '+(objectUrl?'with-thumb':'')+'">'+(objectUrl?image('thumb'):'')+'<span class="scan-badge">'+esc(draft.source)+'</span>'+
+   '<form id="calorie-form"><label class="field">Meal name<input class="control" name="meal" maxlength="100" required value="'+esc(draft.name)+'" placeholder="e.g. Paneer bhurji"></label>'+
+   '<label class="field">Portion (optional)<input class="control" name="portion" maxlength="160" value="'+esc(draft.portion)+'" placeholder="e.g. 1 bowl"></label>'+
+   '<label class="field">Meal type<select class="control" name="mealType">'+mealTypes.map(x=>'<option '+(x===draft.mealType?'selected':'')+'>'+x+'</option>').join('')+'</select></label>'+
+   '<label class="field">Calories (kcal)<input class="control" name="kcal" required type="number" min="1" max="10000" step="1" inputmode="numeric" value="'+esc(draft.kcal)+'"></label>'+
+   '<p class="scan-muted">Logging for '+esc(displayDay(day,{month:'short',day:'numeric'}))+'. You can change these values before saving.</p>'+
+   (entryError?'<p role="alert">'+esc(entryError)+'</p>':'')+
+   '<button class="scan-btn primary" type="submit">'+icon('check')+'<span>'+(editId?'Save changes':'Log meal')+'</span></button></form></section>';
+ }
+ function remove(){
+  return head('Remove meal?','Your food log','edit-back')+
+   '<section class="scan-sheet"><p>Remove '+esc(draft.name)+' from this day’s log?</p>'+btn('Remove from log','remove','danger')+btn('Keep meal','edit-back','secondary')+'</section>';
+ }
+ function journal(){
+  const all=rows(),logged=all.filter(r=>r.day===day),total=logged.reduce((n,r)=>n+r.kcal,0),today=localDay();
+  return head('Food log','Your kitchen','capture')+
+   (statusText?'<p class="scan-saved" role="status">'+icon('check')+esc(statusText)+'</p>':'')+
+   '<div class="journal-date"><strong>'+esc(day===today?'Today':displayDay(day,{weekday:'long',month:'short',day:'numeric'}))+'</strong>'+
+   '<label class="scan-date-label">Pick a date<input type="date" data-calorie="day" aria-label="Log date" max="'+today+'" value="'+esc(day)+'"></label></div>'+
+   '<div class="journal-week" aria-label="Recent days">'+endingWeek(today).map(d=>btn(esc(displayDay(d,{weekday:'short'}))+'<b>'+esc(displayDay(d,{day:'numeric'}))+'</b>','journal-day','day','',
+   'data-id="'+d+'" aria-label="'+esc(displayDay(d,{weekday:'long',month:'short',day:'numeric'}))+'" aria-pressed="'+(d===day)+'"')).join('')+'</div>'+
+   '<section class="journal-total"><div><p>ENERGY LOGGED</p><strong>'+total.toLocaleString()+'</strong><span> kcal</span></div><span class="journal-total-icon">'+icon('plate')+'</span></section>'+
+   '<section class="scan-sheet"><h2>Logged meals</h2>'+
+   (logged.length?'<ul class="journal-meals">'+logged.map(r=>'<li><div><strong>'+esc(r.name)+'</strong><small>'+esc([r.mealType,r.portion,r.source].filter(Boolean).join(' · '))+'</small></div><b>'+r.kcal+' kcal</b>'+
+   btn('Edit','edit','icon-only','edit','data-id="'+esc(r.id)+'" aria-label="'+esc('Edit '+r.name)+'"')+'</li>').join('')+'</ul>':
+   '<div class="journal-empty">'+icon('plate')+'<p>No meals logged for this day.</p></div>')+
+   '<div class="scan-secondary">'+btn('Scan a meal','capture','primary','camera')+btn('Add manually','manual','secondary','edit')+'</div><small>Saved on this device. Photos aren’t included in the log.</small></section>';
+ }
  function show(){
-  const key=storeKey();if(scope&&scope!==key){leave();availability=null;}scope=key;
-  const logged=rows().filter(r=>r.day===day),total=logged.reduce((n,r)=>n+r.kcal,0);
-  screen.innerHTML='<section class="calorie-page"><header class="calorie-hero"><p>MEALDAY · FOOD LOG</p><h1>Calorie tracker</h1><div><strong>'+total.toLocaleString()+'</strong> kcal logged</div><label>Day <input type="date" data-calorie="day" max="'+localDay()+'" value="'+esc(day)+'"></label></header>'+
-   '<section class="calorie-card" aria-labelledby="cal-photo"><h2 id="cal-photo">Log a meal</h2>'+
-   (objectUrl?'<img class="food-preview" src="'+esc(objectUrl)+'" alt="Selected meal photo">':'<p>Take a meal photo, use a Mealday recipe estimate, or enter calories yourself.</p>')+
-   '<div class="calorie-photo-actions"><button type="button" class="button green" data-calorie="camera">Take photo</button><button type="button" class="button ghost" data-calorie="upload">Choose photo</button></div><input type="file" data-calorie="photo" id="cal-camera" accept="image/*" capture="environment" hidden><input type="file" data-calorie="photo" id="cal-upload" accept="image/*" hidden>'+
-   (objectUrl?'<p class="calorie-help">The photo stays on this screen unless you choose an AI estimate.</p>'+photoActions():'')+
-   '<details class="calorie-search" '+(recipe||recipeList.length?'open':'')+'><summary>Use a Mealday recipe estimate</summary><label class="field">Find a recipe<input class="control" type="search" data-calorie="recipe-search" placeholder="e.g. Paneer bhurji"></label><div class="calorie-matches" aria-live="polite">'+matches()+'</div></details>'+
-   '<form id="calorie-form"><label class="field">Meal name<input class="control" name="meal" maxlength="100" value="'+esc(draft.name)+'" required placeholder="e.g. Paneer bhurji and roti"></label>'+
-   '<label class="field">Calories (kcal)<input class="control" name="kcal" type="number" min="1" max="10000" step="1" inputmode="numeric" value="'+esc(draft.kcal)+'" required></label>'+
-   '<p class="calorie-help">Source: '+esc(draft.source)+'. You can adjust the number before saving.</p><button class="button green wide" type="submit">'+(editId?'Save changes':'Log meal')+'</button></form></section>'+
-   '<section class="calorie-card" aria-labelledby="cal-log"><h2 id="cal-log">Meals logged</h2><p class="calorie-help">Your log is stored on this device. Photos are not saved with entries.</p>'+
-   (logged.length?'<ul class="calorie-list">'+logged.map(r=>'<li><div><strong>'+esc(r.name)+'</strong><small>'+esc(r.source)+' · '+r.kcal+' kcal</small></div><button class="button ghost small" type="button" data-calorie="edit" data-id="'+esc(r.id)+'" aria-label="'+esc('Edit '+r.name)+'">Edit</button><button class="button ghost small" type="button" data-calorie="remove" data-id="'+esc(r.id)+'" aria-label="'+esc('Remove '+r.name)+'">Remove</button></li>').join('')+'</ul>':'<p>No meals logged for this day yet.</p>')+'</section></section>';
- }
- function photoActions(){
-  if(estimate)return '<div class="calorie-estimate"><strong>'+esc(estimate.name)+' · '+estimate.minKcal+'–'+estimate.maxKcal+' kcal</strong><p>'+esc(estimate.portion)+' · Rough AI estimate. Check the serving and adjust before saving.</p><button type="button" class="button ghost" data-calorie="use-photo">Use estimate</button></div>';
-  if(!availability?.configured)return '<p class="calorie-help">Automatic photo estimates aren’t available here yet. Use a recipe estimate or enter calories.</p>';
-  if(!availability.signedIn)return '<p class="calorie-help">Sign in to estimate from a photo. You can still log a meal manually.</p>';
-  return '<button type="button" class="button ghost wide" data-calorie="estimate" '+(photoBusy?'disabled':'')+'>'+(photoBusy?'Estimating…':'Estimate with AI')+'</button><p class="calorie-help">Only this action sends the image to OpenAI. Choose a photo that contains food only.</p>';
- }
- function matches(){
-  if(recipe)return '<p><strong>'+esc(recipe.name)+'</strong></p><label class="field">Servings eaten<input class="control" type="number" min=".1" max="12" step=".1" data-calorie="servings" value="1"></label>'+
-   (recipe.nutrition?.complete?'<button class="button ghost" type="button" data-calorie="use-recipe">Use recipe calories</button>':'<p>Complete nutrition is unavailable for this recipe. You can enter calories yourself.</p>');
-  return recipeList.map(r=>'<button class="button ghost small" type="button" data-calorie="recipe" data-id="'+esc(r.id)+'">'+esc(r.name)+'</button>').join(' ');
- }
- function rememberDraft(){
-  const form=input('#calorie-form');if(form){draft.name=form.elements.meal.value;draft.kcal=form.elements.kcal.value;}
+  const key=storeKey();if(scope&&scope!==key)leave();scope=key;
+  const screenHtml=({capture,review,progress,result,failure,recipes,edit,journal,remove})[step]();
+  screen.innerHTML='<section class="calorie-flow" data-stage="'+step+'">'+screenHtml+hiddenInputs+
+   (step==='edit'&&editId?btn('Remove meal','ask-remove','danger'):'')+'</section>';
  }
  async function enter(openCamera=false){
   show();
-  if(openCamera)input('#cal-camera')?.click();
+  if(openCamera)$('#cal-camera')?.click();
   const expected=scope;
-  try{const response=await fetch('/api/calories/status',{credentials:'same-origin'});if(response.ok&&active()&&scope===expected){
-   availability=await response.json();if(active()&&scope===expected&&photo){rememberDraft();show();}
-  }}catch{}
+  try{
+   const response=await fetch('/api/calories/status',{credentials:'same-origin'});
+   const data=response.ok?await response.json():{configured:false,signedIn:false};
+   if(active()&&scope===expected&&storeKey()===expected){availability=data;if(step==='review')show();}
+  }catch{if(active()&&scope===expected&&storeKey()===expected&&!availability){availability={configured:false,signedIn:false};if(step==='review')show();}}
  }
- async function includePhoto(file){
+ function includePhoto(file){
   if(!file)return;
   if(!/^image\/(?:jpeg|png|webp|heic|heif|avif)$/i.test(file.type)||file.size>15*1024*1024){notify('Choose a JPG, PNG, WebP or supported phone photo under 15 MB.');return;}
-  rememberDraft();release();photo=file;objectUrl=URL.createObjectURL(file);show();
+  release();resetDraft();photo=file;objectUrl=URL.createObjectURL(file);go('review');void enter();
  }
- async function encodeImage(){
-  const image=new Image();image.src=objectUrl;
+ async function encodeImage(url){
+  const image=new Image();image.src=url;
   if(image.decode)await image.decode();else await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;});
-  if(!image.naturalWidth||!image.naturalHeight)throw Error('This image could not be opened. Try a JPG or PNG.');
+  if(!image.naturalWidth||!image.naturalHeight)throw Error('This photo could not be opened. Try a JPG or PNG.');
   const ratio=Math.min(1,1024/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement('canvas');
   canvas.width=Math.max(1,Math.round(image.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(image.naturalHeight*ratio));
-  const context=canvas.getContext('2d');context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
-  let url=canvas.toDataURL('image/jpeg',.78);if(url.length>520000)url=canvas.toDataURL('image/jpeg',.55);
-  if(url.length>520000||!url.startsWith('data:image/jpeg;base64,'))throw Error('Could not prepare this photo. Try another one.');
-  return url.split(',')[1];
+  const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);c.drawImage(image,0,0,canvas.width,canvas.height);
+  let jpeg=canvas.toDataURL('image/jpeg',.78);if(jpeg.length>520000)jpeg=canvas.toDataURL('image/jpeg',.55);
+  if(jpeg.length>520000||!jpeg.startsWith('data:image/jpeg;base64,'))throw Error('Could not prepare this photo. Try another one.');
+  return jpeg.split(',')[1];
+ }
+ async function runEstimate(){
+  if(!photo||!availability?.configured||!availability.signedIn||step==='progress')return;
+  abortScan();const seq=token,expected=scope,url=objectUrl,controller=new AbortController();scanAbort=controller;go('progress');
+  const valid=()=>active()&&scope===expected&&storeKey()===expected&&seq===token;
+  try{
+   const image=await encodeImage(url);if(!valid())return;
+   const response=await fetch('/api/calories/estimate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({image}),signal:controller.signal});
+   const data=await response.json();if(!response.ok)throw Error(data.error||'The estimate is unavailable.');
+   if(valid()){estimate=data;go('result');}
+  }catch(err){if(valid()){scanError=err.message||'Please try another photo.';go('failure');}}
+  finally{if(seq===token)scanAbort=null;}
  }
  async function click(button){
-  const action=button.dataset.calorie;if(!action||!active())return false;
+  const action=button.dataset.calorie,id=button.dataset.id;if(!action||!active())return false;
   if(scope!==storeKey()){show();return true;}
-  const id=button.dataset.id;
-  if(action==='camera'||action==='upload'){input(action==='camera'?'#cal-camera':'#cal-upload')?.click();return true;}
-  rememberDraft();
-  if(action==='estimate'&&photo&&!photoBusy&&availability?.signedIn){
-   const seq=++token,expected=scope;photoBusy=true;show();
-   try{
-    const image=await encodeImage();if(!active()||seq!==token||scope!==expected)return true;
-    const response=await fetch('/api/calories/estimate',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({image})});
-    const data=await response.json();
-    if(!response.ok)throw Error(data.error||'Estimate unavailable.');
-    if(active()&&seq===token&&scope===expected)estimate=data;
-   }catch(e){if(active()&&seq===token)notify(e.message||'Photo estimate unavailable.');}
-   finally{if(active()&&seq===token){rememberDraft();photoBusy=false;show();}}
-  }
-  if(action==='use-photo'&&estimate){draft={name:estimate.name,kcal:Math.round((estimate.minKcal+estimate.maxKcal)/2),source:'Photo estimate'};show();input('[name=kcal]')?.focus();}
+  if(action==='camera'||action==='upload'){$(action==='camera'?'#cal-camera':'#cal-upload')?.click();return true;}
+  if(action==='capture'){release();resetDraft();statusText='';go('capture');}
+  if(action==='review'&&objectUrl){abortScan();go('review');}
+  if(action==='journal'){release();resetDraft();statusText='';go('journal');}
+  if(action==='cancel-scan'){abortScan();go('review');}
+  if(action==='estimate')await runEstimate();
+  if(action==='manual'){manualBack=step==='journal'?'journal':'capture';resetDraft();go('edit');}
+  if(action==='recipes'){recipe=null;results=[];go('recipes');}
+  if(action==='result'&&estimate)go('result');
+  if(action==='journal-day'&&/^\d{4}-\d{2}-\d{2}$/.test(id)&&id<=localDay()){day=id;statusText='';go('journal');}
+  if(action==='use-photo'&&estimate){draft={...empty(),name:estimate.name,kcal:Math.round((estimate.minKcal+estimate.maxKcal)/2),portion:estimate.portion,source:'Photo estimate'};go('edit');}
   if(action==='recipe'){
    const seq=++searchToken,expected=scope;
-   try{const data=await request('/api/recipe/'+encodeURIComponent(id));if(active()&&seq===searchToken&&scope===expected){recipe=data;rememberDraft();show();}}catch{notify('Recipe is unavailable.');}
+   try{const r=await request('/api/recipe/'+encodeURIComponent(id));if(active()&&step==='recipes'&&scope===expected&&seq===searchToken){recipe=r;show();}}catch{notify('Recipe is unavailable. You can enter calories manually.');}
   }
   if(action==='use-recipe'&&recipe){
-   const kcal=recipeCalories(recipe.nutrition,Number(input('[data-calorie=servings]').value));
-   if(!kcal){notify('Enter between 0.1 and 12 servings.');return true;}
-   draft={name:recipe.name.slice(0,100),kcal,source:'Recipe estimate'};show();input('[name=kcal]')?.focus();
+   const serving=Number($('[data-calorie=servings]').value),kcal=recipeCalories(recipe.nutrition,serving);
+   if(kcal){draft={...empty(),name:recipe.name.slice(0,100),kcal,portion:serving+(serving===1?' serving':' servings'),source:'Recipe estimate'};go('edit');}
+   else notify('Enter between 0.1 and 12 servings.');
   }
   if(action==='edit'){
-   const entry=rows().find(r=>r.id===id);if(entry){editId=id;draft={name:entry.name,kcal:entry.kcal,source:entry.source};show();input('[name=meal]')?.focus();}
+   const entry=rows().find(r=>r.id===id);if(entry){editId=id;draft={...empty(),...entry};go('edit');}
   }
-  if(action==='remove'){
-   if(write(rows().filter(r=>r.id!==id))){if(editId===id){editId=null;draft={name:'',kcal:'',source:'Manual'};}show();notify('Meal removed.');}
-  }
+  if(action==='ask-remove'&&editId)go('remove');
+  if(action==='edit-back'&&editId)go('edit');
+  if(action==='remove'&&editId&&write(rows().filter(r=>r.id!==editId))){resetDraft();statusText='Meal removed.';go('journal');}
   return true;
  }
  function change(el){
   if(!active())return;
-  if(el.dataset.calorie==='photo')void includePhoto(el.files?.[0]);
+  if(el.dataset.calorie==='photo')includePhoto(el.files?.[0]);
   if(el.dataset.calorie==='day'&&/^\d{4}-\d{2}-\d{2}$/.test(el.value)&&el.value<=localDay()){
-   day=el.value;leave();show();
+   day=el.value;statusText='';go('journal');
   }
  }
  function search(el){
   if(!active()||el.dataset.calorie!=='recipe-search')return;
   clearTimeout(lookupTimer);const seq=++searchToken,q=el.value.trim(),expected=scope;
-  if(q.length<2){recipeList=[];input('.calorie-matches').innerHTML='';return;}
+  recipe=null;results=[];
+  if(q.length<2){$('.calorie-matches').innerHTML='';return;}
   lookupTimer=setTimeout(async()=>{
-   try{const result=await request('/api/recipes?q='+encodeURIComponent(q));
-    if(!active()||seq!==searchToken||scope!==expected||!el.isConnected)return;
-    recipe=null;recipeList=result.recipes.slice(0,6);input('.calorie-matches').innerHTML=matches()||'<p>No matching recipes.</p>';
-   }catch{if(active()&&seq===searchToken&&el.isConnected)input('.calorie-matches').textContent='Recipes are unavailable. Enter calories manually.';}
-  },250);
+   try{const found=await request('/api/recipes?q='+encodeURIComponent(q));
+    if(!active()||step!=='recipes'||seq!==searchToken||scope!==expected||!el.isConnected)return;
+    results=found.recipes.slice(0,6);$('.calorie-matches').innerHTML=recipeChoices()||'<p>No matching recipes.</p>';
+   }catch{if(active()&&seq===searchToken&&el.isConnected)$('.calorie-matches').textContent='Recipes are unavailable. Enter calories manually.';}
+  },230);
  }
  function save(form){
-  if(scope!==storeKey()){leave();show();notify('Your account changed. Please enter the meal again.');return;}
-  const name=form.elements.meal.value.trim(),kcal=Number(form.elements.kcal.value);
-  if(!name||name.length>100||!validCalorie(kcal)){notify('Enter a meal name and whole calories from 1 to 10,000.');return;}
-  const entry={id:editId||crypto.randomUUID(),day,name,kcal,source:draft.source};
-  if(write([entry,...rows().filter(r=>r.id!==entry.id)])){leave();show();notify('Meal logged.');}
+  if(scope!==storeKey()){show();notify('Your account changed. Please enter the meal again.');return;}
+  const name=form.elements.meal.value.trim(),kcal=Number(form.elements.kcal.value),portion=form.elements.portion.value.trim(),mealType=form.elements.mealType.value;
+  if(!name||name.length>100||!validCalorie(kcal)||portion.length>160||!mealTypes.includes(mealType)){
+   draft={...draft,name,kcal,portion,mealType};entryError='Enter a meal name and whole calories from 1 to 10,000.';show();return;
+  }
+  const entry={id:editId||crypto.randomUUID(),day,name,kcal,source:draft.source,portion,mealType};
+  if(write([entry,...rows().filter(r=>r.id!==entry.id)])){statusText=editId?'Meal updated.':'Meal logged.';release();resetDraft();go('journal');}
  }
- return {show,enter,leave,click,change,search,save};
+ function back(){
+  if(step==='capture')return false;
+  const control=$('.scan-head [aria-label=Back]')||$('.calorie-flow [data-calorie=cancel-scan]');
+  if(control){void click(control);return true;}
+  return false;
+ }
+ return {show,enter,leave,click,change,search,save,back};
 }
