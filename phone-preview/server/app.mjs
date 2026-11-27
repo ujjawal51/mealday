@@ -95,10 +95,14 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         let session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
         let accountUser=session?await store.userByEmail(session.email):null;
         if(session&&(!accountUser||String(accountUser._id)!==String(session.userId)||(session.authVersion||0)!==(accountUser.authVersion||0))){await store.deleteSession(digest(rawCookie));session=null;accountUser=null;}
-        if(path==='/api/calories/status'&&req.method==='GET')return send(200,{configured:!!photoCalories,signedIn:!!session});
+        if(path==='/api/calories/status'&&req.method==='GET'){
+          const configured=!!photoCalories&&(!photoCalories.allowed||photoCalories.allowed(session?.email,!!accountUser?.emailVerifiedAt));
+          return send(200,{configured,signedIn:!!session,...(configured&&photoCalories.provider?{provider:photoCalories.provider}:{})});
+        }
         if(path==='/api/calories/estimate'&&req.method==='POST'){
           if(!photoCalories)return send(503,{error:'Automatic photo estimates are not available.'});
           if(!session)return send(401,{error:'Sign in to estimate from a photo.'});
+          if(photoCalories.allowed&&!photoCalories.allowed(session.email,!!accountUser?.emailVerifiedAt))return send(403,{error:'Photo estimates are not available for this account.'});
           const value=await body(525000,'Meal photo is too large.');
           return send(200,await photoCalories.estimate(String(session.userId),value?.image));
         }
