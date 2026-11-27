@@ -1,1 +1,1 @@
-export const caloriesUrl="/calories-dce1795b32f1.js";
+export const caloriesUrl="/calories-387faa952e7b.js";

@@ -1162,25 +1162,81 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 .nav button[data-view=calories] svg{width:54px;height:54px;padding:11px;margin-top:-23px;border:3px solid white;border-radius:50%;background:#b0dc49;color:#26351a;box-shadow:0 4px 15px #2638152c;}
 .nav button[data-view=calories].active svg{background:#a5d433;color:#203415;}
 .nav button[data-view=calories] span{font-weight:700;}
-.calorie-page{width:min(100%,550px);margin:0 auto;display:grid;gap:12px;padding-bottom:82px;}
-.calorie-hero{padding:18px;background:#e9f4d4;border-radius:20px;color:#243320;}
-.calorie-hero p{font-size:.68rem;font-weight:750;letter-spacing:.12em;margin:0;}
-.calorie-hero h1{margin:5px 0;font-size:1.6rem;}
-.calorie-hero strong{font-size:2rem;}
-.calorie-hero label{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:10px;}
-.calorie-hero input{border:1px solid #b9cca8;border-radius:8px;padding:6px;background:white;max-width:100%;}
-.calorie-card{background:white;border:1px solid #dde5da;border-radius:17px;padding:14px;min-width:0;}
-.calorie-card h2{font-size:1.12rem;margin:0 0 8px;}
-.calorie-card p{margin:7px 0;}
-.calorie-photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.food-preview{width:100%;height:min(52vw,240px);object-fit:contain;background:#f0f3eb;border-radius:10px;margin-bottom:8px;}
-.calorie-help{color:#4c5949;font-size:.84rem;}
-.calorie-search{margin:13px 0;}
-.calorie-search summary{font-weight:700;cursor:pointer;}
-.calorie-matches{display:flex;gap:5px;flex-wrap:wrap;margin-block:6px;}
-.calorie-matches label{width:100%;}
-.calorie-estimate{padding:10px;background:#eff5e5;border-radius:10px;}
-.calorie-list{margin:0;padding:0;list-style:none;}
-.calorie-list li{display:flex;align-items:center;gap:5px;padding-block:8px;border-bottom:1px solid #edf1ea;}
-.calorie-list li>div{display:grid;flex:1;min-width:0;overflow-wrap:anywhere;}
-.calorie-list small{color:#4c5949;}
+/* Light Mealday panels, a deliberate camera stage and a separate day journal. */
+.calorie-flow{--scan-soft:#f1f6e9;--scan-ink:#273923;--scan-border:#e0e6d9;--scan-green:#add941;display:grid;gap:14px;max-width:480px;margin:0 auto;color:var(--scan-ink);padding:6px 0 92px;}
+.calorie-flow *{box-sizing:border-box;}
+.scan-head{display:flex;align-items:center;justify-content:space-between;gap:9px;min-height:53px;}
+.scan-head>div{flex:1;min-width:0;}
+.scan-head p{color:#596951;font-size:.67rem;font-weight:750;letter-spacing:.13em;text-transform:uppercase;margin:0 0 4px;}
+.scan-head h1{font-size:clamp(1.42rem,5.6vw,1.82rem);line-height:1.08;margin:0;font-weight:780;letter-spacing:-.04em;}
+.scan-head h1:focus{outline:none;}
+.scan-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-height:44px;padding:8px 10px;border-radius:999px;border:1px solid transparent;font:inherit;font-size:.84rem;font-weight:720;line-height:1.25;background:transparent;color:#365630;cursor:pointer;}
+.scan-btn svg{width:17px;height:17px;flex:none;}
+.scan-btn.primary{width:100%;background:var(--scan-green);border-color:var(--scan-green);color:#253220;}
+.scan-btn.secondary,.scan-btn.pill,.scan-btn.icon-only{background:white;border-color:var(--scan-border);color:#375131;}
+.scan-btn.pill{font-size:.77rem;min-height:38px;}
+.scan-btn.icon-only{min-width:44px;padding:8px;}
+.scan-btn.icon-only span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.scan-btn.danger{width:100%;border-color:#e8c3c1;color:#8c312b;background:#fff5f4;}
+.scan-btn:focus-visible{outline:2px solid #396a2f;outline-offset:2px;}
+.scan-steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0;margin:0;}
+.scan-steps li{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 0;color:#586652;font-size:.76rem;border-radius:13px;background:white;border:1px solid var(--scan-border);}
+.scan-steps b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#eff3ec;font-size:.68rem;}
+.scan-steps [aria-current=step]{background:#eff6e0;border-color:#d2e2b3;color:#294121;font-weight:750;}
+.scan-steps [aria-current=step] b{background:var(--scan-green);color:#233321;}
+.scan-viewfinder{position:relative;display:grid;place-items:center;aspect-ratio:1.34;color:#eef6e8;overflow:hidden;border-radius:23px;background:radial-gradient(at 50% 44%,#40543d,#26372a 57%,#1d2d23);}
+.scan-frame{position:absolute;inset:17% 22% 23%;--c:#b4dc6a;--a:linear-gradient(var(--c),var(--c));background:var(--a) left top/21px 2px,var(--a) left top/2px 21px,var(--a) right top/21px 2px,var(--a) right top/2px 21px,var(--a) left bottom/21px 2px,var(--a) left bottom/2px 21px,var(--a) right bottom/21px 2px,var(--a) right bottom/2px 21px;background-repeat:no-repeat;}
+.scan-plate svg{width:clamp(72px,26vw,124px);height:auto;color:#d0dfc4;opacity:.65;display:block;margin-top:-8px;}
+.scan-viewfinder>span{position:absolute;bottom:9%;color:#e3eddf;font-size:.8rem;}
+.scan-capture{text-align:center;}
+.scan-capture p,.scan-muted{color:#4c5d46;margin:0 0 8px;font-size:.85rem;}
+.scan-capture .shutter{height:60px;width:60px;background:var(--scan-green);border:4px solid white;outline:1px solid #8fb335;margin-bottom:12px;color:#253923;}
+.scan-capture .shutter svg{width:23px;height:23px;}
+.shutter span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.scan-secondary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.scan-secondary .scan-btn{width:100%;white-space:normal;}
+.scan-recipe-link{text-align:center;}
+.scan-photo{display:block;width:100%;height:min(69vw,360px);object-fit:contain;border-radius:20px;background:#29382c;}
+.scan-photo.compact{height:min(49vw,230px);}
+.scan-photo.thumb{width:70px;height:62px;border-radius:12px;float:right;margin:0 0 8px 8px;}
+.scan-sheet{background:white;border:1px solid var(--scan-border);border-radius:19px;padding:15px;min-width:0;}
+.scan-sheet h2{font-size:1.05rem;line-height:1.2;margin:0 0 7px;overflow-wrap:anywhere;}
+.scan-sheet p{font-size:.87rem;line-height:1.42;margin:0 0 9px;color:#4a5943;overflow-wrap:anywhere;}
+.scan-sheet small{display:block;font-size:.77rem;line-height:1.35;color:#4a5943;margin:7px 0;}
+.scan-sheet .scan-secondary{margin-top:8px;}
+.scan-sheet .field{margin:10px 0;}
+.scan-sheet .field input,.scan-sheet .field select{width:100%;}
+.scan-sheet [role=alert]{color:#8c312b;}
+.scan-notice{background:#f0f5e9;color:#364b31;padding:9px;border-radius:11px;font-size:.8rem;line-height:1.4;}
+.scan-processing{position:relative;overflow:hidden;border-radius:20px;}
+.scan-processing img{opacity:.57;}
+.scan-line{height:2px;background:#b5df4a;position:absolute;left:12%;right:12%;top:53%;box-shadow:0 0 15px 2px #b7e84d;animation:scan-analysis 1.6s ease-in-out infinite alternate;}
+@keyframes scan-analysis{from{top:24%}to{top:76%}}
+@media(prefers-reduced-motion:reduce){.scan-line{animation:none;}}
+.scan-badge{display:inline-block;background:#eff5e4;color:#426435;border-radius:999px;padding:5px 8px;font-size:.72rem;font-weight:730;margin-bottom:7px;}
+.scan-range{display:flex;gap:6px;align-items:baseline;color:#293c24;border-block:1px solid #edf0e8;padding:8px 0;margin:6px 0 10px;}
+.scan-range strong{font-size:1.6rem;}
+.scan-range span{font-size:.81rem;}
+.calorie-matches{display:grid;gap:6px;}
+.calorie-matches .recipe-option{border-radius:11px;justify-content:flex-start;text-align:left;background:#f1f6e9;}
+.journal-date{display:flex;justify-content:space-between;align-items:center;gap:6px;}
+.scan-date-label{display:flex;align-items:center;gap:5px;font-size:.72rem;}
+.scan-date-label input{padding:5px;border:1px solid var(--scan-border);border-radius:10px;background:white;min-height:38px;}
+.journal-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;}
+.journal-week .day{border-radius:12px;padding:5px 0;background:white;border-color:var(--scan-border);}
+.journal-week .day b{display:block;margin-top:2px;}
+.journal-week .day[aria-pressed=true]{background:#e9f4d4;border-color:#aac87c;}
+.journal-total{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:19px;background:#e9f3d9;color:#2a4224;}
+.journal-total p{font-size:.67rem;letter-spacing:.12em;font-weight:780;margin:0 0 3px;}
+.journal-total strong{font-size:2rem;letter-spacing:-.05em;}
+.journal-total-icon svg{width:39px;height:39px;opacity:.61;}
+.journal-empty{text-align:center;padding:12px 5px;}
+.journal-empty svg{width:26px;height:26px;color:#547245;}
+.journal-meals{list-style:none;padding:0;margin:0;}
+.journal-meals li{display:flex;align-items:center;gap:6px;border-top:1px solid #edf0e8;padding:8px 0;}
+.journal-meals li>div{min-width:0;flex:1;overflow-wrap:anywhere;}
+.journal-meals b{font-size:.82rem;white-space:nowrap;}
+.journal-meals small{margin:2px 0 0;}
+.scan-saved{display:flex;gap:5px;align-items:center;background:#eff5e4;padding:8px 11px;border-radius:10px;margin:0;font-weight:650;}
+.scan-saved svg{width:16px;height:16px;}
+.calorie-card{max-width:480px;margin:12px auto;padding:18px;background:white;border:1px solid #e0e6d9;border-radius:19px;}
