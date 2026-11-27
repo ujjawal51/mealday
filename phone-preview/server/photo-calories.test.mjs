@@ -61,7 +61,8 @@ test('Cloudflare pilot requires an explicit account, secret, verified user and s
   calls++;assert.equal(url,'https://api.cloudflare.com/client/v4/accounts/'+accountId+'/ai/run/@cf/meta/llama-3.2-11b-vision-instruct');
   assert.equal(init.headers.Authorization,'Bearer '+secret);assert.equal(init.redirect,'error');
   const request=JSON.parse(init.body);
-  assert.equal(request.messages[1].content[1].image_url.url,'data:image/jpeg;base64,'+jpg);
+  assert.equal(request.image,'data:image/jpeg;base64,'+jpg);
+  assert.equal(request.messages[1].content,'Estimate the food in this photo.');
   assert.equal(request.stream,false);
   assert.equal(request.max_tokens,240);
   assert(!('store' in request));
@@ -97,7 +98,7 @@ test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fa
  const base={provider:'cloudflare',key:'test-only',accountId:'0123456789abcdef0123456789abcdef',pilotEmail:'pilot@example.invalid',limit:5,reserve:async()=>true};
  const cases=[
   [()=>new Response(null,{status:429}),429],
-  [()=>new Response(null,{status:403}),503],
+  [()=>Response.json({success:false,errors:[{code:5016,message:'do not log provider payload'}]},{status:403}),503],
   [()=>{throw Error('timeout or network');},503],
   [()=>Response.json({success:true,result:{response:'Food detected, missing JSON'}}),503],
   [()=>Response.json({success:false,result:{response:'{}'}}),503],
@@ -105,8 +106,14 @@ test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fa
   [()=>Response.json({success:true,result:{response:'{"food":true,"name":"Rice","portion":"1 cup","minKcal":400,"maxKcal":300}'}}),422],
  ];
  for(const [payload,status] of cases){
-  let calls=0;
-  const adapter=createPhotoCalories({...base,fetcher:async url=>{calls++;assert.match(url,/^https:\/\/api\.cloudflare\.com\//);return payload();}});
+  let calls=0;const events=[];
+  const adapter=createPhotoCalories({...base,diagnostic:event=>events.push(event),fetcher:async url=>{calls++;assert.match(url,/^https:\/\/api\.cloudflare\.com\//);return payload();}});
   await assert.rejects(adapter.estimate('pilot',jpg),{status});assert.equal(calls,1);
+  if(status!==422){
+   assert.equal(events.length,1);
+   assert.deepEqual(Object.keys(events[0]),['event','provider','stage','httpStatus','code','ms']);
+   if(events[0].httpStatus===403)assert.equal(events[0].code,5016);
+   assert(!JSON.stringify(events).includes('do not log provider payload'));
+  }else assert.equal(events.length,0);
  }
 });

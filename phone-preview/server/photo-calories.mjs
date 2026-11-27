@@ -24,9 +24,10 @@ function requestFor(provider,accountId,image){
  const jpeg='data:image/jpeg;base64,'+image;
  if(provider==='cloudflare')return {
   url:'https://api.cloudflare.com/client/v4/accounts/'+accountId+'/ai/run/'+cfModel,
-  payload:{stream:false,max_tokens:240,temperature:0.1,messages:[
-   {role:'system',content:instructions+' Return only a JSON object with exactly food (boolean), name (string), portion (string), minKcal (integer), maxKcal (integer). Do not add commentary.'},
-   {role:'user',content:[{type:'text',text:'Estimate the food in this photo.'},{type:'image_url',image_url:{url:jpeg}}]}
+  // The model-specific Cloudflare tutorial attaches the image at the top level.
+  payload:{stream:false,max_tokens:240,temperature:0.1,image:jpeg,messages:[
+   {role:'system',content:instructions+' Output one JSON object only. Format: {"food":boolean,"name":string,"portion":string,"minKcal":integer,"maxKcal":integer}. Do not add commentary.'},
+   {role:'user',content:'Estimate the food in this photo.'}
   ]}
  };
  return {url:'https://api.openai.com/v1/responses',payload:{model:'gpt-4.1-mini',store:false,max_output_tokens:240,instructions,
@@ -38,11 +39,12 @@ function responseValue(provider,data){
  if(provider==='cloudflare'&&data.success!==true)throw Error('Provider response failed');
  if(provider==='openai'&&data.status&&data.status!=='completed')throw Error('Provider response incomplete');
  const content=provider==='cloudflare'?data.result?.response:data.output?.flatMap(item=>item.type==='message'&&item.role==='assistant'?item.content||[]:[]).find(x=>x.type==='output_text')?.text;
+ if(provider==='cloudflare'&&content!==null&&typeof content==='object'&&!Array.isArray(content))return content;
  if(typeof content!=='string'||content.length>4096)throw Error('Invalid provider output');
  const clean=content.trim(),fence=clean.match(/^```(?:json)?\s*([\s\S]+?)\s*```$/i);
  return JSON.parse(fence?fence[1]:clean);
 }
-export function createPhotoCalories({provider='openai',key='',accountId='',pilotEmail='',limit=0,fetcher=fetch,reserve=async()=>false}={}){
+export function createPhotoCalories({provider='openai',key='',accountId='',pilotEmail='',limit=0,fetcher=fetch,reserve=async()=>false,diagnostic=entry=>console.warn(JSON.stringify(entry))}={}){
  if(!['openai','cloudflare'].includes(provider)||!key||!Number.isInteger(limit)||limit<1||limit>1000)return null;
  const normalizedEmail=pilotEmail.trim().toLowerCase();
  if(provider==='cloudflare'&&(!/^[a-f0-9]{32}$/i.test(accountId)||!/^\S+@\S+\.\S+$/.test(normalizedEmail)||limit>20))return null;
@@ -51,15 +53,25 @@ export function createPhotoCalories({provider='openai',key='',accountId='',pilot
   async estimate(userId,value){
    const image=validateMealImage(value),day=new Date().toISOString().slice(0,10);
    if(!await reserve(userId,day,limit))throw error(429,'Photo estimate limit reached. You can still log meals manually.');
-   let output;
+   let output,stage='request',httpStatus=null,code=null;const started=performance.now();
    try{
     const {url,payload}=requestFor(provider,accountId,image);
     const r=await fetcher(url,{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},
       redirect:'error',signal:AbortSignal.timeout(17000),body:JSON.stringify(payload)});
+    httpStatus=r.status;
+    stage=r.ok?'response':'http';
+    const data=await r.json().catch(()=>null);
+    const n=data?.errors?.[0]?.code;
+    if(Number.isInteger(n)&&n>=1000&&n<=99999)code=n;
     if(r.status===429)throw error(429,'Photo estimate quota reached. Use a recipe or enter calories manually.');
-    if(!r.ok)throw Error('Provider unavailable');
-    output=responseValue(provider,await r.json());
-   }catch(err){if(err.status===429)throw err;throw error(503,unavailable);}
+    if(!r.ok||!data)throw Error('Provider unavailable');
+    stage=data.success===false?'provider':'parse';
+    output=responseValue(provider,data);
+   }catch(err){
+    if(provider==='cloudflare')diagnostic({event:'photo_estimate_miss',provider,stage:err.name==='TimeoutError'?'timeout':stage,httpStatus,code,ms:Math.round(performance.now()-started)});
+    if(err.status===429)throw err;
+    throw error(503,unavailable);
+   }
    return photoEstimateOutput(output);
   }};
 }
