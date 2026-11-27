@@ -1,5 +1,7 @@
 import {ingredientPicture} from './ingredient-pictures.js';
 import {publicImage} from './catalogue-schema.js';
+import {illustratedPhotoIds} from './illustrated-photo-ids.js';
+import {recipeLabel} from './recipe-labels.js';
 import {mountGoogleSignIn} from './google-signin.js';
 import {createOnboardingMotion} from './onboarding-motion.js';
 import {savingsComparison} from './savings.js';
@@ -110,9 +112,9 @@ function catalogueNotice(){
   if(lastCatalogueMode==='live')return '';
   return '<p class="notice" role="status">'+(lastCatalogueMode==='cached-offline'?'Showing your last synced recipe catalogue.':'Showing packaged offline recipes.')+' Recent changes may be missing. '+button('Retry live recipes','refresh-recipes','ghost small')+'</p>';
 }
-const generatedPhotoIds=new Set(["air-potato","breakfast-oats","breakfast-toast","cheese-wrap","cheesy-pasta","chicken-rice","chickpea-salad","egg-toast","fresh-wrap","lentil-rice","lentil-soup","microwave-potato","potato-salad","rice-egg","roast-bowl","simple-rice","tomato-pasta","tuna-wrap"]);
 function photo(meal){
-  return publicImage(!meal.imageUrl||meal.imageUrl==='/recipe-image-unavailable.svg'&&generatedPhotoIds.has(meal.id)?'/recipes/'+meal.id+'.webp':meal.imageUrl);
+  const image=meal.imageUrl;
+  return publicImage((image==='/recipe-image-unavailable.svg'||!image)&&illustratedPhotoIds.has(meal.id)?'/recipes/'+meal.id+'.webp':image);
 }
 function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minutes)+' min</span><span>'+esc(meal.cuisine)+'</span><span>'+esc(cap(meal.diet))+'</span></div>';}
 function initNavigation(){
@@ -160,7 +162,7 @@ function week(){
     const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
     const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
-    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(m.componentNames?.[0]||m.name)+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
+    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
   const extras=state.extraGroceries||[],total=items.length+extras.length;
@@ -249,7 +251,7 @@ function renderRecipes(snapshot=false){
   const empty=library.saved?(state.favorites.length?'No saved recipes match your search and filters.':'Save recipes you like to find them here.'):'No recipes matched. Try another search or filter.';
   const clearFilters=library.saved&&state.favorites.length&&!rows.length&&(library.q||library.cuisine||library.diet)?button('Clear filters','clear-recipe-filters','ghost small'):'';
   holder.innerHTML=catalogueNotice()+(library.saved?'<p class="saved-result-count">'+rows.length+' of '+state.favorites.length+' saved recipes</p>':'')+(library.error&&!library.saved?'<p role="alert" class="notice">'+esc(library.error)+'</p>':'')+
-    (rows.length?'<div class="cards">'+rows.map(r=>'<article class="recipe-card"><img loading="lazy" src="'+photo(r)+'" alt=""><div class="recipe-card-body"><span class="meal-type">'+esc(r.cuisine)+'</span><h3>'+esc(r.name)+'</h3>'+meta(r)+button(r.unavailable?'No longer published':'View recipe','recipe','ghost small','right','data-id="'+esc(r.id)+'"'+(r.unavailable?' disabled':''))+'</div></article>').join('')+'</div>':
+    (rows.length?'<div class="cards">'+rows.map(r=>'<article class="recipe-card"><img loading="lazy" src="'+photo(r)+'" alt=""><div class="recipe-card-body"><span class="meal-type">'+esc(r.cuisine)+'</span><h3>'+esc(recipeLabel(r.id,r.name))+'</h3>'+meta(r)+button(r.unavailable?'No longer published':'View recipe','recipe','ghost small','right','data-id="'+esc(r.id)+'"'+(r.unavailable?' disabled':''))+'</div></article>').join('')+'</div>':
     '<div class="empty">'+(library.loading?'Loading recipes…':empty)+clearFilters+'</div>')+
     (!library.saved&&library.next!==null?'<div class="more">'+button(library.loading?'Loading…':'More recipes','more','ghost','right',library.loading?'disabled':'')+'</div>':'');
 }
@@ -428,7 +430,7 @@ function renderRecipeDetail(r){
     '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><p>'+esc(r.steps[guidedStep])+'</p><div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
 
   screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">'+(r.photoStatus==='generated'?'AI meal illustration':'Meal illustration')+'</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
-    button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(r.componentNames?.[0]||r.name)+'</h1>'+mealComponents(r)+
+    button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(recipeLabel(r.id,r.componentNames?.[0]||r.name))+'</h1>'+mealComponents(r)+
     renderNutrition(r)+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>Cook time: '+esc(r.minutes)+' min <span aria-hidden="true">&nbsp; | &nbsp;</span> Serves: '+people+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+
     '<div class="recipe-tabs" role="group" aria-label="Recipe sections">'+['ingredients','instructions'].map(tab=>button(cap(tab),'recipe-tab','recipe-tab','','data-id="'+tab+'" aria-pressed="'+(detailTab===tab)+'"')).join('')+'</div>'+
@@ -458,7 +460,7 @@ async function swaps(index){
     const data=await request('/api/swaps',{profile:state.profile,pantry:state.pantry,plan:state.result.plan,index});
     if(!dialog.open||swapIndex!==index)return;
     openDialog('Swap this meal','Options fit your cooking preferences and grocery budget.',
-      data.choices.length?data.choices.map(r=>'<article class="swap-option"><div><strong>'+esc(r.name)+'</strong><p>'+esc(r.minutes)+' min · AED '+money(r.total)+' estimated week</p>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose','apply-swap','primary small','check','data-id="'+esc(r.id)+'"')+'</article>').join(''):'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
+      data.choices.length?data.choices.map(r=>'<article class="swap-option"><div><strong>'+esc(recipeLabel(r.id,r.name))+'</strong><p>'+esc(r.minutes)+' min · AED '+money(r.total)+' estimated week</p>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose','apply-swap','primary small','check','data-id="'+esc(r.id)+'"')+'</article>').join(''):'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
   }catch(err){if(dialog.open&&swapIndex===index)openDialog('Swap this meal','','<p class="notice">'+esc(err.message)+'</p>');}
 }
 async function applySwap(id,buttonNode){
@@ -1203,7 +1205,7 @@ function openReminder(){
 }
 
 function sharePlan(){
-  const text=state.result?.meals.map(x=>DAYS[x.day]+' · '+cap(x.meal)+': '+x.name).join('\n');
+  const text=state.result?.meals.map(x=>DAYS[x.day]+' · '+cap(x.meal)+': '+recipeLabel(x.id,x.name)).join('\n');
   if(!text){notify('Build a meal plan before sharing.');return;}
   if(window.MealdayAndroid){window.MealdayAndroid.share('My Mealday plan\n\n'+text);return;}
   openDialog('Share your plan','Select the text to copy it.','<textarea class="control" rows="12" cols="40" readonly>'+esc(text)+'</textarea>');

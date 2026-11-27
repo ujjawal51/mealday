@@ -1,7 +1,6 @@
 {
   "source": "AI-generated meal illustrations",
-  "generatedDate": "2026-11-24",
-  "stylePrompt": "Square editorial food illustration, natural daylight, off-white ceramic on pale warm stone; actual recipe ingredients only; no text, logos, watermark or extra garnish.",
+  "stylePrompt": "Square editorial food illustration, centered dish in natural daylight, cream ceramic on pale natural surface. Show only the named recipe and sides; no text, logos or extra ingredients.",
   "images": [
     {
       "id": "air-potato",
@@ -164,6 +163,169 @@
       "bytes": 139296,
       "sha256": "780d649f78f5ea1ce6a99daad81a87812cbfd3c88f905718186aa9591d2b99be",
       "illustration": true
+    },
+    {
+      "id": "mealday-quick-besan-chilla",
+      "path": "/recipes/mealday-quick-besan-chilla.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 106136,
+      "sha256": "aecd0f4a9710942e6e4fad09d17f352130f3d915c33166504bb5d3210e0f249c",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-blackeye-appam",
+      "path": "/recipes/mealday-quick-blackeye-appam.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 98230,
+      "sha256": "7a2746f2f4c4a7c0a858729f42191780d1db9e6deba1e2da20aa20d98b56a4b6",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-dahi-poha",
+      "path": "/recipes/mealday-quick-dahi-poha.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 80266,
+      "sha256": "2075fb372f56ba317a608c1439bfdc75c961624999b924358bb70d386d69ba97",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-fava-vermicelli",
+      "path": "/recipes/mealday-quick-fava-vermicelli.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 108786,
+      "sha256": "c50b8938db87a2c894114bc7ddd725f852aa4e03a4324d2d55768e202be660df",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-lemon-rice",
+      "path": "/recipes/mealday-quick-lemon-rice.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 75218,
+      "sha256": "9b58866f6fa31ed818d32d9d4addafb5a6abbf0467dcd0385a6e3740fd07e6c6",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-lentil-puttu",
+      "path": "/recipes/mealday-quick-lentil-puttu.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 81036,
+      "sha256": "a8ae5dc7d14226b571f36a0e305da7e6d887da1ceb0abee057b98d46cc741acf",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-paneer-bhurji",
+      "path": "/recipes/mealday-quick-paneer-bhurji.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 101332,
+      "sha256": "116e00d6eb3d86ba77e3a6b51bedd811bbbac6830f69698c2117315613cdecf3",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-pepper-chicken-roll",
+      "path": "/recipes/mealday-quick-pepper-chicken-roll.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 110846,
+      "sha256": "fe9a77a8a02850ff726ee9a68e9ff93441116edc4bed73e39a4dcd8196c5ca8c",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-rajma-roti",
+      "path": "/recipes/mealday-quick-rajma-roti.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 134476,
+      "sha256": "2cbcd75ed7d2b3544277a3f5ddd4f0d5ea7707e1369c1358ad56363f53158e05",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-spinach-egg-roti",
+      "path": "/recipes/mealday-quick-spinach-egg-roti.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 116486,
+      "sha256": "1c3013a7f876785a0b4d001afc2b2d55933695c9881010e91f9278d27629ef38",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-tawa-masala-corn-potato",
+      "path": "/recipes/mealday-quick-tawa-masala-corn-potato.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 109650,
+      "sha256": "b1548cf81c61d3ddf835d9a53ae38b286e014bbc043fcf8b76da209debf020f6",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-tuna-hoppers",
+      "path": "/recipes/mealday-quick-tuna-hoppers.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 90514,
+      "sha256": "0d06a74804fcb2ccc93e06bcab98fabb39a948416e75921a409bbc3131fc6762",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-bulgur",
+      "path": "/recipes/mealday-quick-turkish-bulgur.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 98666,
+      "sha256": "a341f3a3a69abcd0306b2c7cbdb797ed30f98399b98243ec790126e6d260eab7",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-fava",
+      "path": "/recipes/mealday-quick-turkish-fava.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 84430,
+      "sha256": "473fd4d9b27b042e1b91fe030a3eb0dbd5e286887a901f16437965bacc46ddfd",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-menemen",
+      "path": "/recipes/mealday-quick-turkish-menemen.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 110686,
+      "sha256": "b5721495920fd70edbcbeb7340e6c93838d598a2733de6bcc2e073b0a7e5cea7",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-patlican",
+      "path": "/recipes/mealday-quick-turkish-patlican.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 118316,
+      "sha256": "0e6fe41bd00bec6a73a2a4f0ca0af8a2138fd6d605841cf14410fc291b830874",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-piyaz",
+      "path": "/recipes/mealday-quick-turkish-piyaz.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 90274,
+      "sha256": "43b0811850d5003f7e1abc9f13026ddd294d80f43de5cef1c6a6f1b66c7a8e47",
+      "illustration": true
+    },
+    {
+      "id": "mealday-quick-turkish-tavuk",
+      "path": "/recipes/mealday-quick-turkish-tavuk.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 120172,
+      "sha256": "d0425f23f1bf4209e2ec6cd9314b42e96cc87a1f8eff40d268641b7e78973a05",
+      "illustration": true
     }
-  ]
+  ],
+  "updatedDate": "2026-11-27"
 }

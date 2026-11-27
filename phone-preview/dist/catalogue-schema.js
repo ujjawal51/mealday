@@ -1,4 +1,5 @@
 import {recipePhotos} from './recipe-photos.js';
+import {recipeLabel} from './recipe-labels.js';
 // Public catalogue allowlist: no account fields, private notes or arbitrary HTML/URLs.
 const idOK=x=>typeof x==='string'&&/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,149}$/.test(x)&&!['constructor','prototype','__proto__'].includes(x);
 const text=(v,max=500)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
@@ -26,9 +27,9 @@ export function publicRecipe(doc){
  else timing={prepMinutes:0,cookMinutes:r.time,waitMinutes:0,estimated:true}; // Explicit total prevents stale bundled ID-specific timings.
  const image=r.imageUrl||doc.photo?.path;
  const mapped=(!image||image==='/recipe-image-unavailable.svg')?recipePhotos[r.id]:undefined;
- const data={id:r.id,name:r.name,time:r.time,timing,diet:r.diet,cuisine:r.cuisine,mealTypes:r.mealTypes,appliances:r.appliances,items,steps:r.steps,imageUrl:publicImage(mapped||image),tags:Array.isArray(r.tags)?r.tags.filter(x=>text(x,100)).slice(0,20):[],reviewStatus:'preview',image:0};
+ const data={id:r.id,name:recipeLabel(r.id,r.name),time:r.time,timing,diet:r.diet,cuisine:r.cuisine,mealTypes:r.mealTypes,appliances:r.appliances,items,steps:r.steps,imageUrl:publicImage(mapped||image),tags:Array.isArray(r.tags)?r.tags.filter(x=>text(x,100)).slice(0,20):[],reviewStatus:'preview',image:0};
  if(data.imageUrl===recipePhotos[r.id])data.photoStatus='generated';
- if([1,2].includes(r.mealAssemblyVersion)&&Array.isArray(r.componentNames)&&r.componentNames.length<=8&&r.componentNames.every(x=>text(x,500))){data.mealAssemblyVersion=r.mealAssemblyVersion;data.componentNames=[...r.componentNames];}
+ if([1,2].includes(r.mealAssemblyVersion)&&Array.isArray(r.componentNames)&&r.componentNames.length<=8&&r.componentNames.every(x=>text(x,500))){data.mealAssemblyVersion=r.mealAssemblyVersion;data.componentNames=r.componentNames.map(name=>recipeLabel(r.id,name));}
  if(typeof r.mealComplete==='boolean')data.mealComplete=r.mealComplete;
  for(const key of ['familyId','baseRecipeId','authorship','sourceName','licence'])if(text(r[key],1000))data[key]=r[key];
  if(typeof r.sourceUrl==='string'){try{const u=new URL(r.sourceUrl);if(u.protocol==='https:'&&!u.username&&!u.password)data.sourceUrl=u.href;}catch{}}
