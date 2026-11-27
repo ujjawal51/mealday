@@ -1098,3 +1098,9 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 .carryover-row .control{width:100%;min-height:44px;}
 .swap-impact-list{padding-left:20px;max-height:32vh;overflow:auto;}
 .swap-impact-list li{margin-bottom:8px;}
+/* API-free grocery handoff: keep clipboard and storefront steps independent. */
+.shop-handoff{display:grid;gap:8px;}
+.shop-handoff p{margin:0;}
+.shop-handoff textarea{width:100%;resize:vertical;}
+.shop-provider-links{display:grid;gap:8px;}
+.shop-provider-links .button{justify-content:center;text-decoration:none;min-height:44px;}
