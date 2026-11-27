@@ -66,7 +66,7 @@ test('Cloudflare pilot requires an explicit account, secret, verified user and s
   assert.equal(request.stream,false);
   assert.equal(request.max_tokens,240);
   assert(!('store' in request));
-  return Response.json({success:true,result:{response:JSON.stringify(success)}});
+  return Response.json({success:true,result:'Here is the estimate:\n'+String.fromCharCode(96).repeat(3)+'json\n'+JSON.stringify(success)+'\n'+String.fromCharCode(96).repeat(3)});
  }});
  const ownerCookie='a'.repeat(43),guestCookie='b'.repeat(43),unverifiedCookie='c'.repeat(43);
  const users=[{id:'pilot',email:pilotEmail,verified:true},{id:'other',email:'other@example.invalid',verified:true},{id:'pending',email:pilotEmail,verified:false}];
@@ -94,6 +94,16 @@ test('Cloudflare pilot requires an explicit account, secret, verified user and s
  assert.equal(calls,1);assert.equal(reservations,1);
 });
 
+test('Cloudflare accepts one validated estimate from native response variants',async()=>{
+ const estimate={food:true,name:'Rice',portion:'1 bowl',minKcal:300,maxKcal:450};
+ const json=JSON.stringify(estimate);
+ for(const result of [json,estimate,{response:estimate},{response:json},{response:'Estimate:\n'+json+'\nEstimated portions only.'}]){
+  const adapter=createPhotoCalories({provider:'cloudflare',key:'test-only',accountId:'0123456789abcdef0123456789abcdef',pilotEmail:'pilot@example.invalid',limit:3,reserve:async()=>true,diagnostic:()=>assert.fail('unexpected failure'),fetcher:async()=>Response.json({success:true,result})});
+  const {food:_,...expected}=estimate;
+  assert.deepEqual(await adapter.estimate('pilot',jpg),expected);
+ }
+});
+
 test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fallback',async()=>{
  const base={provider:'cloudflare',key:'test-only',accountId:'0123456789abcdef0123456789abcdef',pilotEmail:'pilot@example.invalid',limit:5,reserve:async()=>true};
  const cases=[
@@ -101,6 +111,10 @@ test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fa
   [()=>Response.json({success:false,errors:[{code:5016,message:'do not log provider payload'}]},{status:403}),503],
   [()=>{throw Error('timeout or network');},503],
   [()=>Response.json({success:true,result:{response:'Food detected, missing JSON'}}),503],
+  [()=>Response.json({success:true,result:'[{"food":false}]'}),503],
+  [()=>Response.json({success:true,result:'Estimate: {"food":false} or {"food":true}'}),503],
+  [()=>Response.json({success:true,result:{response:{name:'Rice',minKcal:300}}}),503],
+  [()=>Response.json({success:true,result:{response:'Estimate: {"food":true,"name":"Rice","portion":"1 cup","minKcal":"300 kcal","maxKcal":400}'}}),422],
   [()=>Response.json({success:false,result:{response:'{}'}}),503],
   [()=>Response.json({success:true,result:{response:'{"food":false,"name":"","portion":"","minKcal":0,"maxKcal":0}'}}),422],
   [()=>Response.json({success:true,result:{response:'{"food":true,"name":"Rice","portion":"1 cup","minKcal":400,"maxKcal":300}'}}),422],
@@ -111,7 +125,8 @@ test('Cloudflare quota, bad payloads and nonfood fail safely without retry or fa
   await assert.rejects(adapter.estimate('pilot',jpg),{status});assert.equal(calls,1);
   if(status!==422){
    assert.equal(events.length,1);
-   assert.deepEqual(Object.keys(events[0]),['event','provider','stage','httpStatus','code','ms']);
+   assert.deepEqual(Object.keys(events[0]),['event','provider','stage','httpStatus','code','ms',...(events[0].stage==='parse'?['outputShape']:[])]);
+   if(events[0].stage==='parse')assert(['nested','direct_text','direct_object','unknown'].includes(events[0].outputShape));
    if(events[0].httpStatus===403)assert.equal(events[0].code,5016);
    assert(!JSON.stringify(events).includes('do not log provider payload'));
   }else assert.equal(events.length,0);
