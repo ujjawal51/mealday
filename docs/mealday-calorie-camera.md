@@ -1,6 +1,6 @@
 # Mealday camera and calorie tracking
 
-The centre Camera control opens the OS photo picker, requesting the rear-facing camera on mobile. Actual picker behavior depends on the browser and phone. Choosing a file or cancelling does not upload anything. The tracker offers a photo preview, manually entered calories, and a serving-scaled estimate for Mealday recipes with complete mapped nutrition. Entries are editable, separated by local day and user or guest on this browser, and are not sent to cloud backup. Photos are not saved with entries. No calorie target or dieting advice is added.
+The centre Camera control and the `/#calories` deep link open the daily food log. Scan a meal → Take photo opens the OS photo picker, requesting the rear-facing camera on mobile. Actual picker behavior depends on the browser and phone. Choosing a file or cancelling does not upload anything. The tracker offers a photo preview, manually entered calories, and a serving-scaled estimate for Mealday recipes with complete mapped nutrition. Entries are editable, separated by local day and user or guest on this browser, and are not sent to cloud backup. Photos are not saved with entries. No calorie target or dieting advice is added.
 
 ## Phone flow
 

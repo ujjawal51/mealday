@@ -80,8 +80,8 @@ const cookingTimer=createCookingTimer({onTick:updateTimerDisplay,onComplete:()=>
 let cloudApplying=false,deletingAccount=false;
 const cloudBackup=createCloudBackup({snapshot:()=>({state:structuredClone(state),history:structuredClone(cookingHistory)}),apply:data=>{
   cloudApplying=true;state=data.state;cookingHistory=loadHistory(data.history);persist();persistHistory();cloudApplying=false;detail=null;guidedStep=null;library.rows=[];library.count=0;
-  setView(state.result?'week':'welcome',false);
-},changed:()=>{if(['settings','account'].includes(view))render();}});
+  if(view!=='calories')setView(state.result?'week':'welcome',false);
+},changed:()=>{if(['settings','account'].includes(view))render();if(view==='calories')calorieTracker?.syncAccount();}});
 let calorieTracker=null;
 async function openCalories(){
  if(calorieTracker)return calorieTracker;
@@ -637,7 +637,7 @@ function startTimer(){
 }
 document.addEventListener('click',async event=>{
   const b=event.target.closest('button');if(!b||b.disabled)return;
-  if(b.dataset.view){setView(b.dataset.view);if(b.dataset.view==='calories'){const camera=$('#quick-cal-camera');if(camera){camera.value='';camera.click();}if(calorieTracker)void calorieTracker.enter();return;}$('#main').focus({preventScroll:true});return;}
+  if(b.dataset.view){setView(b.dataset.view);if(b.dataset.view==='calories'){if(calorieTracker)void calorieTracker.enter();return;}$('#main').focus({preventScroll:true});return;}
   if(b.dataset.calorie){await calorieTracker?.click(b);return;}
   const {action,id,index}=b.dataset;
   if(action==='retry-calories'){renderCalories();return;}
@@ -659,6 +659,7 @@ document.addEventListener('click',async event=>{
   else if(action==='cloud-local'||action==='cloud-remote'){try{await cloudBackup.resolve(action==='cloud-local');dialog.close();}catch(e){notify(e.message);}}
   else if(action==='grocery-add')setView('add-grocery');
   else if(action==='grocery-cancel')setView('shopping');
+  else if(action==='open-calories'){setView('calories');}
   else if(action==='quick-start'){error='';quickDraft=structuredClone(state.profile);quickAdvanced=false;setView('quick-start',false);}
   else if(action==='quick-cancel'){if(!busy){error='';setView(state.result?'week':'welcome',false);}}
   else if(action==='quick-fewer'){if(!busy&&quickDraft.days.length>1){
@@ -871,7 +872,6 @@ document.addEventListener('submit',async event=>{
 });
 document.addEventListener('change',event=>{
   const el=event.target;
-  if(el.id==='quick-cal-camera'){const file=el.files?.[0];if(file)void openCalories().then(t=>{if(view==='calories')t.change(el);}).catch(()=>notify('Could not open the calorie tracker.'));return;}
   if(el.dataset.calorie){calorieTracker?.change(el);return;}
   if(el.id==='store-price-location'){priceLocation=el.value;refreshStorePrices(true);return;}
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
@@ -881,7 +881,7 @@ document.addEventListener('change',event=>{
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
- if(event.target.dataset?.calorie==='recipe-search'){calorieTracker?.search(event.target);return;}
+ if(['recipe-search','servings'].includes(event.target.dataset?.calorie)){calorieTracker?.search(event.target);return;}
   if(event.target.form?.id==='checkout-comparison'){event.target.form.querySelector('output').textContent='';return;}
   if(event.target.form?.id==='extra-grocery-form'){event.target.form.querySelector('button[type=submit]').disabled=!event.target.form.elements.namedItem('item').value.trim();return;}
   if(event.target.id==='recipe-note'&&detail){updateJournal(detail.id,{note:event.target.value});return;}
@@ -1018,7 +1018,7 @@ function welcome(){
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','quick-start','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+button('Guided setup','start-setup')+'</div></div></div>';
+  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','quick-start','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+button('Guided setup','start-setup')+button('Calorie tracker','open-calories')+'</div></div></div>';
 }
 let previewAutoplayPaused=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),previewHovered=false;
 const previewSlideshow=createPreviewSlideshow({count:productPreviews.length,initial:previewSlide,
@@ -1424,7 +1424,7 @@ cloudApplying=true;
 if(persistHistory()&&Object.hasOwn(state,'cooked')){delete state.cooked;persist();}
 cloudApplying=false;
 initNavigation();
-setView(state.result?'week':'welcome',false);
+setView(location.hash==='#calories'?'calories':state.result?'week':'welcome',false);
 window.mealdayStarted=true;
 if (window.MealdayAndroid && typeof window.MealdayAndroid.ready === 'function') {
   window.MealdayAndroid.ready();

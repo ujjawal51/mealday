@@ -21,7 +21,14 @@ const makeContext=async()=>{
 };
 try{
  const ctx=await makeContext(),page=await ctx.newPage();await page.goto(origin);
- const chooser=await fileChooser(page,cameraName);
+ await button(page,cameraName).click();await heading(page,'Food log').waitFor();
+ await page.getByText('Automatic photo estimates are off.',{exact:false}).waitFor();
+ await button(page,'Scan a meal').click();
+ const bad=await fileChooser(page,'Choose photo');
+ await bad.setFiles({name:'unreadable.jpg',mimeType:'image/jpeg',buffer:Buffer.from('invalid photo')});
+ await page.getByText('This photo could not be opened.',{exact:false}).waitFor();
+ await heading(page,'Scan a meal').waitFor();
+ const chooser=await fileChooser(page,'Take photo');
  assert.equal(await chooser.element().getAttribute('capture'),'environment');
  await heading(page,'Scan a meal').waitFor();assert.equal(await page.locator('#calorie-form').count(),0);
  await screenshot(page,'01-capture');
@@ -42,8 +49,8 @@ try{
  assert.match(await page.locator('.journal-meals').innerText(),/Lunch · 1 bowl · Manual/);
  assert.equal(await page.getByRole('img',{name:'Selected meal photo'}).count(),0);
  await screenshot(page,'06-journal');
- await page.reload();await fileChooser(page,cameraName);
- await button(page,'Food log').click();assert.match(await page.locator('.journal-total').innerText(),/450 kcal/);
+ await page.reload();await heading(page,'Food log').waitFor();
+ assert.match(await page.locator('.journal-total').innerText(),/450 kcal/);
  await button(page,'Edit Homemade lentil soup').click();await heading(page,'Edit meal').waitFor();
  await page.getByRole('spinbutton',{name:'Calories (kcal)'}).fill('380');
  await button(page,'Save changes').click();assert.match(await page.locator('.journal-total').innerText(),/380 kcal/);
@@ -54,18 +61,24 @@ try{
  const prev=page.locator('.journal-week button').nth(5);await prev.click();
  assert.match(await page.locator('.journal-total').innerText(),/0 kcal/);
  await page.locator('.journal-week button').nth(6).click();
- await page.locator('.calorie-flow button[data-calorie=capture]').last().click();
- await button(page,'Use a Mealday recipe').click();
+ await button(page,'Find a recipe').click();
  await page.getByRole('searchbox',{name:'Find a recipe'}).fill('Lentil soup');
  await page.locator('.calorie-matches button').first().click();
  const serving=page.getByRole('spinbutton',{name:'Servings eaten'});
- await serving.fill('1.5');await button(page,'Use recipe calories').click();
- const amount=Number(await page.getByRole('spinbutton',{name:'Calories (kcal)'}).inputValue());assert(amount>0);
+ const preview=page.locator('[data-kcal-preview]');
+ const unit=Number((await preview.innerText()).match(/\d+/)[0]);
+ await serving.fill('1.5');
+ const scaled=Number((await preview.innerText()).match(/\d+/)[0]);assert(Math.abs(scaled-Math.round(unit*1.5))<=1 && scaled>unit);
+ await button(page,'Use recipe calories').click();
+ const amount=Number(await page.getByRole('spinbutton',{name:'Calories (kcal)'}).inputValue());assert.equal(amount,scaled);
  await button(page,'Log meal').click();assert.match(await page.locator('.journal-meals').innerText(),/Recipe estimate/);
  const stored=await page.evaluate(()=>localStorage.getItem('mealday.calories.v1:guest'));assert(!stored.includes('blob:')&&!stored.includes('base64'));
  for(const width of [320,390]){await page.setViewportSize({width,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
  await button(page,'Settings').click();await page.getByRole('button',{name:/^Plan preferences/}).click();await heading(page,'Preferences').waitFor();
- await ctx.close();
+ const newGuest=await browser.newContext({viewport:{width:320,height:740},isMobile:true,hasTouch:true});
+ const emptyGuest=await newGuest.newPage();await emptyGuest.goto(origin);
+ await button(emptyGuest,'Calorie tracker').click();await heading(emptyGuest,'Food log').waitFor();
+ await newGuest.close();await ctx.close();
 
  const ai=await makeContext(),aiPage=await ai.newPage();let sent=0,allowResponse;
  await aiPage.route('**/api/calories/status',route=>route.fulfill({json:{configured:true,signedIn:true}}));
@@ -76,7 +89,7 @@ try{
   if(sent===2)await new Promise(resolve=>{allowResponse=resolve;});
   return route.fulfill({json:{name:'Lentil bowl',portion:'About one bowl',minKcal:350,maxKcal:500}}).catch(()=>{});
  });
- await aiPage.goto(origin);await (await fileChooser(aiPage,cameraName)).setFiles(photo);
+ await aiPage.goto(origin+'/#calories');await heading(aiPage,'Food log').waitFor();await button(aiPage,'Scan a meal').click();await (await fileChooser(aiPage,'Take photo')).setFiles(photo);
  await aiPage.getByText('Only tapping Estimate with AI sends this photo to OpenAI.',{exact:false}).waitFor();
  assert.equal(sent,0);
  await button(aiPage,'Estimate with AI').click();
