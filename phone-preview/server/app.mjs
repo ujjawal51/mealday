@@ -1,6 +1,9 @@
 import {priceRequest,quoteStorePrices} from './store-prices.mjs';
 import {liveCatalogue,catalogueSummary,catalogueDetail,matchesCatalogueTag} from './live-catalogue.mjs';
 import {isIP} from 'node:net';
+import {gzip} from 'node:zlib';
+import {promisify} from 'node:util';
+const compress=promisify(gzip);
 import {randomUUID,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
@@ -10,7 +13,7 @@ import {validateFeedback} from './feedback.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
 export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
-  const limits=new Map();let dummy;
+  const limits=new Map();let dummy,wireCache;
   const googleCookieName=production?'__Host-mealday_google':'mealday_google';
   const googleCookie=(value,maxAge)=>`${googleCookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
   const cookieName=production?'__Host-mealday_session':'mealday_session';
@@ -61,10 +64,21 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         }
         if(path==='/api/catalogue'||path==='/api/recipes'||path.startsWith('/api/recipe/')){
           if(req.method!=='GET')return send(405,{error:'Method not allowed.'},{Allow:'GET'});
-          const snapshot=await liveCatalogue(store),etag='"'+snapshot.revision+'"';
+          const snapshot=await liveCatalogue(store),etag='W/"'+snapshot.revision+'"';
           if(path==='/api/catalogue'){
-            if(matchesCatalogueTag(req.headers['if-none-match'],etag)){res.writeHead(304,{'ETag':etag,'Cache-Control':'no-cache'});return res.end();}
-            return send(200,snapshot,{'ETag':etag,'Cache-Control':'no-cache'});
+            const headers={'ETag':etag,'Cache-Control':'no-cache','Vary':'Accept-Encoding'};
+            if(matchesCatalogueTag(req.headers['if-none-match'],etag)){res.writeHead(304,headers);return res.end();}
+            const accepts=String(req.headers['accept-encoding']||'').split(',').map(v=>v.trim()).find(v=>/^gzip(?:\s*;|$)/i.test(v));
+            if(accepts&&!/;\s*q\s*=\s*0(?:\.0*)?(?:\s*;|\s*$)/i.test(accepts)){
+              if(wireCache?.revision!==snapshot.revision){
+                const compressed=compress(JSON.stringify(snapshot));
+                const cached={revision:snapshot.revision,compressed};wireCache=cached;
+                compressed.catch(()=>{if(wireCache===cached)wireCache=undefined;});
+              }
+              const bytes=await wireCache.compressed;
+              res.writeHead(200,{...headers,'Content-Type':'application/json','Content-Encoding':'gzip','Content-Length':bytes.length,'X-Content-Type-Options':'nosniff'});return res.end(bytes);
+            }
+            return send(200,snapshot,headers);
           }
           if(path.startsWith('/api/recipe/')){
             const id=decodeURIComponent(path.slice('/api/recipe/'.length)),recipe=snapshot.recipes.find(r=>r.id===id);
@@ -172,7 +186,7 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
       if(!['GET','HEAD'].includes(req.method))return send(405,{error:'Method not allowed.'});
       const file=resolve(staticRoot,'.'+decodeURIComponent(path==='/'?'/index.html':path));
       if(!file.startsWith(staticRoot+sep))return send(403,{error:'Forbidden.'});
-      try{const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':'no-cache','Referrer-Policy':'strict-origin-when-cross-origin'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(404,{error:'Not found.'});}
+      try{const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':/^\/(?:client|engine)-[0-9a-f]{12}\.js$/.test(path)?'public, max-age=31536000, immutable':'no-cache','Referrer-Policy':'strict-origin-when-cross-origin'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(404,{error:'Not found.'});}
     }catch(error){send(error.status||503,{error:error.status?error.message:'The database is unavailable. Your local data is still on this device.'});}
     async function body(maxBytes=2*1024*1024,tooLarge='Backup is too large.'){
       const chunks=[];let size=0;

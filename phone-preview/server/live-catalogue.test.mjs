@@ -23,10 +23,11 @@ test('Central GET API reflects inserts, edits, unpublishes and deletes without l
  const rows=[structuredClone(documents[0])],store={publishedRecipes:async()=>rows.filter(r=>r.published)};
  const server=createServer();server.listen(0,'127.0.0.1');await once(server,'listening');const origin='http://127.0.0.1:'+server.address().port;server.on('request',createApp({store,origin}));
  try{
-  const first=await fetch(origin+'/api/catalogue'),etag=first.headers.get('etag');assert.equal(first.status,200);assert.equal((await first.json()).recipes.length,1);
+  const first=await fetch(origin+'/api/catalogue',{headers:{'Accept-Encoding':'gzip'}}),etag=first.headers.get('etag');assert.equal(first.status,200);assert.equal(first.headers.get('content-encoding'),'gzip');assert.equal(first.headers.get('vary'),'Accept-Encoding');assert.equal((await first.json()).recipes.length,1);
+  const plain=await fetch(origin+'/api/catalogue',{headers:{'Accept-Encoding':'gzip;q=0, identity'}});assert.equal(plain.headers.get('content-encoding'),null);assert.equal(plain.headers.get('etag'),etag);assert.equal((await plain.json()).recipes.length,1);
   assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':etag}})).status,304);
-  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':'W/'+etag}})).status,304);
-  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':'"old", W/'+etag}})).status,304);
+  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':etag.replace(/^W\//,'')}})).status,304);
+  assert.equal((await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':'"old", '+etag}})).status,304);
   rows[0].data.name='Updated title';rows[0].data.items[0][1]=81;rows[0].data.steps[0]='Updated preparation instructions.';
   const next=await fetch(origin+'/api/catalogue',{headers:{'If-None-Match':etag}});assert.equal(next.status,200);assert.notEqual(next.headers.get('etag'),etag);
   const detail=await (await fetch(origin+'/api/recipe/'+rows[0].id)).json();assert.equal(detail.name,'Updated title');assert.equal(detail.items[0].amount,81);assert.equal(detail.steps[0],'Updated preparation instructions.');

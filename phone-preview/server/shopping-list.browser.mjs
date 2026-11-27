@@ -44,6 +44,13 @@ try{
  await page.getByRole('button',{name:'Reset bought items',exact:true}).click();assert.equal(await page.getByRole('checkbox',{name:'Bought Kitchen towels',exact:true}).isChecked(),false);
  await page.getByRole('button',{name:'Prices & product options',exact:true}).click();
  assert.equal(await page.locator('.basket-row .price').first().isVisible(),true);
+ await page.getByRole('button',{name:'Compare with my checkout',exact:true}).click();
+ const compare=page.getByRole('dialog',{name:'Compare with my checkout'});
+ await compare.locator('[name=subtotal]').fill('58.30');await compare.locator('[name=fees]').fill('7.20');
+ await compare.getByRole('button',{name:'Compare totals',exact:true}).click();
+ assert.match(await compare.locator('output').innerText(),/65.50.*5.30 above.*not verified/);
+ await compare.getByRole('button',{name:'Close',exact:true}).click();
+
  await page.getByRole('button',{name:'Hide price details',exact:true}).click();
  assert.equal(await page.locator('.basket-row .price').first().isVisible(),false);
  await page.getByRole('button',{name:'+ Add groceries',exact:true}).click();

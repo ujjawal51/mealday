@@ -64,3 +64,9 @@ The root app's original scrypt password hashes can be verified without changing 
 In Settings, guests and signed-in users can send an app rating, feature request, or support message. Contact us accepts an optional email for a reply. The app shows a reference after MongoDB confirms the write.
 
 In MongoDB Atlas Data Explorer, open the configured Mealday database and view `feedback_submissions`. Filter by `{ status: "new" }` and sort by `{ createdAt: -1 }`. Use the `_id` field to look up a reference. If a support message includes `replyEmail`, reply from your support mailbox. To clear a reviewed message from this view, change its `status` to `reviewed`.
+
+### Dinner coverage release
+
+On startup, the one-time `dinner-coverage-v1` migration adds 12 South Asian and six Turkish preview recipes to the authoritative MongoDB catalogue. It uses the current public catalogue's ingredient identities, never overwrites an existing recipe, and does not recreate removed recipes after the marker is written. It also removes the contradictory word “Breakfast” from 18 precisely identified multi-meal titles, including Bissara; their existing meal eligibility does not change. A migration failure is logged without taking the service offline. Check the public catalogue for 18 new `mealday-quick-` IDs when validating a release. The times are estimates and the new meals have no dish-specific photo or kitchen-test claim.
+
+The grocery checkout comparison uses customer-entered totals locally and does not submit them or query a retailer. The production catalogue accepts gzip and content-addressed script downloads can be cached; this does not eliminate hosting spin-up.

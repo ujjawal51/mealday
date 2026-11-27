@@ -57,7 +57,9 @@ try{
   for(const collection of ['sessions','accounts','plan_history'])assert.equal(await db.collection(collection).countDocuments({userId:'one'}),0);
   assert(await store.userByEmail('keep@example.com'));assert.deepEqual((await store.kitchen('other')).data,{note:'keep'});
   assert.equal(await db.collection('accounts').countDocuments({userId:'other'}),1);assert.equal(await db.collection('plan_history').countDocuments({userId:'other'}),1);
-  assert.equal(await db.collection('recipes').countDocuments(),420);
+  assert.equal(await db.collection('recipes').countDocuments(),438);
+  assert.equal(await db.collection('recipes').countDocuments({importSource:'mealday-dinner-coverage-v1'}),18);
+  assert.doesNotMatch((await db.collection('recipes').findOne({id:'target-ar-bissara'})).data.name,/Breakfast/);
   const {catalogueDocuments,seedRecipes}=await import('./recipe-catalogue.mjs');
   const catalogue=catalogueDocuments(),original=catalogue[0],edited=catalogue[1];
   await db.collection('recipes').updateOne({id:original.id},{$set:{nutrition:{complete:false,totals:null},privateNote:'keep this'}});
@@ -76,8 +78,10 @@ try{
   snapshot=await liveCatalogue(store);assert.notEqual(snapshot.revision,revision);assert.equal(snapshot.recipes.find(r=>r.id===liveDoc.id).items[0][1],82);
   await db.collection('recipes').updateOne({id:liveDoc.id},{$set:{published:false}});assert(!(await liveCatalogue(store)).recipes.some(r=>r.id===liveDoc.id));
   await db.collection('recipes').deleteOne({id:catalogue.at(-1).id});
+  await db.collection('recipes').deleteOne({id:'mealday-quick-turkish-fava'});
   await store.close();store=await connectStore(process.env.MONGODB_TEST_URI,name);
   assert.equal(await db.collection('recipes').countDocuments({id:catalogue.at(-1).id}),0,'Do not resurrect deleted seeds on startup');
+  assert.equal(await db.collection('recipes').countDocuments({id:'mealday-quick-turkish-fava'}),0,'Do not resurrect release recipes after migration');
 
   const {ingredientSignature,quoteStorePrices}=await import('./store-prices.mjs');
   const {recipeIngredients}=await import('../dist/api.js');const now=Date.now();
