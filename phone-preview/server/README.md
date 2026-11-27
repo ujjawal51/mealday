@@ -58,3 +58,9 @@ The extra 18 recipes retain their original IDs, quantities and instructions. The
 Root `npm start` now starts this server; it resolves dist relative to server/app.mjs, not the shell working directory. This prevents accidentally serving the original root dist and broken image paths. All 402 catalogue photos are served from phone-preview/dist/recipes. Browser image failures use the explicit unavailable-photo SVG. The 18 original imported recipes still have no matching photos.
 
 The root app's original scrypt password hashes can be verified without changing their records. New passwords use the stronger current scrypt settings. Session records also include a hashed token field to remain compatible with the original unique token index. Raw session secrets are never stored. Original account snapshots are retained without silently converting their schema.
+
+## Private feedback and support
+
+In Settings, guests and signed-in users can send an app rating, feature request, or support message. Contact us accepts an optional email for a reply. The app shows a reference after MongoDB confirms the write.
+
+In MongoDB Atlas Data Explorer, open the configured Mealday database and view `feedback_submissions`. Filter by `{ status: "new" }` and sort by `{ createdAt: -1 }`. Use the `_id` field to look up a reference. If a support message includes `replyEmail`, reply from your support mailbox. To clear a reviewed message from this view, change its `status` to `reviewed`.

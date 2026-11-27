@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const dist=new URL('../dist/',import.meta.url);
-async function boot(stored=null){
+async function boot(stored=null,{fetch:fetcher=async()=>new Response('{}',{status:404})}={}){
  const classes={toggle(){},contains(){return false;}};
  const node=()=>({innerHTML:'',dataset:{},classList:classes,setAttribute(){},removeAttribute(){},addEventListener(){},focus(){},querySelector(){return null;}});
  const screen=node(),nav=node(),dialog=node(),main=node(),toast=node();
@@ -13,7 +13,7 @@ async function boot(stored=null){
  const buttons=['week','recipes','plan','settings'].map(view=>({...node(),dataset:{view},classList:{toggle(){}},setAttribute(){},removeAttribute(){}}));
  const storage=new Map(stored?[['mealday.android.v1',JSON.stringify(stored)]]:[]);
  const events={};
- const context=vm.createContext({console,Intl,URL,URLSearchParams,Request,Response,crypto,TextEncoder,TextDecoder,HTMLImageElement:class{},setInterval(){},clearInterval(){},setTimeout(){},clearTimeout(){},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},location:{origin:'https://mealday.test',hash:''},history:{replaceState(){}},fetch:async()=>new Response('{}',{status:404}),document:{body:{dataset:{}},hidden:false,querySelector:s=>nodes[s]||null,querySelectorAll:()=>buttons,getElementById:id=>nodes['#'+id],addEventListener:(name,fn)=>{events[name]=fn;}}});
+ const context=vm.createContext({console,Intl,URL,URLSearchParams,Request,Response,AbortController,FormData:class{constructor(form){this.fields=form.fields;}get(key){return this.fields[key]??null;}},crypto,TextEncoder,TextDecoder,HTMLImageElement:class{},setInterval(){},clearInterval(){},setTimeout(){},clearTimeout(){},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},location:{origin:'https://mealday.test',hash:''},history:{replaceState(){}},fetch:fetcher,document:{body:{dataset:{}},hidden:false,querySelector:s=>nodes[s]||null,querySelectorAll:()=>buttons,getElementById:id=>nodes['#'+id],addEventListener:(name,fn)=>{events[name]=fn;}}});
  vm.runInContext('window=this;window.addEventListener=function(name,fn){ };window.scrollTo=function(){};Object.hasOwn=undefined;structuredClone=undefined;',context);
  const html=await readFile(new URL('index.html',dist),'utf8'),entry=html.match(/src="\/(client-[a-f0-9]+\.js)"/)[1];
  assert.ok(html.indexOf('/startup.js')<html.indexOf('/'+entry));
@@ -81,4 +81,36 @@ test('Settings actions open real controls and saved-meal reset preserves notes a
  await click('delete-account');assert.equal(dialog.open,false);assert.doesNotMatch(dialog.innerHTML,/delete-account-form/);
  await click('clear-saved');assert.match(dialog.innerHTML,/confirm-saved/);await click('confirm-saved');
  const saved=JSON.parse(storage.get('mealday.android.v1'));assert.equal(saved.suggestionsReset,true);assert.deepEqual(saved.planHistory,[]);assert.equal(saved.favorites.length,0);assert.equal(saved.recipeJournal.rice.rating,5);assert.equal(saved.recipeJournal.rice.note,'Keep');
+});
+
+test('The shipped support form waits for a receipt and retries with the same reference',async()=>{
+ const requests=[];
+ const {dialog,events}=await boot(null,{fetch:async(path,options)=>{
+   if(path!=='/api/feedback')return new Response('{}',{status:404});
+   assert.equal(options.credentials,'omit');
+   const body=JSON.parse(options.body);requests.push(body);
+   if(requests.length===1)return new Response('{}',{status:503});
+   return Response.json({reference:body.submissionId},{status:201});
+ }});
+ await events.click({target:{closest:()=>({dataset:{action:'contact'}})}});
+ assert.match(dialog.innerHTML,/How can we help/);
+ assert.match(dialog.innerHTML,/name="replyEmail"/);
+ assert.doesNotMatch(dialog.innerHTML,/github|Save feedback draft/i);
+ const button={disabled:false,textContent:'Send message'},alert={},input={disabled:false};
+ const form={id:'feedback-form',isConnected:true,fields:{kind:'support',message:'Need help',replyEmail:'guest@example.com'},
+   querySelector:selector=>selector.startsWith('button')?button:alert,querySelectorAll:()=>[input]};
+ const submit=()=>events.submit({target:form,preventDefault(){}});
+ const pending=submit();
+ assert.equal(button.disabled,true);
+ assert.equal(input.disabled,true);
+ await submit();
+ await pending;
+ assert.equal(requests.length,1);
+ assert.match(alert.textContent,/could not be sent/);
+ assert.equal(button.disabled,false);
+ assert.equal(form.fields.message,'Need help');
+ await submit();
+ assert.deepEqual(requests[0],requests[1]);
+ assert.match(dialog.innerHTML,/Message sent/);
+ assert.ok(dialog.innerHTML.includes(requests[1].submissionId));
 });

@@ -1,12 +1,12 @@
 import {priceRequest,quoteStorePrices} from './store-prices.mjs';
 import {liveCatalogue,catalogueSummary,catalogueDetail,matchesCatalogueTag} from './live-catalogue.mjs';
 import {isIP} from 'node:net';
-import {timingSafeEqual} from 'node:crypto';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,timingSafeEqual} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
+import {validateFeedback} from './feedback.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
 export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
@@ -36,6 +36,19 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         if(!['GET','HEAD'].includes(req.method)){
           if(req.headers.origin!==origin)return send(403,{error:'Origin rejected.'});
           if(!String(req.headers['content-type']||'').startsWith('application/json'))return send(415,{error:'JSON required.'});
+        }
+        if(path==='/api/feedback'){
+          if(req.method!=='POST')return send(405,{error:'Method not allowed.'},{Allow:'POST'});
+          const forwarded=String(req.headers['x-mealday-client-ip']||'');
+          const ip=trustedProxy&&isIP(forwarded)?forwarded:req.socket.remoteAddress;
+          const key='feedback:'+ip,stamp=Date.now();let rate=limits.get(key);
+          if(!rate||rate.until<=stamp){if(limits.size>=10000)limits.clear();rate={count:0,until:stamp+600000};limits.set(key,rate);}
+          if(++rate.count>20)return send(429,{error:'Too many submissions. Please try again later.'},{'Retry-After':String(Math.ceil((rate.until-stamp)/1000))});
+          const submission=validateFeedback(await body(16384,'Feedback is too large.'));
+          try{
+            if(!await store.saveFeedback(submission))return send(409,{error:'This reference is already in use. Please try again.'});
+          }catch{return send(503,{error:'Feedback could not be sent. Please try again.'});}
+          return send(201,{reference:submission._id});
         }
         if(path==='/api/store-prices'){
           if(req.method!=='POST')return send(405,{error:'Send a grocery price request.'},{Allow:'POST'});
@@ -69,7 +82,6 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         let accountUser=session?await store.userByEmail(session.email):null;
         if(session&&(!accountUser||String(accountUser._id)!==String(session.userId)||(session.authVersion||0)!==(accountUser.authVersion||0))){await store.deleteSession(digest(rawCookie));session=null;accountUser=null;}
         if(path==='/api/account'&&req.method==='GET')return send(200,{user:session?{id:session.userId,email:session.email,emailVerified:!!accountUser.emailVerifiedAt,authMethod:session.authMethod||'password'}:null,csrf:session?.csrf||null,allowRegistration:false,googleSignIn:!!googleAuth});
-        async function body(){let chunks=[],size=0;for await(const part of req){size+=part.length;if(size>2*1024*1024)throw Object.assign(Error('Backup is too large.'),{status:413});chunks.push(part);}try{return JSON.parse(Buffer.concat(chunks).toString());}catch{throw Object.assign(Error('Invalid JSON.'),{status:400});}}
         if(path==='/api/auth/google/challenge'&&req.method==='GET'){
           if(!googleAuth)return send(503,{error:'Google sign-in is being configured. Please try again later.'});
           const purpose=new URL(req.url,origin).searchParams.get('purpose')==='delete'?'delete':'signin';
@@ -162,5 +174,14 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
       if(!file.startsWith(staticRoot+sep))return send(403,{error:'Forbidden.'});
       try{const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':'no-cache','Referrer-Policy':'strict-origin-when-cross-origin'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(404,{error:'Not found.'});}
     }catch(error){send(error.status||503,{error:error.status?error.message:'The database is unavailable. Your local data is still on this device.'});}
+    async function body(maxBytes=2*1024*1024,tooLarge='Backup is too large.'){
+      const chunks=[];let size=0;
+      for await(const part of req.iterator({destroyOnReturn:false})){
+        size+=part.length;
+        if(size>maxBytes){req.resume();throw Object.assign(Error(tooLarge),{status:413});}
+        chunks.push(part);
+      }
+      try{return JSON.parse(Buffer.concat(chunks).toString());}catch{throw Object.assign(Error('Invalid JSON.'),{status:400});}
+    }
   };
 }
