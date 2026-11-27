@@ -12,7 +12,7 @@ import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapsh
 import {validateFeedback} from './feedback.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,quikSandbox=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy,wireCache;
   const googleCookieName=production?'__Host-mealday_google':'mealday_google';
   const googleCookie=(value,maxAge)=>`${googleCookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -52,6 +52,15 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
             if(!await store.saveFeedback(submission))return send(409,{error:'This reference is already in use. Please try again.'});
           }catch{return send(503,{error:'Feedback could not be sent. Please try again.'});}
           return send(201,{reference:submission._id});
+        }
+        if(path.startsWith('/api/quik-sandbox/')){
+          const enabled=!production&&!!quikSandbox&&['127.0.0.1','localhost'].includes(new URL(origin).hostname);
+          if(path==='/api/quik-sandbox/status'&&req.method==='GET')return send(200,{enabled});
+          if(!enabled)return send(404,{error:'Careem Quik sandbox is not enabled.'});
+          const action=path.slice('/api/quik-sandbox/'.length);
+          if(!['review','quote'].includes(action))return send(404,{error:'This sandbox action is not supported.'});
+          if(req.method!=='POST')return send(405,{error:'Method not allowed.'},{Allow:'POST'});
+          return send(200,await quikSandbox[action](await body(18000,'Sandbox grocery request is too large.')));
         }
         if(path==='/api/store-prices'){
           if(req.method!=='POST')return send(405,{error:'Send a grocery price request.'},{Allow:'POST'});

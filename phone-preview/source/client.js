@@ -1,3 +1,4 @@
+import {createQuikSandboxUi} from './quik-sandbox-ui.js';
 import {ingredientPicture} from './ingredient-pictures.js';
 import {publicImage} from './catalogue-schema.js';
 import {illustratedPhotoIds} from './illustrated-photo-ids.js';
@@ -123,6 +124,7 @@ function initNavigation(){
     b.innerHTML=icon(name==='plan'?'settings':name==='settings'?'gear':name==='recipes'?'plate':name)+'<span>'+labels[name]+'</span>';
   }
 }
+const quik=createQuikSandboxUi({openDialog,esc,dialog,onAvailability:()=>{if(view==='shopping')screen.innerHTML=shopping();}});
 function render(){
   onboardingMotion.cancel();
   document.body.dataset.view=view;
@@ -140,7 +142,7 @@ function render(){
   }
   if(view==='week')screen.innerHTML=week();
   if(view==='recipes')renderRecipes();
-  if(view==='shopping'){screen.innerHTML=shopping();refreshStorePrices();}
+  if(view==='shopping'){screen.innerHTML=shopping();refreshStorePrices();quik.check();}
   if(view==='add-grocery')screen.innerHTML=addGrocery();
   if(view==='pantry')screen.innerHTML=pantry();
   if(view==='plan')screen.innerHTML=planSettings();
@@ -337,7 +339,7 @@ function shopping(){
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
  return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
- (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
+ (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+(state.result?quik.button():'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
 }
 function openCheckoutComparison(){
@@ -508,6 +510,7 @@ document.addEventListener('click',async event=>{
   if(action==='shopping-filter'){shoppingFilter=['all','todo','bought'].includes(id)?id:'all';screen.innerHTML=shopping();screen.querySelector('[data-action="shopping-filter"][data-id="'+shoppingFilter+'"]').focus({preventScroll:true});}
   else if(action==='shopping-reset'){const ids=new Set(shoppingItems().map(i=>i.key));state.checked=state.checked.filter(key=>!ids.has(key));for(const item of state.extraGroceries||[])item.checked=false;persist();screen.innerHTML=shopping();notify('Bought items reset.');}
   else if(action==='shopping-prices'){shoppingPricesOpen=!shoppingPricesOpen;screen.innerHTML=shopping();}
+  else if(action==='quik-sandbox'&&view==='shopping'&&state.result){quik.connect(shoppingItems());}
   else if(action==='compare-checkout'&&view==='shopping'&&state.result){openCheckoutComparison();}
   else if(action==='shopping-share'){await shareGroceries();}
   else if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
