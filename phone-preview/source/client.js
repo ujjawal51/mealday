@@ -71,7 +71,7 @@ let storedCookingHistory;
 try{storedCookingHistory=JSON.parse(localStorage.getItem(COOKING_HISTORY_KEY)||'null');}catch{}
 let cookingHistory=loadHistory(storedCookingHistory,state.cooked,[...(state.result?.meals||[]),...(state.favorites||[])]);
 let options=null, view=state.result?'week':'welcome', day=state.profile.days[0], busy=false, error='', toastTimer, requestId=0, recipeSequence=0;
-let library={q:'',cuisine:'',diet:'',saved:false,rows:[],count:0,next:null,loading:false,error:''};
+let library={recent:[],respectPreferences:true,q:'',cuisine:'',diet:'',saved:false,rows:[],count:0,next:null,loading:false,error:''};
 let libraryDelay, placementPreview=null, carryoverPlan=null, carryoverFormRows=[], swapIndex=null,shoppingFilter='all',shoppingPricesOpen=false;
 let detail=null, detailTab='ingredients', guidedStep=null, recipeOrigin='week', recipeScroll=0, recipeSequenceId=0;
 const cookingTimer=createCookingTimer({onTick:updateTimerDisplay,onComplete:()=>notify('Your 5-minute timer finished.')});
@@ -248,6 +248,7 @@ function chips(name,values,selected){
 }
 function openDialog(title,description,body){
   if(!dialog.open)dialog.showModal();
+  dialog.classList.toggle('rating-dialog',false);
   dialog.innerHTML='<div class="dialog-head"><div><h2 id="dialog-title">'+esc(title)+'</h2>'+(description?'<p>'+esc(description)+'</p>':'')+'</div>'+button('','close','ghost icon-only','close','aria-label="Close"')+'</div><div class="dialog-body">'+body+'</div>';
   dialog.setAttribute('aria-labelledby','dialog-title');
 }
@@ -280,6 +281,23 @@ function cuisineTiles(){
 function syncCuisineTiles(){
  for(const tile of screen.querySelectorAll('[data-action="cuisine-tile"]'))tile.setAttribute('aria-pressed',String(!library.saved&&tile.dataset.id===library.cuisine));
 }
+function recipeRestriction(){
+ if(!library.respectPreferences)return {};
+ const planDiet=state.profile.diet||'Any',avoid=(state.profile.allergies||[]).join(',');
+ return {planDiet,avoid};
+}
+function restrictionsHint(){
+ const active=(state.profile.diet&&state.profile.diet!=='Any')||state.profile.allergies?.length;
+ if(!active||library.saved)return '';
+ return '<div class="browse-restrictions"><small>'+esc(library.respectPreferences?'Filtered by your diet and ingredient exclusions. Always check labels.':'All dietary options shown. Check ingredients before cooking.')+'</small>'+
+  button(library.respectPreferences?'Show all recipes':'Use my preferences','toggle-browse-rules','ghost small')+'</div>';
+}
+function recentRecipes(){
+ const rows=library.recent;
+ if(library.saved||library.q||!rows.length)return '';
+ return '<section class="recent-discover"><h2>Recently viewed</h2><div class="recent-recipe-rail" tabindex="0" aria-label="Recently viewed recipes">'+
+  rows.map(r=>'<button class="recent-recipe" type="button" data-action="recipe" data-id="'+esc(r.id)+'"><img src="'+photo(r)+'" alt="" loading="lazy"><span><strong>'+esc(recipeLabel(r.id,r.name))+'</strong><small>'+esc(r.minutes)+' min</small></span></button>').join('')+'</div></section>';
+}
 function renderRecipes(snapshot=false){
   if(!snapshot){
     screen.innerHTML=heading('Recipe library','Find something you’ll enjoy making at home.')+
@@ -292,7 +310,7 @@ function renderRecipes(snapshot=false){
   const rows=library.saved?filterSavedRecipes(state.favorites,library):library.rows;
   const empty=library.saved?(state.favorites.length?'No saved recipes match your search and filters.':'Save recipes you like to find them here.'):'No recipes matched. Try another search or filter.';
   const clearFilters=library.saved&&state.favorites.length&&!rows.length&&(library.q||library.cuisine||library.diet)?button('Clear filters','clear-recipe-filters','ghost small'):'';
-  holder.innerHTML=catalogueNotice()+(library.saved?'<p class="saved-result-count">'+rows.length+' of '+state.favorites.length+' saved recipes</p>':'')+(library.error&&!library.saved?'<p role="alert" class="notice">'+esc(library.error)+'</p>':'')+
+  holder.innerHTML=catalogueNotice()+recentRecipes()+restrictionsHint()+(library.saved?'<p class="saved-result-count">'+rows.length+' of '+state.favorites.length+' saved recipes</p>':'')+(library.error&&!library.saved?'<p role="alert" class="notice">'+esc(library.error)+'</p>':'')+
     (rows.length?'<div class="cards">'+rows.map(r=>'<article class="recipe-card"><img loading="lazy" src="'+photo(r)+'" alt=""><div class="recipe-card-body"><span class="meal-type">'+esc(r.cuisine)+'</span><h3>'+esc(recipeLabel(r.id,r.name))+'</h3>'+meta(r)+button(r.unavailable?'No longer published':'View recipe','recipe','ghost small','right','data-id="'+esc(r.id)+'"'+(r.unavailable?' disabled':''))+'</div></article>').join('')+'</div>':
     '<div class="empty">'+(library.loading?'Loading recipes…':empty)+clearFilters+'</div>')+
     (!library.saved&&library.next!==null?'<div class="more">'+button(library.loading?'Loading…':'More recipes','more','ghost','right',library.loading?'disabled':'')+'</div>':'');
@@ -308,13 +326,16 @@ async function loadRecipes(append=false){
     return;
   }
   library.loading=true;library.error='';
-  if(!append){library.rows=[];library.next=null;}
+  if(!append){library.rows=[];library.next=null;library.recent=[];}
   renderRecipes(true);
   try{
-    const q=new URLSearchParams({q:library.q,cuisine:library.cuisine,diet:library.diet,offset:String(append?library.next||0:0)});
-    const data=await request('/api/recipes?'+q);
+    const q=new URLSearchParams({q:library.q,cuisine:library.cuisine,diet:library.diet,offset:String(append?library.next||0:0),...recipeRestriction()});
+    const ids=(state.recentRecipeIds||[]).slice(0,10);
+    const recent=new URLSearchParams({ids:ids.join(','),...recipeRestriction()});
+    const [data,history]=await Promise.all([request('/api/recipes?'+q),!append&&ids.length&&!library.q?request('/api/saved-recipes?'+recent).catch(()=>null):null]);
     if(seq!==recipeSequence)return;
     library.rows=append?[...library.rows,...data.recipes]:data.recipes;library.next=data.next;
+    if(!append)library.recent=history?.recipes||[];
   }catch(err){if(seq===recipeSequence)library.error=err.message;}
   finally{if(seq===recipeSequence){library.loading=false;if(view==='recipes')renderRecipes(true);}}
 }
@@ -439,6 +460,7 @@ async function showRecipe(id){
     recipeOrigin=origin;
     recipeScroll=window.scrollY;
     detail=recipe;
+    state.recentRecipeIds=[id,...(state.recentRecipeIds||[]).filter(x=>x!==id)].slice(0,10);persist();
     if(cookingHistory.events.some(e=>e.recipeId===recipe.id&&!e.name)){cookingHistory={...cookingHistory,events:cookingHistory.events.map(e=>e.recipeId===recipe.id?{...e,name:recipe.name}:e)};persistHistory();}
     detailTab='ingredients';
     guidedStep=null;
@@ -572,7 +594,7 @@ function setView(target,hash=true){
   if(hash&&location.hash!=='#'+view)history.replaceState(null,'','#'+view);
   render();
   window.scrollTo(0,0);
-  if(view==='recipes'&&!library.saved&&!library.rows.length&&!library.loading)loadRecipes();
+  if(view==='recipes'&&!library.saved&&!library.loading)loadRecipes();
   if(view==='pantry'&&!options)request('/api/options').then(data=>{options=data;if(view==='pantry')render();}).catch(err=>notify(err.message));
 }
 function renderCookingTimer(){
@@ -703,6 +725,9 @@ document.addEventListener('click',async event=>{
   else if(action==='confirm-placement')confirmPlacement();
   else if(action==='placement-preferences'){dialog.close();detail=null;setView('plan');}
   else if(action==='placement-groceries'){dialog.close();setView('shopping');}
+  else if(action==='toggle-browse-rules'){library.respectPreferences=!library.respectPreferences;await loadRecipes();}
+  else if(action==='clear-plan-allergies'){for(const el of $('#plan-form').querySelectorAll('[name=allergies]'))el.checked=false;syncNoAllergies();}
+  else if(action==='rating-continue')openFeedback('rating',true);
   else if(action==='cuisine-tile'){
     clearTimeout(libraryDelay);const wasSaved=library.saved;library.saved=false;library.cuisine=id||'';
     if(wasSaved)renderRecipes();else {$('#cuisine').value=library.cuisine;syncCuisineTiles();}
@@ -828,6 +853,7 @@ document.addEventListener('change',event=>{
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
   if(el.dataset.extra){const item=state.extraGroceries?.find(x=>x.id===el.dataset.extra);if(item){item.checked=el.checked;persist();screen.innerHTML=shopping();}return;}
   if(el.dataset.grocery){const id=el.dataset.grocery;state.checked=el.checked?[...new Set([...state.checked,id])]:state.checked.filter(key=>key!==id);persist();screen.innerHTML=shopping();Array.from(screen.querySelectorAll('[data-grocery]')).find(input=>input.dataset.grocery===id)?.focus({preventScroll:true});}
+  if(el.name==='allergies'&&el.form?.id==='plan-form')syncNoAllergies();
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
@@ -1216,6 +1242,19 @@ function quickStart(){
     (error&&p.minutes<30?button('Try up to 30 minutes','quick-more-time','ghost wide'):'')+
     (error&&p.days.length>1?button('Try '+shorterDayCount(p)+(shorterDayCount(p)===1?' day':' days'),'quick-fewer','ghost wide'):'')+'</fieldset></form></section>';
 }
+function preferenceCards(title,subtitle,name,rows,selected,single=false){
+ const cards=rows.map(([key,glyph,description,svg])=>{
+  const label=name==='allergies'&&key!=='None'?key:(description||key);
+  if(key==='None'&&name==='allergies')return '<button type="button" class="preference-tile no-allergies" data-action="clear-plan-allergies" aria-pressed="'+!selected?.length+'"><span aria-hidden="true">'+glyph+'</span><strong>None</strong></button>';
+  const checked=single?selected===key:selected?.includes(key);
+  return '<label class="preference-choice"><input type="'+(single?'radio':'checkbox')+'" name="'+name+'" value="'+esc(key)+'" '+(checked?'checked':'')+'><span class="preference-tile"><span aria-hidden="true">'+(svg?glyph:esc(glyph))+'</span><strong>'+esc(label)+'</strong></span></label>';
+ }).join('');
+ return '<fieldset class="plan-tile-section"><legend>'+esc(title)+'</legend><p>'+esc(subtitle)+'</p><div class="preference-grid">'+cards+'</div></fieldset>';
+}
+function syncNoAllergies(){
+ const form=$('#plan-form');const none=form?.querySelector('.no-allergies');
+ if(none)none.setAttribute('aria-pressed',String(!form.querySelector('[name=allergies]:checked')));
+}
 function planSettings(){
   const p=state.profile;
   const group=(title,name,values,selected)=>'<fieldset class="surface-card plan-section pref-choices"><legend>'+esc(title)+'</legend>'+chips(name,values,selected||[])+'</fieldset>';
@@ -1224,9 +1263,9 @@ function planSettings(){
     '<form id="plan-form" class="plan-form">'+group('Cooking days','days',DAYS.map((x,i)=>[i,x.slice(0,3)]),p.days)+
     '<div class="surface-card plan-section"><label class="field">Household servings<input class="control" name="people" type="number" min="1" max="12" required value="'+esc(p.people)+'"></label><label class="field">Weekly budget (AED)<input class="control" name="budget" type="number" min="20" max="5000" step=".01" required value="'+esc(p.budget)+'"></label><label class="field">Maximum cooking time'+dropdown('minutes',[15,20,30,45,60,90,120,240,1440],p.minutes)+'</label></div>'+
     group('Meals to plan','mealTypes',[['breakfast','Breakfast'],['lunch','Lunch'],['dinner','Dinner']],p.mealTypes)+
-    '<div class="surface-card plan-section"><label class="field">Diet'+dropdown('diet',foodTypes.map(x=>x[0]),p.diet)+'</label></div>'+
-    group('Ingredients to avoid','allergies',allergyOptions.filter(x=>x[0]!=='None').map(x=>[x[0],x[0]]),p.allergies)+'<p class="quick-help">No exclusions? Leave all unchecked. Always check packaged food labels.</p>'+
-    group('Available appliances','appliances',appliances.map(x=>[x[0],x[0]]),p.appliances)+
+    preferenceCards('Dietary needs','Choose one','diet',foodTypes,p.diet,true)+
+    preferenceCards('Allergens','Choose ingredients to avoid. Always check packaged food labels.','allergies',allergyOptions,p.allergies)+
+    preferenceCards('Kitchen appliances','Select at least one to plan with','appliances',appliances.map(([name,glyph])=>[name,icon(glyph),name,true]),p.appliances)+
     '<details class="surface-card plan-section optional-preferences"><summary>Personalise further</summary><div class="optional-fields"><label class="field">Your name (optional)<input class="control" name="name" autocomplete="given-name" maxlength="40" value="'+esc(p.name)+'"></label><label class="field">City'+dropdown('city',places,p.city)+'</label><label class="field">Supermarket'+dropdown('shop',supermarkets,p.shop)+'</label>'+group('Cuisines','cuisines',styles.map(x=>[x[0],x[2]||x[0]]),p.cuisines||[p.cuisine])+group('Meal styles · up to 3','priorities',priorities.filter(x=>x[0]!=='None').map(x=>[x[0],x[2]]),p.priorities)+'<details class="meal-style-rules"><summary>How meal styles match</summary><p>Recipes match any chosen style, plus every other filter. Speedy: 30 min or less. Everyday: 60 min or less, up to 15 ingredients. Family: a rice, pasta, potato, bread or wrap dish in 45 min or less. Comfort: a warm staple or pulse dish. Fresh: at least 150 g vegetables and up to 600 estimated kcal per serving. Protein: at least 25 g estimated protein per serving. Fresh and Protein require complete nutrition data.</p></details>'+'</div></details>'+
     '<div class="setting-list">'+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have')+'</div><button class="button green wide" '+(busy?'disabled':'')+'>'+icon('refresh')+(busy?'Building your plan…':'Apply & rebuild plan')+'</button></form>';
 }
@@ -1245,8 +1284,9 @@ function cookingHistoryPage(){
 }
 function settings(){
  const section=(title,content)=>'<section class="settings-section"><h2>'+title+'</h2><div class="setting-list">'+content+'</div></section>';
- const reminder=state.reminder;
+ const reminder=state.reminder,account=cloudBackup.info().account;
  return '<div class="phone-settings simple-settings"><header class="settings-heading"><p>Your account</p><h1>settings</h1></header>'+
+ '<div class="settings-profile"><div><h2>'+esc(state.profile.name?'Hi, '+state.profile.name:'Your kitchen')+'</h2><p>Shopping at '+esc(state.profile.shop||'your preferred supermarket')+'</p></div>'+button('','edit-name','ghost icon-only','edit','aria-label="Edit your name"')+'<span class="settings-profile-badge">'+(account?'Signed in':'Guest')+'</span></div>'+
  section('App',settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
  section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
  section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact','Send a private message'))+
@@ -1257,7 +1297,11 @@ function settings(){
 function readFeedbackDraft(){
   try{return localStorage.getItem(feedbackDraftKey)||'';}catch{return '';}
 }
-function openFeedback(kind){
+function openFeedback(kind,showForm=false){
+  if(kind==='rating'&&!showForm){
+    openDialog('Enjoying Mealday?','', '<div class="rating-welcome"><img src="/chef.png" alt="" width="120" height="120"><p>Tell us what’s working and what we could do better.</p>'+button('Sure!','rating-continue','wide')+button('Not today','close','ghost wide')+'</div>');
+    dialog.classList.toggle('rating-dialog',true);return;
+  }
   const raw=readFeedbackDraft();
   let draft={};
   try{const saved=JSON.parse(raw);if(saved?.kind===kind)draft=saved;}catch{}
