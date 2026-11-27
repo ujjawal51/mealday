@@ -1156,3 +1156,31 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 .recent-recipe>span{padding:8px;display:grid;gap:3px;}
 .recent-recipe small,.browse-restrictions small{color:#505f4e;}
 .browse-restrictions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:9px 0;}
+
+/* Raise the camera above the navigation without changing its five positions. */
+.nav button[data-view=calories]{position:relative;overflow:visible;min-height:60px;color:#24361f;}
+.nav button[data-view=calories] svg{width:54px;height:54px;padding:11px;margin-top:-23px;border:3px solid white;border-radius:50%;background:#b0dc49;color:#26351a;box-shadow:0 4px 15px #2638152c;}
+.nav button[data-view=calories].active svg{background:#a5d433;color:#203415;}
+.nav button[data-view=calories] span{font-weight:700;}
+.calorie-page{width:min(100%,550px);margin:0 auto;display:grid;gap:12px;padding-bottom:82px;}
+.calorie-hero{padding:18px;background:#e9f4d4;border-radius:20px;color:#243320;}
+.calorie-hero p{font-size:.68rem;font-weight:750;letter-spacing:.12em;margin:0;}
+.calorie-hero h1{margin:5px 0;font-size:1.6rem;}
+.calorie-hero strong{font-size:2rem;}
+.calorie-hero label{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:10px;}
+.calorie-hero input{border:1px solid #b9cca8;border-radius:8px;padding:6px;background:white;max-width:100%;}
+.calorie-card{background:white;border:1px solid #dde5da;border-radius:17px;padding:14px;min-width:0;}
+.calorie-card h2{font-size:1.12rem;margin:0 0 8px;}
+.calorie-card p{margin:7px 0;}
+.calorie-photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.food-preview{width:100%;height:min(52vw,240px);object-fit:contain;background:#f0f3eb;border-radius:10px;margin-bottom:8px;}
+.calorie-help{color:#4c5949;font-size:.84rem;}
+.calorie-search{margin:13px 0;}
+.calorie-search summary{font-weight:700;cursor:pointer;}
+.calorie-matches{display:flex;gap:5px;flex-wrap:wrap;margin-block:6px;}
+.calorie-matches label{width:100%;}
+.calorie-estimate{padding:10px;background:#eff5e5;border-radius:10px;}
+.calorie-list{margin:0;padding:0;list-style:none;}
+.calorie-list li{display:flex;align-items:center;gap:5px;padding-block:8px;border-bottom:1px solid #edf1ea;}
+.calorie-list li>div{display:grid;flex:1;min-width:0;overflow-wrap:anywhere;}
+.calorie-list small{color:#4c5949;}

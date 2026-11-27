@@ -12,7 +12,7 @@ import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapsh
 import {validateFeedback} from './feedback.mjs';
 const DAY=86400000;
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
+export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,photoCalories=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy,wireCache;
   const googleCookieName=production?'__Host-mealday_google':'mealday_google';
   const googleCookie=(value,maxAge)=>`${googleCookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${production?'; Secure':''}`;
@@ -95,6 +95,13 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
         let session=rawCookie&&/^[\w-]{43}$/.test(rawCookie)?await store.session(digest(rawCookie)):null;
         let accountUser=session?await store.userByEmail(session.email):null;
         if(session&&(!accountUser||String(accountUser._id)!==String(session.userId)||(session.authVersion||0)!==(accountUser.authVersion||0))){await store.deleteSession(digest(rawCookie));session=null;accountUser=null;}
+        if(path==='/api/calories/status'&&req.method==='GET')return send(200,{configured:!!photoCalories,signedIn:!!session});
+        if(path==='/api/calories/estimate'&&req.method==='POST'){
+          if(!photoCalories)return send(503,{error:'Automatic photo estimates are not available.'});
+          if(!session)return send(401,{error:'Sign in to estimate from a photo.'});
+          const value=await body(525000,'Meal photo is too large.');
+          return send(200,await photoCalories.estimate(String(session.userId),value?.image));
+        }
         if(path==='/api/account'&&req.method==='GET')return send(200,{user:session?{id:session.userId,email:session.email,emailVerified:!!accountUser.emailVerifiedAt,authMethod:session.authMethod||'password'}:null,csrf:session?.csrf||null,allowRegistration:false,googleSignIn:!!googleAuth});
         if(path==='/api/auth/google/challenge'&&req.method==='GET'){
           if(!googleAuth)return send(503,{error:'Google sign-in is being configured. Please try again later.'});
@@ -186,7 +193,7 @@ export function createApp({store,origin,production=false,allowRegistration=!prod
       if(!['GET','HEAD'].includes(req.method))return send(405,{error:'Method not allowed.'});
       const file=resolve(staticRoot,'.'+decodeURIComponent(path==='/'?'/index.html':path));
       if(!file.startsWith(staticRoot+sep))return send(403,{error:'Forbidden.'});
-      try{const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':/^\/(?:client|engine)-[0-9a-f]{12}\.js$/.test(path)?'public, max-age=31536000, immutable':'no-cache','Referrer-Policy':'strict-origin-when-cross-origin'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(404,{error:'Not found.'});}
+      try{const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Cache-Control':/^\/(?:client|engine|calories)-[0-9a-f]{12}\.js$/.test(path)?'public, max-age=31536000, immutable':'no-cache','Referrer-Policy':'strict-origin-when-cross-origin'});res.end(req.method==='HEAD'?undefined:bytes);}catch{return send(404,{error:'Not found.'});}
     }catch(error){send(error.status||503,{error:error.status?error.message:'The database is unavailable. Your local data is still on this device.'});}
     async function body(maxBytes=2*1024*1024,tooLarge='Backup is too large.'){
       const chunks=[];let size=0;
