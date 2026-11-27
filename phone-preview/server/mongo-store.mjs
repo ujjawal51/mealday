@@ -1,5 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import {seedRecipes} from './recipe-catalogue.mjs';
+import {installDinnerCoverage} from './dinner-coverage.mjs';
+import {liveCatalogue} from './live-catalogue.mjs';
 export async function connectStore(uri,dbName){
   const {MongoClient}=await import('mongodb');
   const client=new MongoClient(uri,{maxPoolSize:10,serverSelectionTimeoutMS:5000});
@@ -11,6 +13,9 @@ export async function connectStore(uri,dbName){
       if(!await db.collection('recipes').countDocuments({},{limit:1}))await seedRecipes(db);
       await markers.updateOne({_id:'initial-import'},{$setOnInsert:{createdAt:new Date().toISOString()}},{upsert:true});
     }
+    try{
+      await installDinnerCoverage(db,()=>liveCatalogue({publishedRecipes:()=>db.collection('recipes').find({published:true},{projection:{_id:0,id:1,data:1,ingredients:1,photo:1,published:1}}).limit(2001).toArray()}));
+    }catch(error){console.warn('Dinner coverage migration not completed:', error.message);}
   }catch(error){await client.close();throw error;}
   const users=db.collection('users'),sessions=db.collection('sessions'),kitchens=db.collection('kitchens'),googleChallenges=db.collection('google_challenges');
   await Promise.all([users.createIndex({email:1},{unique:true}),sessions.createIndex({expiresAt:1},{expireAfterSeconds:0}),users.createIndex({googleSub:1},{unique:true,sparse:true}),googleChallenges.createIndex({expiresAt:1},{expireAfterSeconds:0})]);

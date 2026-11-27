@@ -335,8 +335,15 @@ function shopping(){
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
  return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
- (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
+ (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
+}
+function openCheckoutComparison(){
+  openDialog('Compare with my checkout','Manual comparison · nothing is saved or sent.',
+    '<form id="checkout-comparison"><p>Use the same basket and quantities. Leave unrelated extras out. The catalogue estimates the grocery subtotal, not delivery.</p>'+
+    '<label class="field">Retailer grocery subtotal (AED)<input class="control" type="number" name="subtotal" min="0" max="50000" step=".01" required></label>'+
+    '<label class="field">Delivery and checkout fees (AED)<input class="control" type="number" name="fees" min="0" max="10000" step=".01" placeholder="0"></label>'+
+    '<button type="submit" class="button green wide">Compare totals</button><p><output aria-live="polite"></output></p></form>');
 }
 function addGrocery(){
  return '<section class="add-grocery-page"><div class="grocery-sheet-handle" aria-hidden="true"></div><header class="add-grocery-header">'+button('←','grocery-cancel','grocery-back','','aria-label="Back to grocery list"')+'<h1>Add groceries</h1></header><form id="extra-grocery-form"><label class="field" for="grocery-item">Item</label><input id="grocery-item" class="control" name="item" required maxlength="80" placeholder="e.g. Bananas" autocomplete="off"><label class="field" for="grocery-quantity">Quantity (optional)</label><input id="grocery-quantity" class="control" name="quantity" maxlength="80" placeholder="e.g. 2 lb" autocomplete="off"><button class="button green wide" type="submit" disabled>Add to list</button></form></section>';
@@ -499,6 +506,7 @@ document.addEventListener('click',async event=>{
   if(action==='shopping-filter'){shoppingFilter=['all','todo','bought'].includes(id)?id:'all';screen.innerHTML=shopping();screen.querySelector('[data-action="shopping-filter"][data-id="'+shoppingFilter+'"]').focus({preventScroll:true});}
   else if(action==='shopping-reset'){const ids=new Set(shoppingItems().map(i=>i.key));state.checked=state.checked.filter(key=>!ids.has(key));for(const item of state.extraGroceries||[])item.checked=false;persist();screen.innerHTML=shopping();notify('Bought items reset.');}
   else if(action==='shopping-prices'){shoppingPricesOpen=!shoppingPricesOpen;screen.innerHTML=shopping();}
+  else if(action==='compare-checkout'&&view==='shopping'&&state.result){openCheckoutComparison();}
   else if(action==='shopping-share'){await shareGroceries();}
   else if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
   else if(action==='setup-account-back'){if(setupAccountBusy)return;error='';setupAccountMode='choice';wizardStory='benefits';setView('setup',false);}
@@ -636,6 +644,17 @@ document.addEventListener('submit',async event=>{
     }
     await generate(next);return;
   }
+  if(form.id==='checkout-comparison'){
+    event.preventDefault();
+    const data=new FormData(form),amount=String(data.get('subtotal')??''),fees=String(data.get('fees')??'');
+    const cents=v=>/^\d+(?:\.\d{1,2})?$/.test(v)?Math.round(Number(v)*100):NaN;
+    const subtotal=cents(amount),fee=fees===''?0:cents(fees),estimate=Math.round((state.result?.total??0)*100);
+    const result=form.querySelector('output');
+    if(!Number.isSafeInteger(subtotal)||!Number.isSafeInteger(fee)||subtotal>5000000||fee>1000000){result.textContent='Enter valid AED amounts with up to two decimal places.';return;}
+    const diff=subtotal-estimate;
+    result.textContent='Your checkout total: AED '+priceMoney((subtotal+fee)/100)+'. Grocery subtotal: '+(diff===0?'matches the catalogue estimate':'AED '+priceMoney(Math.abs(diff)/100)+(diff>0?' above':' below')+' the catalogue estimate')+'. Entered by you, not verified by Mealday.';
+    return;
+  }
   if(form.id==='feedback-form'){
     event.preventDefault();
     await submitFeedback(form);
@@ -691,6 +710,7 @@ document.addEventListener('change',event=>{
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
+  if(event.target.form?.id==='checkout-comparison'){event.target.form.querySelector('output').textContent='';return;}
   if(event.target.form?.id==='extra-grocery-form'){event.target.form.querySelector('button[type=submit]').disabled=!event.target.form.elements.namedItem('item').value.trim();return;}
   if(event.target.id==='recipe-note'&&detail){updateJournal(detail.id,{note:event.target.value});return;}
   if(event.target.id==='wizard-name'&&wizardDraft){
@@ -1060,7 +1080,7 @@ function quickStart(){
   const field=(title,name,values,selected)=>'<label class="field">'+title+dropdown(name,values,selected)+'</label>';
   const multi=(title,name,values,selected)=>'<fieldset class="quick-section"><legend>'+title+'</legend>'+chips(name,values,selected)+'</fieldset>';
   const cuisine='<label class="field">Cuisine<select name="cuisine" class="control">'+styles.map(([value,,label])=>'<option value="'+esc(value)+'" '+(value===p.cuisine?'selected':'')+'>'+esc(label||value)+'</option>').join('')+'</select></label>';
-  const hint=error?'<div class="notice" role="alert"><strong>Let’s adjust your plan</strong><p>'+esc(error.replace(/ after recent-history exclusions/,'').replace(' or allow recently suggested meals in Plan settings',''))+'</p><p>Your budget, diet and exclusions stay as entered. Edit the time or days below.</p></div>':'';
+  const hint=error?'<div class="notice" role="alert"><strong>Let’s adjust your plan</strong><p>'+esc(error.replace(/ after recent-history exclusions/,'').replace(/,? or allow recently suggested meals in Plan settings/,''))+'</p><p>Your budget, diet and exclusions stay as entered. Edit the time or days below.</p></div>':'';
   return '<section class="quick-start-page"><header>'+button('Back','quick-cancel','ghost small','back',busy?'disabled':'')+'<p class="section-caption">MEALDAY · QUICK START</p><h1>Plan your first week</h1><p>See your meals and grocery estimate without signing up.</p></header>'+
     hint+'<form id="quick-start-form" class="plan-form"><fieldset class="surface-card quick-start-fields" '+(busy?'disabled':'')+'><legend>Your dinner plan</legend>'+
     '<label class="field">People<input class="control" name="people" type="number" min="1" max="12" step="1" required value="'+esc(p.people)+'"></label>'+cuisine+
