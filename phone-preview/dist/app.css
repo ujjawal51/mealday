@@ -1432,3 +1432,25 @@ body[data-view=week] .week-bottom .button.green{background:linear-gradient(103de
 body[data-view=week] .plan-greeting h1{font-weight:700;letter-spacing:-.55px}
 body[data-view=week] .meal-row .meal-name{font-weight:650;letter-spacing:-.1px}
 body[data-view=week] .meal-open .meta{font-variant-numeric:tabular-nums}
+
+/* Home: full-bleed Mealday mascot, clean canvas, and simple entry actions. */
+body[data-view=welcome]{background:#f6f6f6}
+body[data-view=welcome] .mealday-home{background:#f6f6f6;--setup-bg:#f6f6f6}
+.home-intro{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center}
+.home-hero{width:100%;position:relative;overflow:hidden;background:#086727;color:#fff}
+.home-wordmark{position:relative;display:inline-block;margin:clamp(25px,5.2svh,47px) 24px 0;font-size:clamp(41px,11vw,65px);font-weight:800;line-height:1.04;letter-spacing:-.055em;z-index:1}
+.home-sparkles{position:absolute;inset:20% -27px auto auto;width:22px;height:21px;pointer-events:none}
+.home-sparkles i{position:absolute;width:7px;height:7px;left:2px;top:2px;transform:rotate(45deg);border-radius:2px;background:#abcf37}
+.home-sparkles i:nth-child(2){width:3px;height:3px;left:15px;top:9px;opacity:.6}
+.home-sparkles i:nth-child(3){width:3px;height:3px;left:5px;top:15px;opacity:.8}
+.home-hero-art{display:block;width:100%;height:clamp(250px,calc(100vw * 1.07),490px);object-fit:cover;object-position:center top;margin:2px 0 0;mask-image:linear-gradient(180deg,transparent 0,#000 4%)}
+.home-hero:after{content:"";position:absolute;bottom:0;left:0;right:0;height:12px;background:linear-gradient(0deg,#f6f6f6,transparent);pointer-events:none}
+.phone-welcome.mealday-home h1{margin:6px auto 0;max-width:100%;padding:0 16px;color:#0d5237;font-size:clamp(23px,6.6vw,34px);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance;text-transform:none}
+.home-start{display:grid;justify-items:center;gap:0;margin:clamp(15px,3.2svh,29px) 0 25px}
+.home-start .button.home-signin,.home-start .button.home-guest{border:0;min-height:44px;box-shadow:none;background:transparent;color:#0d5237}
+.home-start .button.home-signin{font-size:15px;font-weight:750}
+.home-start .button.home-guest{font-size:13px;font-weight:580;color:#405c4b;text-decoration:underline;text-underline-offset:3px}
+.home-previews{padding:15px 0 0;border-top:1px solid #e6e9e3}
+body[data-view=welcome] .home-previews .wizard-footer{background:#f6f6f6}
+@media (max-width:350px){.home-sparkles{right:-22px}}
+@media (max-height:660px) and (orientation:portrait){.home-hero-art{height:clamp(235px,55svh,370px);object-fit:contain;background:linear-gradient(#086727 82%,#f6f6f6 97%)}.home-wordmark{margin-top:17px}}

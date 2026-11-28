@@ -27,3 +27,7 @@ Complete ingredient atlas v2: original AI-generated food thumbnails; exact catal
 
 ## Missing catalogue photos — 30 October 2026
 63 original AI-generated recipe illustrations created with the built-in image generation tool, using the individual recipe name, ingredient list and cooking method as the prompt reference. No reference photograph was copied. These depict illustrative food, not kitchen-tested batches. Complete prompt set and asset checksums: `data/generated-missing-photos-audit.json`. Runtime asset mapping: `data/recipe-photo-map.json`; files: `dist/assets/recipe-photo-*.webp`.
+
+## Home welcome illustration — 28 November 2026
+
+- `phone-preview/dist/mealday-welcome-chef.webp`: generated with the built-in image tool using Mealday’s existing chef mascot and an owner-supplied Mealday home screenshot as composition references. The new artwork shows the green-apron chef with a spoon and a platter of biryani, curry, salad and roti. Text, logo lettering and mobile browser chrome are not part of the artwork.
