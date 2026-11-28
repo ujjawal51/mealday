@@ -14,6 +14,16 @@ try{
  await context.addInitScript(value=>localStorage.setItem('mealday.android.v1',JSON.stringify(value)),state);
  const page=await context.newPage();await page.goto(origin);
  await page.getByRole('heading',{name:'Chef Ujjawal!',exact:true}).waitFor();
+ const font=await page.evaluate(async()=>{
+  const faces=await document.fonts.load('650 14px "Exo 2"','Classic Shakshuka');
+  return {loaded:faces.some(face=>face.status==='loaded'),title:getComputedStyle(document.querySelector('.meal-name')).fontFamily,button:getComputedStyle(document.querySelector('.week-bottom .green')).fontFamily};
+ });
+ assert.equal(font.loaded,true);
+ assert.match(font.title,/^"Exo 2"/);
+ assert.match(font.button,/^"Exo 2"/);
+ const asset=await page.request.get(origin+'/fonts/exo-2-latin.woff2');
+ assert.equal(asset.status(),200);
+ assert.equal(asset.headers()['content-type'],'font/woff2');
  assert.match(await page.locator('.plan-salutation').innerText(),/GOOD (MORNING|AFTERNOON|EVENING)/);
  assert.match(await page.locator('.overview-cost').innerText(),/AED 72\.35\s*\/ 90/);
  assert.equal(await page.locator('.meal-row').count(),5);
@@ -29,7 +39,7 @@ try{
  await page.waitForFunction(()=>[...document.querySelectorAll('.meal-open img')].every(i=>i.complete&&i.naturalWidth>0));
  if(process.env.MEALDAY_PLAN_PREVIEW)await page.screenshot({path:process.env.MEALDAY_PLAN_PREVIEW});
  if(process.env.PLAN_SCREENSHOT==='1')console.log('PLAN_SCREENSHOT '+(await page.screenshot()).toString('base64'));
- await page.getByRole('button',{name:/Tap to view Grocery list/}).click();await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();assert.equal(await page.locator('.grocery-done').innerText(),'2/2 done');
+ await page.getByRole('button',{name:/Tap to view Grocery list/}).click();await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();assert.doesNotMatch(await page.locator('body').evaluate(node=>getComputedStyle(node).fontFamily),/^"Exo 2"/);assert.equal(await page.locator('.grocery-done').innerText(),'2/2 done');
  await page.getByRole('button',{name:'Shop or share',exact:true}).click();
  await page.getByRole('heading',{name:'Shop or share',exact:true}).waitFor();
  await page.getByRole('button',{name:'Carrefour',exact:true}).click();

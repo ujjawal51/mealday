@@ -11,7 +11,7 @@ import {fileURLToPath} from 'node:url';
 import {token,digest,passwordHash,passwordMatches,validateAccount,validateSnapshot} from './security.mjs';
 import {validateFeedback} from './feedback.mjs';
 const DAY=86400000;
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon','.woff2':'font/woff2'};
 export function createApp({store,origin,production=false,allowRegistration=!production,proxySecret='',googleAuth=null,allowPasswordAuth=false,luluPrices=null,photoCalories=null,staticRoot=resolve(fileURLToPath(new URL('../dist/',import.meta.url)))}){
   const limits=new Map();let dummy,wireCache;
   const googleCookieName=production?'__Host-mealday_google':'mealday_google';
