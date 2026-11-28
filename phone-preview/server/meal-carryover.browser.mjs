@@ -27,6 +27,13 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
  await context.addInitScript(value=>{if(!localStorage.getItem('mealday.android.v1'))localStorage.setItem('mealday.android.v1',JSON.stringify(value));},initial);
  const page=await context.newPage();await page.goto(origin);
+ const assertNoCarryoverCard=async()=>{
+  for(const label of ['Leftovers for next week','At the end of your week, confirm what is actually left before reusing it.','Last swap estimate','Review leftovers','Update pantry for next week']){
+   assert.equal(await page.getByText(label,{exact:true}).count(),0,label);
+  }
+ };
+ await page.getByRole('button',{name:'Rebuild plan',exact:true}).waitFor();
+ await assertNoCarryoverCard();
  await page.getByRole('button',{name:/Tap to view Grocery list/}).click();
  const paneerRow=page.getByRole('checkbox',{name:'Bought Paneer',exact:true}).locator('..');
  assert.match(await paneerRow.locator('.basket-needed').innerText(),/330 g needed/);
@@ -51,20 +58,24 @@ try{
  assert.match(await report.innerText(),/Estimated change for the whole grocery list/);
  await report.getByRole('button',{name:'View updated grocery list',exact:true}).click();
  await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();
+ await assertNoCarryoverCard();
  assert.match(await paneerRow.locator('.basket-needed').innerText(),/130 g needed/);
  await page.getByRole('button',{name:'Back to my week'}).click();
- await page.reload();await page.getByText('Last swap estimate').waitFor();
- await page.getByRole('button',{name:'Review leftovers',exact:true}).click();
+ await page.reload();await page.getByRole('button',{name:'Rebuild plan',exact:true}).waitFor();
+ await assertNoCarryoverCard();
+ await page.getByRole('button',{name:'Kitchen',exact:true}).click();
+ await page.getByRole('button',{name:/^Update pantry for next week/}).click();
  const amount=report.getByRole('spinbutton',{name:'Paneer remaining in g',exact:true});
  assert.equal(await amount.inputValue(),'');
  // Leaving the review before confirmation must not change any held stock.
  await report.getByRole('button',{name:'Close',exact:true}).click();
  const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('mealday.android.v1')));
  assert.equal((await stored()).pantry.paneer,20);
- await page.getByRole('button',{name:'Review leftovers',exact:true}).click();
+ await page.getByRole('button',{name:/^Update pantry for next week/}).click();
  await amount.fill('400');await report.getByRole('button',{name:'Confirm and plan next week',exact:true}).click();
  await page.getByText('Next week planned with your confirmed pantry.',{exact:true}).waitFor();
- await page.reload();await page.getByRole('button',{name:'Review leftovers',exact:true}).waitFor();
+ await page.reload();await page.getByRole('button',{name:'Rebuild plan',exact:true}).waitFor();
+ await assertNoCarryoverCard();
  const next=await stored(),paneer=next.result.items.find(r=>r.key==='paneer');
  assert.equal(next.pantry.paneer,400);assert.equal(paneer.have,400);assert.equal(paneer.packs,0);
  assert.deepEqual(next.carryoverCandidates,[]);
