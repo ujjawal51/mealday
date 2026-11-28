@@ -27,8 +27,17 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
  await context.addInitScript(value=>{if(!localStorage.getItem('mealday.android.v1'))localStorage.setItem('mealday.android.v1',JSON.stringify(value));},initial);
  const page=await context.newPage();await page.goto(origin);
- await page.getByRole('button',{name:/Paneer rice dinner/}).click();
- await page.getByRole('button',{name:'Swap this meal',exact:true}).click();
+ await page.getByRole('button',{name:/Tap to view Grocery list/}).click();
+ const paneerRow=page.getByRole('checkbox',{name:'Bought Paneer',exact:true}).locator('..');
+ assert.match(await paneerRow.locator('.basket-needed').innerText(),/330 g needed/);
+ assert.match(await paneerRow.locator('.basket-quantities').textContent(),/Recipe 350 · At home 20 · Needed 330 g/);
+ await page.getByText('Using 1 ingredient you already have',{exact:true}).click();
+ assert.match(await page.locator('.pantry-used').innerText(),/20 g from home\s+330 g still needed/);
+ await page.getByRole('button',{name:'Back to my week'}).click();
+ await page.setViewportSize({width:320,height:750});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await page.getByRole('button',{name:'Swap Monday dinner',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});
  const similar=page.locator('dialog .swap-option').filter({hasText:'Spiced paneer rice'});
  assert.match(await similar.innerText(),/No change in estimated grocery spend/);
  const light=page.locator('dialog .swap-option').filter({hasText:'Lighter paneer rice'});
@@ -38,7 +47,10 @@ try{
  await report.getByText('Swap updated',{exact:true}).waitFor();
  assert.match(await report.innerText(),/Paneer · 2 → 1 planned packs/);
  assert.match(await report.innerText(),/Whole-basket estimate, not a checkout saving/);
- await report.getByRole('button',{name:'Close',exact:true}).click();
+ await report.getByRole('button',{name:'View updated grocery list',exact:true}).click();
+ await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();
+ assert.match(await paneerRow.locator('.basket-needed').innerText(),/130 g needed/);
+ await page.getByRole('button',{name:'Back to my week'}).click();
  await page.reload();await page.getByText('Last swap estimate').waitFor();
  await page.getByRole('button',{name:'Review leftovers',exact:true}).click();
  const amount=report.getByRole('spinbutton',{name:'Paneer remaining in g',exact:true});
@@ -54,5 +66,9 @@ try{
  const next=await stored(),paneer=next.result.items.find(r=>r.key==='paneer');
  assert.equal(next.pantry.paneer,400);assert.equal(paneer.have,400);assert.equal(paneer.packs,0);
  assert.deepEqual(next.carryoverCandidates,[]);
+ await page.getByRole('button',{name:/Tap to view Grocery list/}).click();
+ assert.equal(await page.getByRole('checkbox',{name:'Bought Paneer',exact:true}).count(),0);
+ await page.getByText('Using 1 ingredient you already have',{exact:true}).click();
+ assert.match(await page.locator('.pantry-used').innerText(),new RegExp(paneer.required+' g from home\\s+No purchase needed'));
  console.log('Phone swap & carryover passed: same-pack zero, two-to-one pack AED 9 estimate, explicit 400 g pantry after reload, no paneer purchase next week.');
 } finally {await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
