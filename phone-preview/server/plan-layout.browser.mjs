@@ -63,7 +63,12 @@ try{
  const checkType=async (p,selector)=>{
   const target=p.locator(selector).first();
   await target.waitFor();
-  assert.match(await target.evaluate(node=>getComputedStyle(node).fontFamily),/^"Exo 2"/,selector);
+  // Read the current connected element. View updates can replace the visible node
+  // between Playwright resolving a locator and evaluating its computed style.
+  await p.waitForFunction(selector=>{
+   const node=document.querySelector(selector);
+   return node?.isConnected&&getComputedStyle(node).fontFamily.startsWith('"Exo 2"');
+  },selector,{timeout:5000});
   assert.equal(await p.evaluate(async()=>(await document.fonts.load('650 14px "Exo 2"','Mealday')).some(face=>face.status==='loaded')),true);
   for(const width of [320,390]){
    await p.setViewportSize({width,height:844});
@@ -71,7 +76,10 @@ try{
   }
  };
  await checkType(page,'.nav button');
- await page.locator('.nav [data-view=pantry]').click();await checkType(page,'#kitchen-search');
+ await page.locator('.nav [data-view=pantry]').click();
+ // The initial search field is replaced when ingredient options arrive.
+ await page.locator('#kitchen-results [data-kitchen-item]').first().waitFor();
+ await checkType(page,'#kitchen-search');
  await page.locator('.nav [data-view=plan]').click();await checkType(page,'.preferences-heading h1');
  await page.locator('.nav [data-view=shopping]').click();await checkType(page,'#screen h1');
  await page.locator('.nav [data-view=settings]').click();await checkType(page,'.setting-row');
