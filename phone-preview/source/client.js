@@ -176,12 +176,12 @@ function render(){
 function heading(title,description){return '<div class="page-head"><h1>'+title+'</h1><p>'+description+'</p></div>';}
 function week(){
   const result=state.result,p=state.profile;
-  const rows=result?.meals.map(m=>{
+  const rows=result?.meals.map((m,index)=>{
     const selected=priorities.find(([id])=>m.matchedStyles?.includes(id));
     const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
     const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
-    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3><span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button></article>';
+    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3>'+mealComponents(m)+'<span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button>'+button('Swap','swaps','ghost plan-meal-swap','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[m.day]+' '+m.meal)+'" '+(busy?'disabled':''))+'</article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
   const extras=state.extraGroceries||[],total=items.length+extras.length;
@@ -190,8 +190,16 @@ function week(){
     '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Grocery estimate</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress><small class="estimate-disclaimer">Catalogue estimate · delivery not included</small></div>'+
     '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
-    recommendationSummary(result)+'<div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
+    pantryUsedSummary(result)+' '+recommendationSummary(result)+'<div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
     nextWeekShortcut()+'<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
+}
+function pantryUsedSummary(result){
+ const rows=(result?.items||[]).filter(i=>i.have>0&&i.required>0);
+ if(!rows.length)return '';
+ const covered=rows.filter(i=>i.packs===0).length;
+ return '<details class="surface-card pantry-used"><summary>Using '+rows.length+' '+(rows.length===1?'ingredient':'ingredients')+' you already have</summary>'+
+  '<p>These amounts are used in this plan. '+(covered?covered+' '+(covered===1?'item needs':'items need')+' no purchase.':'Buy only what is still needed.')+'</p><ul>'+
+  rows.map(i=>'<li><strong>'+esc(i.name)+'</strong><span>'+quantity(Math.min(i.have,i.required))+' '+esc(i.unit)+' from home</span><small>'+(i.packs===0?'No purchase needed':quantity(i.need)+' '+esc(i.unit)+' still needed')+'</small></li>').join('')+'</ul></details>';
 }
 function recommendationSummary(result){
   const info=result?.recommendationInfo;
@@ -225,7 +233,7 @@ function showSwapImpact(impact){
   openDialog('Swap updated','Whole-basket estimate, not a checkout saving.',
    '<div class="carryover-card"><strong>'+esc(swapCostText(impact.savedCents))+'</strong><p>Estimated weekly groceries: AED '+priceMoney(impact.beforeCents/100)+' → AED '+priceMoney(impact.afterCents/100)+'. This does not include delivery or groceries you already paid for.</p>'+
    (changed?'<h3>Pack and leftover changes</h3><ul class="swap-impact-list">'+changed+'</ul>':'')+
-   '<p>At the end of the week, use Review leftovers to confirm what you still have.</p></div>');
+   '<p>At the end of the week, use Review leftovers to confirm what you still have.</p></div>'+button('View updated grocery list','placement-groceries','green wide','shopping'));
 }
 function keepChecked(previous,next,checked){
   const before=new Map((previous?.items||[]).map(item=>[item.key,item]));
@@ -411,13 +419,13 @@ function shopping(){
   return '<section class="grocery-group"><h3><span>'+esc(name==='Vegetables'?'Fruit & veg':name==='Pantry'?'Herbs, spices & pantry':name)+'</span><span>'+visible.length+'</span></h3><div class="basket-items">'+visible.map(i=>{
    const record=currentStorePrices()?.data?.items.find(r=>r.key===i.key),recorded=record?.status==='recorded-price',checked=state.checked.includes(i.key);
    const packs=recorded?record.packs:i.packs,pack=recorded?record.packLabel:quantity(i.pack)+' '+i.unit;
-   const have=Number(i.have)||0,remaining=Math.max(0,i.need-have);
-   return '<div class="priced-grocery-item"><label class="basket-row '+(checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-grocery="'+esc(i.key)+'" '+(checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy" decoding="async"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><span class="basket-pack">'+packs+' × '+esc(pack)+'</span><small class="basket-needed">('+quantity(remaining)+' '+esc(i.unit)+' needed)</small><small class="basket-quantities">Recipe '+quantity(i.need)+' · At home '+quantity(have)+' · Needed '+quantity(remaining)+' '+esc(i.unit)+'</small><small class="basket-price-kind">'+(recorded?'Recorded product price':'Catalogue estimate')+'</small></span><span class="basket-buy-quantity">'+(packs>1?packs+' × ':'')+esc(pack)+'</span><span class="price">'+'AED '+priceMoney(recorded?record.subtotal:i.cost)+'</span></label>'+storePriceRow(i)+'</div>';
+   const have=Number(i.have)||0,remaining=i.need,totalNeeded=i.required??remaining+have;
+   return '<div class="priced-grocery-item"><label class="basket-row '+(checked?'checked':'')+'"><input aria-label="Bought '+esc(i.name)+'" type="checkbox" data-grocery="'+esc(i.key)+'" '+(checked?'checked':'')+'><img class="ingredient-image" src="'+ingredientPicture(i.name)+'" alt="" width="42" height="42" loading="lazy" decoding="async"><span class="basket-copy"><strong>'+esc(i.name)+'</strong><span class="basket-pack">'+packs+' × '+esc(pack)+'</span><small class="basket-needed">('+quantity(remaining)+' '+esc(i.unit)+' needed)</small><small class="basket-quantities">Recipe '+quantity(totalNeeded)+' · At home '+quantity(have)+' · Needed '+quantity(remaining)+' '+esc(i.unit)+'</small><small class="basket-price-kind">'+(recorded?'Recorded product price':'Catalogue estimate')+'</small></span><span class="basket-buy-quantity">'+(packs>1?packs+' × ':'')+esc(pack)+'</span><span class="price">'+'AED '+priceMoney(recorded?record.subtotal:i.cost)+'</span></label>'+storePriceRow(i)+'</div>';
   }).join('')+'</div></section>';
  }).join('');
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
- return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
+ return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+pantryUsedSummary(state.result)+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
  (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+nextWeekShortcut()+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
 }
@@ -537,14 +545,16 @@ function moveGuide(step){
   screen.querySelector('.recipe-tabs')?.scrollIntoView({block:'start'});
 }
 async function swaps(index){
+  if(busy||!Number.isInteger(index)||!state.result?.plan[index])return;
+  const source=state.result;
   swapIndex=index;
   openDialog('Swap this meal','Options fit your cooking preferences and grocery budget.','<p>Finding suitable meals…</p>');
   try{
     const data=await request('/api/swaps',{profile:state.profile,pantry:state.pantry,plan:state.result.plan,index});
-    if(!dialog.open||swapIndex!==index)return;
+    if(!dialog.open||swapIndex!==index||state.result!==source)return;
     openDialog('Swap this meal','Options fit your cooking preferences and grocery budget.',
       data.choices.length?data.choices.map(r=>'<article class="swap-option"><div><strong>'+esc(recipeLabel(r.id,r.name))+'</strong><p>'+esc(r.minutes)+' min · AED '+money(r.total)+' estimated week</p><small>'+esc(swapCostText(-Math.round(r.change*100)))+'</small>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose','apply-swap','primary small','check','data-id="'+esc(r.id)+'"')+'</article>').join(''):'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
-  }catch(err){if(dialog.open&&swapIndex===index)openDialog('Swap this meal','','<p class="notice">'+esc(err.message)+'</p>');}
+  }catch(err){if(dialog.open&&swapIndex===index&&state.result===source)openDialog('Swap this meal','','<p class="notice">'+esc(err.message)+'</p>');}
 }
 function saveSwapResult(result){
  const impact=result.swapImpact;

@@ -1243,3 +1243,18 @@ body[data-view=recipe] button:focus-visible{outline:2px solid #8caf31;outline-of
 
 .tracker-actions .tracker-availability{margin:8px 0 4px;font-size:.78rem;}
 .tracker-actions .tracker-availability[hidden]{display:none;}
+
+
+/* Keep the weekly plan, meal swap and amounts reused from home in one flow. */
+body[data-view=week] .meal-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px}
+body[data-view=week] .meal-open{min-width:0}
+body[data-view=week] .meal-open .meal-components{margin:-1px 0 4px}
+body[data-view=week] .meal-row>.plan-meal-swap{min-width:48px;min-height:44px;padding:5px;gap:3px;font-size:11px}
+body[data-view=week] .meal-row>.plan-meal-swap svg{width:12px;height:12px}
+.pantry-used{padding:12px 14px;margin:12px 0}
+.pantry-used summary{cursor:pointer;min-height:28px;padding:4px 0;font-size:13px;font-weight:700}
+.pantry-used p{font-size:12px;margin:5px 0 8px}
+.pantry-used ul{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pantry-used li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 8px;border-top:1px solid #e4e7da;padding:7px 0 0;font-size:12px}
+.pantry-used li small{grid-column:2;color:#46604c}
+.pantry-used li strong{overflow-wrap:anywhere}

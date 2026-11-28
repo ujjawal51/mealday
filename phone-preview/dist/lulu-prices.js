@@ -108,7 +108,7 @@
      select.onclick=async()=>{
       if(search.disabled)return;search.disabled=true;for(const b of results.querySelectorAll('button'))b.disabled=true;status.textContent='Rechecking this product…';
       try{
-       const remaining=Math.max(0,item.need-(item.have||0));
+       const remaining=item.need;
        const value=await api('/api/lulu/product',{productId:product.id,need:remaining,unit:item.unit});
        if(seq!==sequence||key!==currentKey()||!d.open)return;
        if(/drained|cooked|edible|desalted/i.test(item.name)){value.quote=null;}

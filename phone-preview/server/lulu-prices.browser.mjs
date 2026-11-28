@@ -5,7 +5,7 @@ import {once} from 'node:events';
 import {chromium} from 'playwright';
 import {createApp} from './app.mjs';
 import {createLuluPrices} from './lulu-prices.mjs';
-let calls=0,fail=false;const state={profile:{name:'Test chef',shop:'LuLu',city:'Dubai',people:1,days:[0],mealTypes:['dinner'],budget:100},favorites:[],pantry:{},checked:[],result:{total:16,meals:[],plan:[],items:[{key:'tomato',name:'Tomatoes',unit:'g',need:600,have:0,packs:2,pack:500,cost:10,category:'Vegetables'},{key:'peas',name:'Frozen peas',unit:'g',need:210,have:0,packs:1,pack:400,cost:6,category:'Vegetables'}]}};
+let calls=0,fail=false;const state={profile:{name:'Test chef',shop:'LuLu',city:'Dubai',people:1,days:[0],mealTypes:['dinner'],budget:100},favorites:[],pantry:{},checked:[],result:{total:16,meals:[],plan:[],items:[{key:'tomato',name:'Tomatoes',unit:'g',required:750,need:600,have:150,packs:2,pack:500,cost:10,category:'Vegetables'},{key:'peas',name:'Frozen peas',unit:'g',need:210,have:0,packs:1,pack:400,cost:6,category:'Vegetables'}]}};
 const product={product_id:'test-tomato',sku:'123',name:'Tomato Jordan 500 g',pack_size:'500 g',price:3.48,currency:'AED',url:'https://gcc.luluhypermarket.com/en-ae/tomato/p/123/',in_stock:true,stock:10};
 const luluPrices=createLuluPrices({key:'PRIVATE_FIXTURE_KEY',reserve:async()=>true,fetchImpl:async(url,init)=>{
  calls++;if(fail)throw Error('PRIVATE_FIXTURE_KEY');const large={...product,product_id:'large',name:'Tomato 1.5 kg',pack_size:'1.5 kg',price:11.95};const data={country:'ae',currency:'AED',...(url.endsWith('/search')?{results:[product,large]}:{product:JSON.parse(init.body).product_id==='large'?large:product})};
