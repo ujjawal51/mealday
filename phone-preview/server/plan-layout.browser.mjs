@@ -39,7 +39,7 @@ try{
  await page.waitForFunction(()=>[...document.querySelectorAll('.meal-open img')].every(i=>i.complete&&i.naturalWidth>0));
  if(process.env.MEALDAY_PLAN_PREVIEW)await page.screenshot({path:process.env.MEALDAY_PLAN_PREVIEW});
  if(process.env.PLAN_SCREENSHOT==='1')console.log('PLAN_SCREENSHOT '+(await page.screenshot()).toString('base64'));
- await page.getByRole('button',{name:/Tap to view Grocery list/}).click();await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();assert.doesNotMatch(await page.locator('body').evaluate(node=>getComputedStyle(node).fontFamily),/^"Exo 2"/);assert.equal(await page.locator('.grocery-done').innerText(),'2/2 done');
+ await page.getByRole('button',{name:/Tap to view Grocery list/}).click();await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();assert.match(await page.locator('body').evaluate(node=>getComputedStyle(node).fontFamily),/^"Exo 2"/);assert.equal(await page.locator('.grocery-done').innerText(),'2/2 done');
  await page.getByRole('button',{name:'Shop or share',exact:true}).click();
  await page.getByRole('heading',{name:'Shop or share',exact:true}).waitFor();
  await page.getByRole('button',{name:'Carrefour',exact:true}).click();
@@ -60,6 +60,33 @@ try{
  await page.evaluate(()=>window.mealdayBack());await page.waitForSelector('body[data-view=week]');
  for(const width of [320,390,768]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow at '+width);}
  assert.equal(await page.getByRole('button',{name:'Rebuild plan',exact:true}).isEnabled(),true);
+ const checkType=async (p,selector)=>{
+  const target=p.locator(selector).first();
+  await target.waitFor();
+  assert.match(await target.evaluate(node=>getComputedStyle(node).fontFamily),/^"Exo 2"/,selector);
+  assert.equal(await p.evaluate(async()=>(await document.fonts.load('650 14px "Exo 2"','Mealday')).some(face=>face.status==='loaded')),true);
+  for(const width of [320,390]){
+   await p.setViewportSize({width,height:844});
+   assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),selector+' at '+width);
+  }
+ };
+ await checkType(page,'.nav button');
+ await page.locator('.nav [data-view=pantry]').click();await checkType(page,'#kitchen-search');
+ await page.locator('.nav [data-view=plan]').click();await checkType(page,'.preferences-heading h1');
+ await page.locator('.nav [data-view=shopping]').click();await checkType(page,'#screen h1');
+ await page.locator('.nav [data-view=settings]').click();await checkType(page,'.setting-row');
+ await page.locator('[data-action=open-recipes]').click();await checkType(page,'#screen h1');
+ await page.locator('.nav [data-view=plan]').click();
+ await page.locator('.preference-camera').click();await page.getByRole('heading',{name:'Food log',exact:true}).waitFor();await checkType(page,'#screen h1');
+ const welcome=await browser.newPage({viewport:{width:390,height:844}});
+ await welcome.goto(origin);
+ await checkType(welcome,'.phone-welcome h1');
+ await welcome.getByRole('button',{name:'Get started',exact:true}).click();await checkType(welcome,'.wizard h1');
+ for(const path of ['/login.html','/signup.html']){
+  await welcome.goto(origin+path);await checkType(welcome,'.account-heading');
+ }
+ await welcome.close();
+ console.log('Shared typography passed: Mealday screens, forms, navigation, onboarding and standalone sign-in.');
  console.log('Plan layout passed: five meal photos, actual AED budget, extras-aware grocery progress, grocery/preferences/recipe navigation and responsive widths.');
  await context.close();
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
