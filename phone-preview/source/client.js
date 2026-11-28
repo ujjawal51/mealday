@@ -192,7 +192,7 @@ function week(){
     '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
     pantryUsedSummary(result)+recommendationSummary(result)+'<div class="week-section-heading"><h2>Your meals</h2>'+button('Share plan','share-plan','week-share','share',!rows?'disabled':'')+'</div><div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
-    nextWeekShortcut()+'<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
+    '<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
 }
 function dayPlan(){
  const meals=(state.result?.meals||[]).map((meal,index)=>({meal,index})).filter(({meal})=>meal.day===day);
@@ -219,19 +219,12 @@ function recommendationSummary(result){
 function swapCostText(cents){
   return cents>0?'Save AED '+priceMoney(cents/100):cents<0?'Costs AED '+priceMoney(-cents/100)+' more':'No change in estimated grocery spend';
 }
-function nextWeekShortcut(){
-  if(!state.result?.plan?.length||!leftoverRows().length)return '';
-  const last=state.lastSwapEstimate;
-  return '<section class="surface-card carryover-card"><h2>Leftovers for next week</h2><p>At the end of your week, confirm what is actually left before reusing it.</p>'+
-   (Number.isSafeInteger(last)?'<p><small>Last swap estimate</small><br><strong>'+esc(swapCostText(last))+'</strong></p>':'')+
-   button('Review leftovers','review-leftovers','ghost wide')+'</section>';
-}
 function leftoverRows(){return carryoverRows(state.result?.items||[],state.carryoverCandidates||[]);}
 function reviewLeftovers(){
   if(busy)return;
   carryoverPlan=state.result;carryoverFormRows=leftoverRows();
   if(!carryoverPlan||!carryoverFormRows.length)return;
-  openDialog('Leftovers for next week','Only amounts you confirm are carried into the next plan.',
+  openDialog('Confirm pantry amounts','Only amounts you confirm are carried into the next plan.',
    '<form id="leftover-form"><p>Estimates assume you buy the planned packs and cook all the planned meals. Check what you actually have and can still use. For ingredients already in your pantry, enter the remaining amount or 0.</p>'+
    '<div class="carryover-rows">'+carryoverFormRows.map(row=>'<label class="carryover-row"><span><strong>'+esc(row.name)+'</strong><small>'+(row.expected==null?'Removed from a recent plan':('Expected: '+quantity(row.expected)+' '+esc(row.unit)))+'</small></span><span><input class="control" type="number" inputmode="decimal" name="leftover-'+esc(row.key)+'" aria-label="'+esc(row.name+' remaining in '+row.unit)+'" min="0" max="100000" step=".01" '+(state.pantry[row.key]>0?'required':'')+'><small>'+esc(row.unit)+'</small></span></label>').join('')+'</div>'+
    '<p id="form-error" role="alert" hidden></p><button class="button green wide" type="submit">Confirm and plan next week</button></form>');
@@ -241,7 +234,7 @@ function showSwapImpact(impact){
   openDialog('Swap updated','Estimated change for the whole grocery list.',
    '<div class="carryover-card"><strong>'+esc(swapCostText(impact.savedCents))+'</strong><p>Estimated weekly groceries: AED '+priceMoney(impact.beforeCents/100)+' → AED '+priceMoney(impact.afterCents/100)+'. This does not include delivery or groceries you already paid for.</p>'+
    (changed?'<h3>Pack and leftover changes</h3><ul class="swap-impact-list">'+changed+'</ul>':'')+
-   '<p>At the end of the week, use Review leftovers to confirm what you still have.</p></div>'+button('View updated grocery list','placement-groceries','green wide','shopping'));
+   '</div>'+button('View updated grocery list','placement-groceries','green wide','shopping'));
 }
 function keepChecked(previous,next,checked){
   const before=new Map((previous?.items||[]).map(item=>[item.key,item]));
@@ -258,7 +251,7 @@ async function generate(profile=state.profile,rollover=null){
     if(onboarding)await new Promise(resolve=>setTimeout(resolve,40));
     const result=await request('/api/plan',{profile,pantry:rollover?.pantry??state.pantry,seed});
     if(attempt!==requestId)return;
-    if(rollover&&state.result!==rollover.plan)throw Error('Your plan changed. Review leftovers again.');
+    if(rollover&&state.result!==rollover.plan)throw Error('Your plan changed. Reopen the pantry update to try again.');
     if(onboarding&&['setup','account'].includes(view)){
       screen.innerHTML=renderGeneration(true);
       await new Promise(resolve=>setTimeout(resolve,720));
@@ -435,7 +428,7 @@ function shopping(){
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
  return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('Shop or share','shop-share','ghost wide grocery-handoff','share')+pantryUsedSummary(state.result)+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
- (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+nextWeekShortcut()+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
+ (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
 }
 const retailers=new Map([
@@ -488,8 +481,10 @@ async function shareGroceries(){
 }
 function pantry(){
   const contents=Object.entries(state.pantry),data=options?.pantry||[];
+  const canCarryOver=Boolean(state.result?.plan?.length&&leftoverRows().length);
   return heading('Kitchen','Keep track of what you already have.')+
     '<div class="panel pantry-summary"><strong>'+contents.length+' ingredients at home</strong><p>Add amounts to deduct them from your grocery list.</p></div>'+
+    (canCarryOver?'<div class="setting-list">'+settingRow('Update pantry for next week','review-leftovers','Confirm the amounts you still have before making a new plan.')+'</div>':'')+
     '<div class="pantry-layout"><section class="pantry-list">'+
     (contents.length?contents.map(([id,value])=>{const item=data.find(i=>i.id===id);return '<article class="pantry-entry"><strong>'+esc(item?.name||id)+'</strong><small>'+quantity(value)+' '+esc(item?.unit||'')+'</small>'+button('Remove','pantry-remove','ghost small','','data-id="'+esc(id)+'" aria-label="Remove '+esc(item?.name||id)+'"')+'</article>';}).join(''):
     '<div class="empty">Your pantry is empty. Add an ingredient you already have at home.</div>')+
@@ -612,7 +607,7 @@ function saveSwapResult(result){
  const impact=result.swapImpact;
  const removed=new Map((state.carryoverCandidates||[]).map(row=>[row.key,row]));
  for(const row of impact?.rows||[])if(row.removed)removed.set(row.key,{key:row.key,name:row.name,unit:row.unit});
- state={...state,checked:keepChecked(state.result,result,state.checked),result,lastSwapEstimate:impact?.savedCents,carryoverCandidates:[...removed.values()].slice(-100),planHistory:rememberPlan(result)};
+ state={...state,checked:keepChecked(state.result,result,state.checked),result,carryoverCandidates:[...removed.values()].slice(-100),planHistory:rememberPlan(result)};
  persist();
 }
 function placeRecipe(){
