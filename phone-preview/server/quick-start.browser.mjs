@@ -13,6 +13,26 @@ const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePa
 try {
  const page=await browser.newPage({viewport:{width:320,height:740},reducedMotion:'reduce'});
  await page.goto(origin);
+ const headline=page.getByRole('heading',{name:'Your smart meal planner made delicious.',exact:true});
+ const signin=page.getByRole('button',{name:'Sign in / Create account',exact:true});
+ await headline.waitFor();
+ await page.waitForFunction(()=>{const hero=document.querySelector('.home-hero-art');return hero?.complete&&hero.naturalWidth>0;});
+ await page.evaluate(()=>document.fonts.load('800 30px "Exo 2"','Mealday'));
+ assert.match(await headline.evaluate(el=>getComputedStyle(el).fontFamily),/^"Exo 2"/);
+ assert.equal(await page.locator('.home-wordmark').innerText(),'mealday');
+ for (const [width,height] of [[320,640],[390,844],[768,900]]){
+  await page.setViewportSize({width,height});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  assert((await signin.boundingBox()).y<height,'Sign in should be visible without scrolling');
+  assert((await page.locator('.home-previews').boundingBox()).y>=height-1);
+ }
+ await page.setViewportSize({width:390,height:844});
+ if(process.env.HOME_SCREENSHOT)await page.screenshot({path:process.env.HOME_SCREENSHOT});
+ await signin.click();
+ await page.waitForURL('**/login.html');
+ await page.getByRole('heading',{name:'Welcome back.',exact:true}).waitFor();
+ await page.goto(origin);
+ await page.setViewportSize({width:320,height:740});
  await page.getByRole('button',{name:'Quick start',exact:true}).click();
  await page.getByRole('heading',{name:'Plan your first week'}).waitFor();
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
