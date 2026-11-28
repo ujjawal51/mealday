@@ -58,6 +58,7 @@ function profile(x: any): Profile {
     preferredStyles: x.priorities ? selected(x.priorities,['Everyday','Quick','Family','Comfort','Fresh','Protein'],'priorities',false) : [],
     mealStyleRecipeIds: styleRecipeIds(x.priorities||[]),
     completeMealRecipeIds:[...catalog.values()].filter(r=>r.mealComplete===true).map(r=>r.id),
+    dislikedIngredients:x.dislikedIngredients===undefined?[]:selected(x.dislikedIngredients,Object.keys(pantryCatalog),'ingredients to leave out',false),
     allowRepeats:true,
   };
 }
@@ -148,7 +149,7 @@ export async function api(request:Request,url:URL) {
   try {
     if (path==='/api/health' && method==='GET') return json({ok:true,recipes:catalog.size,currency:'AED'});
     if (path==='/api/options' && method==='GET') return json({diets,cuisines,meals,appliances,allergies,cities,shops,
-      pantry:Object.entries(pantryCatalog).filter(([id])=>id!=='water').map(([id,i])=>({id,name:i.name,unit:i.unit})).sort((a,b)=>a.name.localeCompare(b.name))});
+      pantry:Object.entries(pantryCatalog).filter(([id])=>id!=='water').map(([id,i])=>({id,name:i.name,unit:i.unit,pack:i.pack})).sort((a,b)=>a.name.localeCompare(b.name))});
     if(path==='/api/saved-recipes'&&method==='GET'){
       const ids=[...new Set((url.searchParams.get('ids')||'').split(',').filter(Boolean))].slice(0,500);
       const match=browsingMatch(url);
@@ -178,14 +179,17 @@ export async function api(request:Request,url:URL) {
         return json(planResult(plan,p,kitchen));
       }
       const plan=slots(body.plan,p);
-      assertPlanPreferences(plan,p);
-      if(path==='/api/quote') return json(planResult(plan,p,kitchen));
+      // Taste changes affect future suggestions; a saved plan can still be
+      // quoted and edited without requiring every old slot to be replaced.
+      const existingProfile={...p,dislikedIngredients:[]};
+      assertPlanPreferences(plan,existingProfile);
+      if(path==='/api/quote') return json(planResult(plan,existingProfile,kitchen));
       valid(Number.isInteger(body.index)&&inRange(body.index,0,plan.length-1),'Choose a meal in the plan.');
       const choices=mealSwapChoices(plan,body.index,p,kitchen).filter(x=>catalog.has(x.recipe.id)&&x.allowed);
       if(path==='/api/swaps') return json({choices:choices.slice(0,18).map(x=>({...summary(x.recipe),total:x.cost,change:x.change}))});
       const choice=choices.find(x=>x.recipe.id===body.recipeId);
       if(!choice) return json({error:'This swap exceeds your budget or does not match your preferences.'},422);
-      const result=planResult(choice.plan,p,kitchen);
+      const result=planResult(choice.plan,existingProfile,kitchen);
       return json({...result,swapImpact:swapBasketImpact(basket(plan,p,kitchen),result.items)});
     }
     return json({error:'This endpoint is unavailable.'},404);

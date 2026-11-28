@@ -83,5 +83,50 @@ try{
  assert.equal(await page.getByRole('checkbox',{name:'Bought Paneer',exact:true}).count(),0);
  await page.getByText('Using 1 ingredient you already have',{exact:true}).click();
  assert.match(await page.locator('.pantry-used').innerText(),new RegExp(paneer.required+' g from home\\s+No purchase needed'));
+ await page.getByRole('button',{name:'Kitchen',exact:true}).click();
+ const search=page.getByRole('searchbox',{name:'Find an ingredient'});
+ await search.fill('cucumber');
+ const cucumber=page.getByRole('checkbox',{name:'At home: Cucumber',exact:true});
+ await cucumber.click();
+ await report.getByRole('button',{name:'Add without amount'}).click();
+ assert.equal(await cucumber.isChecked(),true);
+ assert.equal((await stored()).pantry.cucumber,undefined);
+ await page.reload();
+ await page.getByRole('button',{name:'Kitchen',exact:true}).click();
+ await page.getByRole('searchbox',{name:'Find an ingredient'}).fill('cucumber');
+ await cucumber.waitFor();
+ assert.equal(await cucumber.isChecked(),true);
+ await page.getByRole('button',{name:/Don’t like/}).click();
+ const dislike=page.getByRole('checkbox',{name:'Don’t like: Cucumber',exact:true});
+ await dislike.check();
+ assert.deepEqual((await stored()).profile.dislikedIngredients,['cucumber']);
+ const current=await stored();
+ for(const [path,expected] of [['quote',200],['plan',422],['swaps',200]]){
+  const endpoint=new URL('http://mealday.test/api/'+path);
+  const response=await api(new Request(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile:current.profile,pantry:current.pantry,plan:current.result.plan,index:0})}),endpoint);
+  assert.equal(response.status,expected,path);
+  if(path==='swaps')assert.deepEqual((await response.json()).choices,[]);
+ }
+ await page.getByRole('button',{name:'At home',exact:true}).click();
+ await page.getByRole('button',{name:'Set amount for Cucumber'}).click();
+ await report.getByRole('spinbutton').fill('100');
+ await report.getByRole('button',{name:'Save amount'}).click();
+ await report.waitFor({state:'hidden'});
+ assert.equal((await stored()).pantry.cucumber,100);
+ assert.equal((await stored()).result.items.find(x=>x.key==='cucumber').packs,0);
+ await cucumber.click();
+ await page.getByText('Ingredient removed.',{exact:true}).waitFor();
+ assert.equal(await cucumber.isChecked(),false);
+ assert.equal((await stored()).pantry.cucumber,undefined);
+ await search.fill('mealday no such ingredient');
+ await page.getByText('No ingredients match your search.').waitFor();
+ await search.fill('');
+ await page.setViewportSize({width:320,height:750});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ if(process.env.KITCHEN_SCREENSHOT){
+  await search.fill('');
+  await page.screenshot({path:process.env.KITCHEN_SCREENSHOT});
+ }
+ console.log('Kitchen browser passed: pantry search, mark without a quantity, reload, edit amount, grocery deduction, dislike filtering and narrow phone layout.');
  console.log('Phone swap & carryover passed: same-pack zero, two-to-one pack AED 9 estimate, explicit 400 g pantry after reload, no paneer purchase next week.');
 } finally {await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}

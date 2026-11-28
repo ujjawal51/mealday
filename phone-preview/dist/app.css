@@ -1347,3 +1347,35 @@ body[data-view=shopping] .shopping-page .grocery-actions .button svg{width:16px;
 }
 
 .grocery-handoff{margin:8px 0 12px;min-height:44px;background:#e7f2e3;color:#27523d}
+/* Kitchen ingredient picker */
+body[data-view=pantry]{background:#f8f9f4}
+body[data-view=pantry] main{max-width:550px;padding:13px 15px calc(88px + env(safe-area-inset-bottom))}
+.kitchen-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.kitchen-head>div{min-width:0}
+body[data-view=pantry] .kitchen-head .page-head{margin:0 0 17px}
+body[data-view=pantry] .kitchen-head h1{font-size:24px;line-height:1.12;letter-spacing:-.7px;margin:0 0 10px;color:#191d17}
+body[data-view=pantry] .kitchen-head p{font-size:14px;color:#656e5e;margin:0}
+.button.kitchen-rollover{border-color:#dce3d2;background:#f2f5eb;min-width:44px;min-height:44px;border-radius:12px;box-shadow:none}
+.kitchen-summary{display:flex;align-items:flex-start;gap:11px;background:#f0f3e9;border-radius:11px;padding:12px 13px;margin-bottom:16px}
+.kitchen-summary svg{width:25px;height:25px;color:#66744f;flex:none;stroke-width:1.9}
+.kitchen-summary strong{display:block;font-size:16px;line-height:1.25;color:#1b2019;letter-spacing:-.15px}
+.kitchen-summary p{font-size:12px;color:#616a58;line-height:1.4;margin:4px 0 0}
+.kitchen-tabs{display:flex;gap:5px;border-bottom:1px solid #dce4d3}
+.kitchen-tabs .kitchen-tab{font-size:13px;font-weight:500;min-height:42px;padding:6px 12px;color:#3b4237;background:none;border:none;border-bottom:2px solid transparent;border-radius:0 0 14px 14px;box-shadow:none}
+.kitchen-tabs .kitchen-tab[aria-pressed=true]{border-bottom-color:#739b35;color:#20271b}
+.kitchen-hint{margin:12px 0 12px;color:#616a5d;font-size:13px;line-height:1.45}
+.kitchen-search-label{display:block;font-size:15px;font-weight:650;color:#383f36;margin-bottom:6px}
+.control.kitchen-search{background:#f5f6f0;border:1px solid #e1e6db;border-radius:13px;width:100%;min-height:47px;margin:0 0 10px;padding:8px 10px;color:#232821;font-size:16px;box-shadow:none}
+.control.kitchen-search::placeholder{color:#4e554b;opacity:1}
+.kitchen-item{display:flex;align-items:center;gap:5px;border-bottom:1px solid #e3e9dc}
+.kitchen-item-main{display:grid;grid-template-columns:16px 30px minmax(0,1fr);align-items:center;gap:8px;flex:1;min-width:0;padding:5px 0;min-height:47px;cursor:pointer}
+.kitchen-item-main input{appearance:none;display:grid;place-content:center;width:15px;height:15px;box-sizing:border-box;margin:0;border:1px solid #aab994;border-radius:4px;background:transparent;cursor:pointer}
+.kitchen-item-main input:checked{background:#638d29;border-color:#638d29}
+.kitchen-item-main input:checked::after{content:'';width:6px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px)}
+.kitchen-item-main img{border-radius:5px;background:#fff;object-fit:contain}
+.kitchen-item-main strong,.kitchen-item-main small{display:block;overflow-wrap:anywhere;line-height:1.28}
+.kitchen-item-main strong{font-size:15px;font-weight:500;color:#212620;letter-spacing:-.1px}
+.kitchen-item-main small{font-size:12px;color:#5e6b54;margin-top:3px}
+.kitchen-item .button{min-height:42px;flex:none;padding:5px 7px}
+.kitchen-empty{padding:16px 0;font-size:14px;color:#616a5d}
+.kitchen-amount-actions{display:grid;gap:8px;margin-top:12px}
