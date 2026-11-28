@@ -11,7 +11,6 @@ const origin='http://127.0.0.1:'+server.address().port;server.on('request',creat
 const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
 const photo='phone-preview/dist/recipes/arab-adas-complete.webp';
 const button=(page,name)=>page.getByRole('button',{name,exact:true}),heading=(page,name)=>page.getByRole('heading',{name,exact:true});
-const cameraName='Camera: calorie tracker';
 const screenshot=async(page,stage)=>{if(process.env.SCAN_SCREENSHOTS)await page.screenshot({path:process.env.SCAN_SCREENSHOTS+'/'+stage+'.png',fullPage:false});};
 const fileChooser=async(page,name)=> (await Promise.all([page.waitForEvent('filechooser'),button(page,name).click()]))[0];
 const makeContext=async()=>{
@@ -21,7 +20,7 @@ const makeContext=async()=>{
 };
 try{
  const ctx=await makeContext(),page=await ctx.newPage();await page.goto(origin);
- await button(page,cameraName).click();await heading(page,'Food log').waitFor();
+ await button(page,'Preferences').click();await button(page,'Scan a meal').click();await heading(page,'Food log').waitFor();
  await page.getByText('Automatic photo estimates are off.',{exact:false}).waitFor();
  await button(page,'Scan a meal').click();
  const bad=await fileChooser(page,'Choose photo');

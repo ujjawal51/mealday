@@ -27,7 +27,7 @@ try{
  await page.getByRole('button',{name:'Instructions',exact:true}).click();await page.locator('.recipe-instructions').waitFor();
  assert.equal(await page.getByRole('button',{name:'Instructions',exact:true}).getAttribute('aria-pressed'),'true');
  await page.getByRole('button',{name:'Cook step-by-step',exact:true}).click();await page.locator('.guided-cook').waitFor();
- await page.getByRole('button',{name:'Next step',exact:true}).click();assert.match(await page.locator('.guided-cook .recipe-kicker').innerText(),/STEP 2 OF/);
+ await page.getByRole('button',{name:'Next step',exact:true}).click();assert.match(await page.locator('.guided-cook > .recipe-kicker').innerText(),/STEP 2 OF/);
  await page.getByRole('button',{name:'Ingredients',exact:true}).click();await page.locator('.recipe-ingredients').waitFor();
  assert.equal(await page.locator('#recipe-note').inputValue(),'Add lemon next time.');
  for(const width of [320,390,768]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);}

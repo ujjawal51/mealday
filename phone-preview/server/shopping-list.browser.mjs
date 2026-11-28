@@ -20,7 +20,7 @@ try{
  assert.equal(await page.locator('.ingredient-image').first().getAttribute('src'),'/ingredients/onion.png');
  assert.equal(await page.locator('.basket-buy-quantity').first().innerText(),'1,000 g');
  assert.equal(await page.locator('.basket-row .price').first().isVisible(),false);
- assert.equal(await page.locator('.nav').isVisible(),false);
+ assert.equal(await page.locator('.nav').isVisible(),true);
  assert.equal(await page.getByRole('button',{name:'Copy list',exact:true}).isVisible(),true);
  assert.equal(await page.getByRole('button',{name:'+ Add groceries',exact:true}).isVisible(),true);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

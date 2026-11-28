@@ -27,7 +27,7 @@ try{
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
  await context.addInitScript(value=>{if(!localStorage.getItem('mealday.android.v1'))localStorage.setItem('mealday.android.v1',JSON.stringify(value));},initial);
  const page=await context.newPage();await page.goto(origin);
- await page.getByRole('button',{name:'Meals',exact:true}).click();
+ await page.getByRole('button',{name:'Settings',exact:true}).click();await page.getByRole('button',{name:/^Recipe library/}).click();
  await page.getByRole('heading',{name:'Explore by cuisine',exact:true}).waitFor();
  for(const img of await page.locator(".cuisine-tile img").all()){await img.scrollIntoViewIfNeeded();await page.waitForFunction(el=>el.complete&&el.naturalWidth>0,await img.elementHandle(),{timeout:10000});}
  await page.evaluate(()=>window.scrollTo(0,0));
@@ -57,7 +57,7 @@ try{
  let saved=await stored();assert.equal(saved.result.plan[0].recipeId,'replacement');
  assert.equal(saved.result.items.find(x=>x.key==='chickpeas').required,160);
  await page.reload();assert.equal((await stored()).result.plan[0].recipeId,'replacement');
- await page.getByRole('button',{name:'Meals',exact:true}).click();
+ await page.getByRole('button',{name:'Settings',exact:true}).click();await page.getByRole('button',{name:/^Recipe library/}).click();
  await page.getByRole('heading',{name:'Recently viewed',exact:true}).waitFor();
  assert.match(await page.locator('.recent-recipe-rail').innerText(),/Chana cucumber rice bowl/);
  assert.doesNotMatch(await page.locator('.recent-recipe-rail').innerText(),/Paneer/);
@@ -74,6 +74,6 @@ try{
  await page.getByRole('heading',{name:'Rate Mealday',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Send feedback',exact:true}).count(),1);
  await page.getByRole('button',{name:'Close',exact:true}).click();
- for(const width of [320,768]){await page.setViewportSize({width,height:844});await page.getByRole('button',{name:'Meals',exact:true}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow at '+width);}
+ for(const width of [320,768]){await page.setViewportSize({width,height:844});await page.getByRole('button',{name:'Settings',exact:true}).click();await page.getByRole('button',{name:/^Recipe library/}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal overflow at '+width);}
  console.log('Recipe to plan: original cuisine tiles, milk restriction, explicit weekly quote confirmation, persisted replacement and updated grocery quantities at phone widths.');
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}
