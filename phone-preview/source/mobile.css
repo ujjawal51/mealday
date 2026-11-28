@@ -881,3 +881,92 @@ body[data-view=week] .meal-row>.plan-meal-swap svg{width:12px;height:12px}
 .pantry-used li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1px 8px;border-top:1px solid #e4e7da;padding:7px 0 0;font-size:12px}
 .pantry-used li small{grid-column:2;color:#46604c}
 .pantry-used li strong{overflow-wrap:anywhere}
+
+/* Mobile kitchen flow */
+body:is([data-view=week],[data-view=day],[data-view=shopping],[data-view=shop-share],[data-view=pantry]){background:#f7f8f2}
+body:is([data-view=day],[data-view=shop-share]) main{max-width:550px;padding:16px 15px 100px}
+.nav{background:#f9faf4;border-top:1px solid #dfe4d6}
+.nav button,.nav button.active{min-height:58px;font-size:clamp(9px,2.7vw,12px);color:#33422e}
+.nav button.active svg{background:#eaf2d9;color:#263925}
+.week-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 10px}
+.week-section-heading h2{margin:0;font-size:12px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
+.button.week-share{min-height:42px;padding:8px 12px;border:1px solid #ccdeca;border-radius:12px;background:#e7f2e3;color:#27523d;box-shadow:none;font-size:13px}
+body[data-view=week] .meal-list{gap:12px}
+body[data-view=week] .meal-row{grid-template-columns:1fr auto;gap:0 10px;padding:12px 11px;border-radius:17px;border-color:#dce4d4;box-shadow:0 1px 2px #23321e0d}
+body[data-view=week] .meal-row>.meal-day{grid-column:1/-1;position:static;transform:none;justify-self:start;margin:0 0 0 78px;padding:0 4px;min-height:30px;min-width:55px;border:0;border-radius:4px;background:transparent;color:#43533c;box-shadow:none;font-size:11px;font-weight:750;letter-spacing:.04em}
+body[data-view=week] .meal-row .meal-open{grid-column:1/-1;align-items:flex-start;gap:12px}
+body[data-view=week] .meal-row .meal-open img{width:66px;height:81px;margin-top:-25px;border-radius:12px}
+body[data-view=week] .meal-row .meal-name{font-size:16px;font-weight:650;margin:0 0 5px}
+body[data-view=week] .planned-meal-type{margin:0 0 5px;color:#576451;font-size:12px}
+body[data-view=week] .meal-row .meal-open .meta{font-size:12px;gap:0;color:#55604f;margin-top:6px}
+body[data-view=week] .meal-open .meal-components{font-size:11px;margin:0 0 4px}
+body[data-view=week] .meal-row>.plan-meal-swap{grid-column:2;justify-self:end;margin-top:5px;padding:5px 13px;min-height:40px;border:1px solid #9ec249;border-radius:999px;font-size:12px;color:#2d3926}
+.day-heading,.preferences-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.day-heading h1,.shop-share-hero h1{margin:7px 0;font-size:25px;line-height:1.15;letter-spacing:-.025em}
+.button.day-back{padding:0 8px;min-height:42px;border:0;background:transparent;box-shadow:none}
+.day-meal{margin:12px 0;padding:13px}
+.day-meal .meal-open{display:flex;align-items:center;gap:13px;text-align:left;padding:0}
+.day-meal .meal-open img{width:66px;height:70px;border-radius:10px;object-fit:cover}
+.day-meal .meal-open small{color:#57704c}
+.day-meal .meal-open strong{display:block;margin:3px 0;font-size:16px}
+.day-meal .meal-open .meta{justify-content:flex-start}
+.day-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin-top:9px}
+.preferences-heading .preference-camera{min-height:44px;padding:6px 10px;flex:none}
+.preferences-heading .preference-camera svg{width:21px;height:21px}
+
+dialog.swap-sheet{width:min(100% - 12px,550px);max-width:none;max-height:89dvh;margin:auto auto 0;border-radius:24px 24px 0 0}
+dialog.swap-sheet .dialog-head{padding:16px 18px 8px;border:0}
+dialog.swap-sheet .dialog-head h2{font-size:23px;letter-spacing:-.02em}
+dialog.swap-sheet .dialog-body{padding:0 18px max(16px,env(safe-area-inset-bottom))}
+.swap-filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 12px}
+.swap-filters label{display:grid;gap:4px;min-width:0;font-size:13px;font-weight:650}
+.swap-filters .control{width:100%;min-width:0;margin:0;padding-inline:8px;font-size:14px}
+.swap-track{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(180px,66%,270px);gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:0 1px 9px;overscroll-behavior-inline:contain}
+.swap-sheet .swap-option{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:0;padding:0;overflow:hidden;border:1px solid #dfe6d6;border-radius:15px;background:#fff;scroll-snap-align:start}
+.swap-sheet .swap-option[hidden]{display:none}
+.swap-option img{display:block;width:100%;height:118px;object-fit:cover;background:#eff2e8}
+.swap-option-copy{flex:1;padding:9px 11px 5px}
+.swap-option-copy h3{margin:0 0 5px;font-size:16px;line-height:1.25}
+.swap-option-copy p{margin:0 0 4px;color:#586350;font-size:13px}
+.swap-option-copy small{display:block}
+.swap-sheet .swap-option .button{align-self:center;width:calc(100% - 20px);min-height:42px;margin:5px 0 10px;border-radius:999px;background:#a8d643;color:#253821;box-shadow:none}
+.swap-empty{margin:7px 0}
+
+.shop-share-hero{margin:7px 0 12px;padding:22px 15px;border-radius:14px;background:#eaf2df;color:#223c2c}
+.shopping-together{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:13px}
+.shopping-together img{flex:none;object-fit:contain}
+.shopping-together h2,.retailer-card h2{margin:0 0 4px;font-size:18px}
+.shopping-together p,.retailer-card p{margin:0 0 9px;color:#576452}
+.retailer-card{padding:14px}
+.retailer-grid,.retailer-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.retailer-grid .button{min-height:45px}
+.retailer-grid [aria-pressed=true]{background:#eaf2da;border-color:#7fa43c;color:#273b1e}
+.retailer-actions a{min-height:44px;text-decoration:none}
+.retailer-card .quick-help{margin:0}
+body[data-view=shopping] .shopping-page .grocery-actions .button{font-size:13px;min-height:44px}
+body[data-view=shopping] .shopping-page .grocery-actions .button svg{width:16px;height:16px}
+
+.reference-welcome .welcome-mascot{display:grid;justify-items:center;align-items:end;gap:8px;padding:20px 0 0;background:radial-gradient(ellipse at 50% 80%,#36a451,#087738 75%);border-radius:0 0 40% 40% / 0 0 8% 8%;color:#fff}
+.reference-welcome .welcome-mascot span{font-size:38px;font-weight:800;letter-spacing:-.06em}
+.reference-welcome .welcome-mascot img{height:clamp(174px,37vh,320px);max-width:85%;width:auto;object-fit:contain;filter:drop-shadow(0 14px 16px #133b2b50)}
+.phone-welcome.reference-welcome h1{max-width:400px;margin:16px auto 9px;padding:0 15px;color:#164a32;text-transform:none;font-size:clamp(24px,6vw,33px);line-height:1.1}
+.reference-welcome .welcome-start{display:grid;gap:5px;margin:0 auto 14px;width:min(100% - 36px,370px)}
+.reference-welcome .welcome-start .button{min-height:44px;border-radius:999px}
+.reference-welcome .welcome-start .green,.wizard .wizard-footer>.button{background:#a8d643;color:#253821;box-shadow:none}
+.wizard .wizard-body h1,.wizard .wizard-hint,.wizard .wizard-footer .button{text-transform:none}
+.wizard .wizard-body[data-step=city] .wizard-choice,.wizard .wizard-body[data-step=diet] .wizard-choice,.wizard .wizard-body[data-step=priorities] .wizard-choice{min-height:47px}
+.wizard .wizard-choices.rows .wizard-choice.selected{border-color:#a8c95d;background:#f7faee}
+.guided-cook .guided-progress{width:100%;height:6px;accent-color:#94bc39}
+.guided-cook .guided-number{display:block;margin:9px 0 2px;font-size:26px;font-weight:760;color:#2e3f27}
+.guided-cook .guided-title{margin:0;font-size:20px}
+.guided-cook .guided-timer{margin:12px 0 0;padding:12px 0;border-block:1px solid #e4e9df}
+.guided-cook .timer-strip{justify-content:center}
+@media(max-width:350px){
+ .swap-filters{grid-template-columns:1fr}
+ .day-heading h1{font-size:21px}
+ .day-heading .week-share{padding-inline:8px}
+ body[data-view=week] .meal-row>.meal-day{margin-left:70px}
+ body[data-view=week] .meal-row .meal-open img{width:58px;height:74px}
+}
+
+.grocery-handoff{margin:8px 0 12px;min-height:44px;background:#e7f2e3;color:#27523d}

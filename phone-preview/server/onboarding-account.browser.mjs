@@ -71,7 +71,8 @@ try{
  assert.equal(result.profile.name,'New Chef');assert.equal(result.profile.people,1);assert.equal(result.recipeJournal.rice.note,'Keep this cloud note');
  assert.equal(await first.page.evaluate(()=>localStorage.getItem('mealday.pending-setup.v1')),null);
  // Exercise nutrition through the actual phone recipe library, including non-USDA sources.
- await first.page.locator('.nav [data-view="recipes"]').click();
+ await first.page.getByRole('button',{name:'Settings',exact:true}).click();
+ await first.page.getByRole('button',{name:/^Recipe library/}).click();
  await first.page.getByRole('searchbox',{name:'Search recipes'}).fill('Regag with cheese');
  await first.page.locator('[data-action="recipe"][data-id="draft-regag-cheese"]').click();
  await first.page.locator('.nutrition-status.complete').waitFor();

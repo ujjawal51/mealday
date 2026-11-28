@@ -23,7 +23,8 @@ try{const context=await browser.newContext({viewport:{width:390,height:844},redu
  await page.getByRole('button',{name:'Back from recipe',exact:true}).click();
  const savedImage=page.locator('[data-action=recipe][data-id="mealday-quick-paneer-bhurji"] img');
  assert.equal(await savedImage.getAttribute('src'),'/recipes/mealday-quick-paneer-bhurji.webp');
- await page.locator('.nav [data-view=recipes]').click();
+ await page.getByRole('button',{name:'Settings',exact:true}).click();
+ await page.getByRole('button',{name:/^Recipe library/}).click();
  for(const a of manifest.images){const doc=docs.find(d=>d.id===a.id);await page.getByRole('searchbox',{name:'Search recipes'}).fill(doc.data.name);await page.locator('[data-action=recipe][data-id="'+a.id+'"]').click();await page.waitForSelector('.recipe-page');assert.equal(await page.locator('.recipe-cover>img').getAttribute('src'),a.path);await page.waitForFunction(()=>document.querySelector('.recipe-cover>img')?.naturalWidth>0);assert.equal(await page.locator('.recipe-photo-caption').innerText(),'AI meal illustration');await page.getByRole('button',{name:'Back from recipe',exact:true}).click();}
  console.log('Image browser passed: '+manifest.images.length+' replacement images load with illustration captions; saved plans show the corrected Bissara title and replacement images.');await context.close();
 }finally{await browser.close();server.closeAllConnections();await new Promise(r=>server.close(r));}

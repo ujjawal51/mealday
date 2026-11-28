@@ -42,11 +42,13 @@ try{
  assert.match(await similar.innerText(),/No change in estimated grocery spend/);
  const light=page.locator('dialog .swap-option').filter({hasText:'Lighter paneer rice'});
  assert.match(await light.innerText(),/Save AED 9\.00/);
- await light.getByRole('button',{name:'Choose',exact:true}).click();
+ await page.getByRole('searchbox',{name:'Search meals'}).fill('lighter');
+ assert.equal(await similar.isVisible(),false);
+ await light.getByRole('button',{name:/^Choose Lighter paneer rice/}).click();
  const report=page.getByRole('dialog');
  await report.getByText('Swap updated',{exact:true}).waitFor();
  assert.match(await report.innerText(),/Paneer · 2 → 1 planned packs/);
- assert.match(await report.innerText(),/Whole-basket estimate, not a checkout saving/);
+ assert.match(await report.innerText(),/Estimated change for the whole grocery list/);
  await report.getByRole('button',{name:'View updated grocery list',exact:true}).click();
  await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();
  assert.match(await paneerRow.locator('.basket-needed').innerText(),/130 g needed/);

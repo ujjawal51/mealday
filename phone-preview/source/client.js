@@ -13,7 +13,6 @@ import {createCloudBackup} from './cloud-backup.js';
 import {createCookingTimer,timerText} from './cooking-timer.js';
 import {COOKING_HISTORY_KEY,emptyHistory,loadHistory,hasCooked,recordCook,undoCookedMark,historyEntries} from './cooking-history.js';
 import {filterSavedRecipes} from './recipe-filters.js';
-import {calculateNutrition,nutritionSource} from './nutrition.js';
 import {personalizedApi as api} from './lazy-api.js';
 const $ = (selector, root = document) => root.querySelector(selector);
 const screen = $('#screen');
@@ -56,7 +55,7 @@ const ICONS = {
   gear:'<path d="M10 3h4l.6 2.5 1.6.9 2.5-.7 2 3.4-1.9 1.8v2.2l1.9 1.8-2 3.4-2.5-.7-1.6.9L14 21h-4l-.6-2.5-1.6-.9-2.5.7-2-3.4 1.9-1.8v-2.2L3.3 9.1l2-3.4 2.5.7 1.6-.9L10 3Z"/><circle cx="12" cy="12" r="3"/>',
 };
 Object.assign(ICONS,{cloud:'<path d="M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 4.5 4.5 0 1 1 0 9Z"/>',download:'<path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/>',bell:'<path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5Zm5 3h4"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18m0-18c5 5 5 13 0 18"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4m-6 8 6 4"/>',shield:'<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/>'});
-const labels = {week:'Plan',recipes:'Meals',shopping:'Shopping',pantry:'Kitchen',plan:'Preferences',calories:'Camera',settings:'Settings',history:'Cooking history'};
+const labels = {week:'My week',recipes:'Meals',shopping:'Shopping',pantry:'Kitchen',plan:'Preferences',calories:'Camera',settings:'Settings',history:'Cooking history',day:'Day plan','shop-share':'Shop or share'};
 function icon(name){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
 const esc = value => String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const money = amount => new Intl.NumberFormat('en-AE',{minimumFractionDigits:0,maximumFractionDigits:2}).format(amount);
@@ -138,15 +137,15 @@ function meta(meal){return '<div class="meta"><span>'+icon('time')+esc(meal.minu
 function initNavigation(){
   for(const b of document.querySelectorAll('.nav button')) {
     const name=b.dataset.view;
-    b.innerHTML=icon(name==='calories'?'camera':name==='plan'?'settings':name==='settings'?'gear':name==='recipes'?'plate':name)+'<span>'+labels[name]+'</span>';
+    b.innerHTML=icon(name==='calories'?'camera':name==='plan'?'plate':name==='settings'?'gear':name==='recipes'?'plate':name)+'<span>'+labels[name]+'</span>';
   }
 }
 function render(){
   onboardingMotion.cancel();
   document.body.dataset.view=view;
-  $('.nav').hidden=['welcome','quick-start','setup','recipe','account','shopping','add-grocery'].includes(view);
+  $('.nav').hidden=['welcome','quick-start','setup','recipe','account','add-grocery'].includes(view);
   for(const b of document.querySelectorAll('.nav button')){
-    const active=b.dataset.view===view||(b.dataset.view==='plan'&&view==='pantry')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
+    const active=b.dataset.view===view||(b.dataset.view==='week'&&view==='day')||(b.dataset.view==='shopping'&&view==='shop-share')||(b.dataset.view==='plan'&&view==='calories')||(b.dataset.view==='settings'&&view==='history');b.classList.toggle('active',active);
     if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   }
   screen.setAttribute('aria-busy',String(busy&&view!=='setup'));
@@ -157,6 +156,8 @@ function render(){
     else renderWizard();
   }
   if(view==='week')screen.innerHTML=week();
+  if(view==='day')screen.innerHTML=dayPlan();
+  if(view==='shop-share')screen.innerHTML=shopOrShare();
   if(view==='recipes')renderRecipes();
   if(view==='shopping'){screen.innerHTML=shopping();refreshStorePrices();}
   if(view==='add-grocery')screen.innerHTML=addGrocery();
@@ -181,7 +182,7 @@ function week(){
     const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
     const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
-    return '<article class="meal-row"><span class="meal-day">'+DAYS[m.day]+(p.mealTypes.length>1?' · '+esc(cap(m.meal)):'')+'</span><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3>'+mealComponents(m)+'<span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button>'+button('Swap','swaps','ghost plan-meal-swap','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[m.day]+' '+m.meal)+'" '+(busy?'disabled':''))+'</article>';
+    return '<article class="meal-row">'+button(DAYS[m.day],'open-day','meal-day','','data-id="'+m.day+'" aria-label="View '+DAYS[m.day]+' meal plan"')+'<button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3><p class="planned-meal-type">'+esc(cap(m.meal))+'</p>'+mealComponents(m)+'<span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button>'+button('Swap','swaps','ghost plan-meal-swap','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[m.day]+' '+m.meal)+'" '+(busy?'disabled':''))+'</article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
   const extras=state.extraGroceries||[],total=items.length+extras.length;
@@ -190,8 +191,15 @@ function week(){
     '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Grocery estimate</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress><small class="estimate-disclaimer">Catalogue estimate · delivery not included</small></div>'+
     '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
-    pantryUsedSummary(result)+' '+recommendationSummary(result)+'<div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
+    pantryUsedSummary(result)+recommendationSummary(result)+'<div class="week-section-heading"><h2>Your meals</h2>'+button('Share plan','share-plan','week-share','share',!rows?'disabled':'')+'</div><div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
     nextWeekShortcut()+'<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
+}
+function dayPlan(){
+ const meals=(state.result?.meals||[]).map((meal,index)=>({meal,index})).filter(({meal})=>meal.day===day);
+ return '<div class="day-plan">'+button('My week','go-week','ghost day-back','back')+
+  '<header class="day-heading"><h1 tabindex="-1">'+esc(DAYS[day])+' · Meal plan</h1>'+button('Share plan','share-plan','week-share','share',!meals.length?'disabled':'')+'</header>'+
+  (meals.length?meals.map(({meal,index})=>'<article class="day-meal surface-card"><button class="meal-open" type="button" data-action="recipe" data-id="'+esc(meal.id)+'"><img src="'+photo(meal)+'" alt=""><span><small>'+esc(cap(meal.meal))+'</small><strong>'+esc(recipeLabel(meal.id,meal.name))+'</strong><span class="meta">'+icon('time')+esc(meal.minutes)+' min · '+state.profile.people+' servings</span></span></button>'+mealComponents(meal)+'<div class="day-actions">'+button('View recipe','recipe','ghost small','','data-id="'+esc(meal.id)+'"')+button('Swap '+cap(meal.meal),'swaps','ghost small','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[day]+' '+meal.meal)+'"')+'</div></article>').join(''):'<p class="empty">No meals are planned for this day.</p>')+
+  button('Grocery list','go-shopping','green wide','shopping')+'</div>';
 }
 function pantryUsedSummary(result){
  const rows=(result?.items||[]).filter(i=>i.have>0&&i.required>0);
@@ -230,7 +238,7 @@ function reviewLeftovers(){
 }
 function showSwapImpact(impact){
   const changed=impact.rows.map(row=>'<li><strong>'+esc(row.name)+'</strong> · '+row.fromPacks+' → '+row.toPacks+' planned packs<br><small>Expected remaining: '+quantity(row.beforeLeft)+' → '+quantity(row.afterLeft)+' '+esc(row.unit)+'</small></li>').join('');
-  openDialog('Swap updated','Whole-basket estimate, not a checkout saving.',
+  openDialog('Swap updated','Estimated change for the whole grocery list.',
    '<div class="carryover-card"><strong>'+esc(swapCostText(impact.savedCents))+'</strong><p>Estimated weekly groceries: AED '+priceMoney(impact.beforeCents/100)+' → AED '+priceMoney(impact.afterCents/100)+'. This does not include delivery or groceries you already paid for.</p>'+
    (changed?'<h3>Pack and leftover changes</h3><ul class="swap-impact-list">'+changed+'</ul>':'')+
    '<p>At the end of the week, use Review leftovers to confirm what you still have.</p></div>'+button('View updated grocery list','placement-groceries','green wide','shopping'));
@@ -275,6 +283,7 @@ function chips(name,values,selected){
 function openDialog(title,description,body){
   if(!dialog.open)dialog.showModal();
   dialog.classList.toggle('rating-dialog',false);
+  dialog.classList.toggle('swap-sheet',false);
   dialog.innerHTML='<div class="dialog-head"><div><h2 id="dialog-title">'+esc(title)+'</h2>'+(description?'<p>'+esc(description)+'</p>':'')+'</div>'+button('','close','ghost icon-only','close','aria-label="Close"')+'</div><div class="dialog-body">'+body+'</div>';
   dialog.setAttribute('aria-labelledby','dialog-title');
 }
@@ -425,9 +434,29 @@ function shopping(){
  }).join('');
  const extraRows=extraGroceryList();shown+=extras.filter(i=>shoppingVisible(i.checked)).length;
  const tabs=[['all','All'],['todo','To buy'],['bought','Bought']].map(([id,label])=>button(label,'shopping-filter','shopping-tab'+(shoppingFilter===id?' selected':''),'','data-id="'+id+'" aria-pressed="'+(shoppingFilter===id)+'"')).join('');
- return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+pantryUsedSummary(state.result)+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
+ return '<div class="shopping-page clean-grocery-list '+(shoppingPricesOpen?'show-prices':'')+'"><header class="grocery-header">'+button('←','go-week','grocery-back','','aria-label="Back to my week"')+'<p>This week</p><h1>Grocery list</h1><div class="grocery-store-pill"><span class="grocery-store-name">'+esc(state.profile.shop)+'</span><span class="grocery-done">'+bought+'/'+total+' done</span></div><span class="shopping-progress-label" aria-live="polite">'+bought+' / '+total+' items bought</span><progress class="shopping-progress" value="'+bought+'" max="'+Math.max(1,total)+'" aria-label="Shopping progress"></progress></header><div class="grocery-actions">'+button('Copy list','copy','grocery-copy')+button('Share','shopping-share','grocery-share')+'</div>'+button('Shop or share','shop-share','ghost wide grocery-handoff','share')+pantryUsedSummary(state.result)+button('+ Add groceries','grocery-add','green wide grocery-add')+'<section class="shopping-list-card"><div class="shopping-groups">'+rows+extraRows+(!shown?'<div class="shopping-empty">'+(shoppingFilter==='bought'?'No items bought yet.':shoppingFilter==='todo'?'Everything is bought. You’re ready to cook!':state.result?'You have enough ingredients for your plan.':'Plan your meals to build a shopping list.')+'</div>':'')+'</div></section><section class="grocery-list-tools"><h2>List tools</h2><div class="shopping-toolbar"><div class="shopping-tabs" role="group" aria-label="Filter shopping list">'+tabs+'</div>'+button('Reset','shopping-reset','shopping-reset','','aria-label="Reset bought items" '+(!bought?'disabled':''))+'</div>'+button(shoppingPricesOpen?'Hide price details':'Prices & product options','shopping-prices','ghost wide','','aria-expanded="'+shoppingPricesOpen+'"')+'</section>'+
  (state.result?'<section class="shopping-price-area" aria-label="Grocery pricing"><div class="surface-card shopping-head"><div><p class="section-caption">Estimated grocery total</p><strong>AED '+priceMoney(state.result.total)+'</strong><p class="subtle">'+esc(state.profile.shop)+' · '+esc(state.profile.city||'Dubai')+'<br>Delivery and checkout fees not included</p></div>'+button('Change store','go-plan','ghost small')+'</div>'+storePricePanel()+button('Compare with my checkout','compare-checkout','ghost wide')+'<details class="surface-card price-explanation"><summary>Estimate &amp; pack details</summary><p>Catalogue estimates use assumed pack prices. Selected retailer products are shown separately with source and retrieval time. Delivery fees and checkout availability are not confirmed.</p></details></section>':'')+nextWeekShortcut()+'<div class="setting-list pantry-shortcut">'+settingRow('Already have something?','go-pantry','Update your pantry to adjust the grocery list')+'</div></div>';
 
+}
+const retailers=new Map([
+ ['LuLu','https://gcc.luluhypermarket.com/en-ae/grocery/'],
+ ['Carrefour','https://www.carrefouruae.com/mafuae/en/'],
+ ['talabat mart','https://www.talabat.com/uae/talabat-mart'],
+ ['InstaShop','https://instashop.com/en-ae/vertical/grocery'],
+ ['noon Minutes','https://minutes.noon.com/uae-en/categories/'],
+ ['Careem Quik','https://www.careem.com/en-AE/groceries/'],
+]);
+let shoppingRetailer=null;
+function shopOrShare(){
+ const retailer=shoppingRetailer||(retailers.has(state.profile.shop)?state.profile.shop:retailers.keys().next().value);
+ const count=shoppingItems().filter(item=>!state.checked.includes(item.key)).length+(state.extraGroceries||[]).filter(item=>!item.checked).length;
+ return '<section class="shop-share-page">'+button('Grocery list','go-shopping','ghost day-back','back')+
+  '<header class="shop-share-hero"><h1>Shop or share</h1></header>'+
+  '<article class="surface-card shopping-together"><img src="/chef.png" alt="" width="60" height="73"><div><h2>Shopping together?</h2><p>Share your grocery list with someone.</p>'+button('Share grocery list','shopping-share','ghost small','share')+'</div></article>'+
+  '<section class="surface-card retailer-card"><h2>Choose a store</h2><p>'+count+' '+(count===1?'item':'items')+' left to buy · '+esc(state.profile.city)+'</p>'+
+  '<div class="retailer-grid" role="group" aria-label="Grocery stores">'+[...retailers.keys()].map(name=>button(esc(name),'retailer','ghost','','data-id="'+esc(name)+'" aria-pressed="'+(name===retailer)+'"')).join('')+'</div>'+
+  '<div class="retailer-actions">'+button('Copy list','copy','ghost','copy')+'<a class="button green" href="'+retailers.get(retailer)+'" target="_blank" rel="noopener noreferrer">Open '+esc(retailer)+'</a></div>'+
+  '<p class="quick-help">Use your list to add items in the store. Check current prices and delivery with the retailer.</p></section></section>';
 }
 function openCheckoutComparison(){
   openDialog('Compare with my checkout','Manual comparison · nothing is saved or sent.',
@@ -497,15 +526,16 @@ async function showRecipe(id){
 function ingredientIcon(item){return '<img class="ingredient-image" src="'+ingredientPicture(item.name)+'" alt="" width="24" height="24" loading="lazy">';}
 function mealComponents(r){return r.mealComplete&&r.componentNames?.length>1?'<p class="meal-components">Includes: '+r.componentNames.slice(1).map(esc).join(' · ')+'</p>':'';}
 function renderNutrition(r){
-  const result=r.nutrition||calculateNutrition(r.items);
+  const result=r.nutrition;
+  if(!result)return '';
   const metrics=[['kcal','kcal','Calories'],['protein','g','Protein'],['carbs','g','Carbs'],['fat','g','Fats']];
   const values=metrics.map(([key,unit,label])=>'<div class="macro-value macro-'+key+'"><strong>'+ (result.complete?Math.round(result.totals[key])+ (unit==='g'?'<span>g</span>':''):'—')+'</strong><small>'+esc(label)+(unit==='kcal'?' · kcal':'')+'</small></div>').join('');
   const matched=result.references.length,total=r.items.length;
-  const rows=result.references.map(ref=>'<li><a href="'+esc(ref.url)+'" target="_blank" rel="noopener noreferrer">'+esc(ref.name)+'</a><span>'+(ref.grams===null?quantity(ref.amount)+' '+esc(ref.unit):quantity(ref.grams)+' g')+' per serving · '+Math.round(ref.nutrients.kcal)+' kcal</span><small>'+esc(ref.description)+(ref.note?' · '+esc(ref.note):'')+'</small><small>'+esc(ref.source?.name||'Ingredient reference')+' · checked '+esc(ref.source?.retrieved||nutritionSource.retrieved)+'</small></li>').join('');
+  const rows=result.references.map(ref=>'<li><a href="'+esc(ref.url)+'" target="_blank" rel="noopener noreferrer">'+esc(ref.name)+'</a><span>'+(ref.grams===null?quantity(ref.amount)+' '+esc(ref.unit):quantity(ref.grams)+' g')+' per serving · '+Math.round(ref.nutrients.kcal)+' kcal</span><small>'+esc(ref.description)+(ref.note?' · '+esc(ref.note):'')+'</small><small>'+esc(ref.source?.name||'Ingredient reference')+' · checked '+esc(ref.source?.retrieved||'Date unavailable')+'</small></li>').join('');
   const missing=result.missing.map(item=>'<li><strong>'+esc(item.name)+'</strong><small>'+esc(item.reason)+'</small></li>').join('');
   return '<section class="recipe-panel recipe-nutrition" aria-labelledby="macro-heading"><h2 id="macro-heading" class="recipe-kicker">Macros · per serving</h2><div class="macro-grid">'+values+'</div><p class="nutrition-status '+(result.complete?'complete':'pending')+'">'+(result.complete?'Calculated estimate · sourced ingredient references':'Complete totals unavailable · '+matched+' of '+total+' ingredients matched')+'</p>'+
     (!result.complete?'<p class="nutrition-explanation">Missing nutrition data for '+esc(result.missing.map(x=>x.name).join(', '))+'. Complete macros need verified data for these ingredients.</p>':'')+
-    '<details class="nutrition-sources"><summary>Nutrition sources &amp; calculation</summary><p>Per serving, regardless of your household size. Values use the listed ingredient amounts and disclosed edible yields; all listed oil and whole dried lime are counted. Named brands, reference spice blends and bread portions are estimates and can differ from your ingredients. Cooking losses and retained nutrients are not modelled.</p><p>'+esc(nutritionSource.name)+' · checked '+esc(nutritionSource.retrieved)+'. Individual source links are listed below.</p><p>Calculation: ingredient quantity × its source conversion × reference nutrients, summed before rounding. Carbs include fibre when the source reports it; otherwise the source carbohydrate value is retained. Gram, ml and named-serving references keep their original units. These are calculated estimates, not laboratory-tested dishes.</p>'+(missing?'<h3>References still needed</h3><ul>'+missing+'</ul>':'')+'<h3>Matched ingredients</h3><ul>'+rows+'</ul></details></section>';
+    '<details class="nutrition-sources"><summary>Nutrition sources &amp; calculation</summary><p>Per serving, regardless of your household size. Values use the listed ingredient amounts and disclosed edible yields; all listed oil and whole dried lime are counted. Named brands, reference spice blends and bread portions are estimates and can differ from your ingredients. Cooking losses and retained nutrients are not modelled.</p><p>Calculation: ingredient quantity × its source conversion × reference nutrients, summed before rounding. Carbs include fibre when the source reports it; otherwise the source carbohydrate value is retained. Gram, ml and named-serving references keep their original units. These are calculated estimates, not laboratory-tested dishes.</p>'+(missing?'<h3>References still needed</h3><ul>'+missing+'</ul>':'')+'<h3>Matched ingredients</h3><ul>'+rows+'</ul></details></section>';
 }
 function renderRecipeDetail(r){
   const people=state.profile.people;
@@ -517,7 +547,7 @@ function renderRecipeDetail(r){
   const ingredientRows='<ul class="recipe-ingredients">'+r.items.map(item=>'<li><span aria-hidden="true">'+ingredientIcon(item)+'</span><strong>'+esc(item.name)+'</strong><small>'+quantity(item.amount*people)+' '+esc(item.unit)+'</small></li>').join('')+'</ul>';
   const instructions='<div class="recipe-instructions">'+(guidedStep===null?
     button('Cook step-by-step','guide-start','guide-start ghost','right')+'<ol>'+r.steps.map(step=>'<li>'+esc(step)+'</li>').join('')+'</ol>':
-    '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><p>'+esc(r.steps[guidedStep])+'</p><div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
+    '<section class="guided-cook recipe-panel"><span class="recipe-kicker">Step '+(guidedStep+1)+' of '+r.steps.length+'</span><progress class="guided-progress" max="'+r.steps.length+'" value="'+(guidedStep+1)+'" aria-label="Cooking progress"></progress><span class="guided-number" aria-hidden="true">'+String(guidedStep+1).padStart(2,'0')+'</span><h2 class="guided-title">'+(guidedStep===0?'Let’s get ready.':'Keep cooking')+'</h2><p>'+esc(r.steps[guidedStep])+'</p><details><summary>Ingredients for this meal · '+people+' '+(people===1?'serving':'servings')+'</summary>'+ingredientRows+'</details>'+renderCookingTimer()+'<div class="guided-actions">'+button('Previous','guide-prev','ghost','',''+(guidedStep===0?'disabled':''))+button(guidedStep===r.steps.length-1?'Finish':'Next step','guide-next','green')+'</div></section>')+'</div>';
 
   screen.innerHTML=catalogueNotice()+'<article class="recipe-page"><div class="recipe-cover"><img src="'+photo(r)+'" alt=""><span class="recipe-photo-caption">'+(r.photoStatus==='generated'?'AI meal illustration':'Meal illustration')+'</span>'+button('','recipe-back','cover-back','back','aria-label="Back from recipe"')+
     button('','favorite','cover-save'+(isSaved?' is-saved':''),'heart','aria-label="'+(isSaved?'Remove saved recipe':'Save recipe')+'" aria-pressed="'+isSaved+'"' )+'</div><h1 tabindex="-1">'+esc(recipeLabel(r.id,r.componentNames?.[0]||r.name))+'</h1>'+mealComponents(r)+
@@ -525,7 +555,7 @@ function renderRecipeDetail(r){
     renderNutrition(r)+
     '<section class="recipe-panel recipe-actions"><h2 class="recipe-kicker">Recipe notes</h2><p>Cook time: '+esc(r.minutes)+' min <span aria-hidden="true">&nbsp; | &nbsp;</span> Serves: '+people+'</p><div>'+button(cooked?'Cooked':'Mark as cooked','cooked','cook-check'+(cooked?' marked':''),'check','aria-pressed="'+cooked+'" aria-label="'+(cooked?'Undo cooked mark':'Mark as cooked')+'"')+'<div class="recipe-rating" role="group" aria-label="Rate this recipe">'+stars+'</div></div>'+(cooked?'<div class="cooking-record-summary"><p>Last cooked: '+esc(cookingDate(lastCook?.cookedAt))+'</p>'+button('Log another cook','log-cook','ghost small','plus')+'</div>':'')+'</section>'+
     '<div class="recipe-tabs" role="group" aria-label="Recipe sections">'+['ingredients','instructions'].map(tab=>button(cap(tab),'recipe-tab','recipe-tab','','data-id="'+tab+'" aria-pressed="'+(detailTab===tab)+'"')).join('')+'</div>'+
-    (detailTab==='ingredients'?ingredientRows:instructions)+'<details class="recipe-panel recipe-quality"><summary>Kitchen test pending · cooking notes</summary><p>Quantities, cooking time and taste have not been validated by Mealday in a kitchen. The '+esc(r.minutes)+' min total is an estimate; allow extra time on your first cook.</p><p>Ingredient amounts are scaled to '+people+' '+(people===1?'serving':'servings')+'. Check ingredient labels for raw, cooked or drained quantities. Your ratings and cooking history are personal feedback.</p></details>'+renderCookingTimer()+'<label class="personal-notes"><span>Your notes</span><textarea id="recipe-note" maxlength="2000" placeholder="Add a note to this recipe…">'+esc(entry.note||'')+'</textarea></label>'+
+    (detailTab==='ingredients'?ingredientRows:instructions)+'<details class="recipe-panel recipe-quality"><summary>Kitchen test pending · cooking notes</summary><p>Quantities, cooking time and taste have not been validated by Mealday in a kitchen. The '+esc(r.minutes)+' min total is an estimate; allow extra time on your first cook.</p><p>Ingredient amounts are scaled to '+people+' '+(people===1?'serving':'servings')+'. Check ingredient labels for raw, cooked or drained quantities. Your ratings and cooking history are personal feedback.</p></details>'+(guidedStep===null?renderCookingTimer():'')+'<label class="personal-notes"><span>Your notes</span><textarea id="recipe-note" maxlength="2000" placeholder="Add a note to this recipe…">'+esc(entry.note||'')+'</textarea></label>'+
     (index>=0?button('Swap this meal','swaps','recipe-swap ghost','swap','data-index="'+index+'"'):'')+
     (r.source?'<p class="recipe-source"><a href="'+esc(r.source)+'" target="_blank" rel="noopener noreferrer">'+esc(r.sourceName||'Recipe source')+'</a>'+(r.licence?' · '+esc(r.licence):'')+'</p>':'')+'</article>';
 }
@@ -544,18 +574,40 @@ function moveGuide(step){
   renderRecipeDetail(detail);
   screen.querySelector('.recipe-tabs')?.scrollIntoView({block:'start'});
 }
+let swapRequest=0;
 async function swaps(index){
-  if(busy||!Number.isInteger(index)||!state.result?.plan[index])return;
-  const source=state.result;
+  const source=state.result, slot=source?.plan?.[index];
+  if(busy||!Number.isInteger(index)||!slot)return;
+  const title='Choose your meal', description=DAYS[slot.day]+' · '+cap(slot.meal);
   swapIndex=index;
-  openDialog('Swap this meal','Options fit your cooking preferences and grocery budget.','<p>Finding suitable meals…</p>');
+  const attempt=++swapRequest;
+  const show=body=>{
+    openDialog(title,description,body);
+    dialog.classList.toggle('swap-sheet',true);
+  };
+  show('<p role="status">Finding meals that fit your preferences and budget…</p>');
   try{
-    const data=await request('/api/swaps',{profile:state.profile,pantry:state.pantry,plan:state.result.plan,index});
-    if(!dialog.open||swapIndex!==index||state.result!==source)return;
-    openDialog('Swap this meal','Options fit your cooking preferences and grocery budget.',
-      data.choices.length?data.choices.map(r=>'<article class="swap-option"><div><strong>'+esc(recipeLabel(r.id,r.name))+'</strong><p>'+esc(r.minutes)+' min · AED '+money(r.total)+' estimated week</p><small>'+esc(swapCostText(-Math.round(r.change*100)))+'</small>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose','apply-swap','primary small','check','data-id="'+esc(r.id)+'"')+'</article>').join(''):'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
-  }catch(err){if(dialog.open&&swapIndex===index&&state.result===source)openDialog('Swap this meal','','<p class="notice">'+esc(err.message)+'</p>');}
+    const data=await request('/api/swaps',{profile:state.profile,pantry:state.pantry,plan:source.plan,index});
+    if(attempt!==swapRequest||!dialog.open||!dialog.classList.contains('swap-sheet')||swapIndex!==index||state.result!==source)return;
+    const choices=[...data.choices].sort((a,b)=>a.total-b.total);
+    show(choices.length?'<div class="swap-filters"><label>Search meals<input class="control" type="search" id="swap-search" placeholder="Search available meals"></label><label>Sort meals<select class="control" id="swap-sort"><option value="grocery">Lowest grocery cost</option><option value="time">Shortest cooking time</option></select></label></div><div class="swap-track" aria-label="Available meals">'+choices.map(r=>{
+      const name=recipeLabel(r.id,r.name);
+      return '<article class="swap-option" data-total="'+r.total+'" data-minutes="'+r.minutes+'" data-name="'+esc(name.toLowerCase())+'"><img src="'+photo(r)+'" alt="" loading="lazy"><div class="swap-option-copy"><h3>'+esc(name)+'</h3><p>'+esc(r.minutes)+' min · '+state.profile.people+' servings</p><p>AED '+money(r.total)+' estimated week</p><small>'+esc(swapCostText(-Math.round(r.change*100)))+'</small>'+(r.recommendationReason?'<small>'+esc(r.recommendationReason)+'</small>':'')+'</div>'+button('Choose this meal','apply-swap','green wide','','data-id="'+esc(r.id)+'" aria-label="Choose '+esc(name)+'"')+'</article>';
+    }).join('')+'</div><p class="swap-empty" role="status" hidden>No matching meals.</p>':'<p class="empty">No other meal fits these settings. Try a longer cooking time or a higher budget.</p>');
+  }catch(err){if(attempt===swapRequest&&dialog.open&&dialog.classList.contains('swap-sheet')&&swapIndex===index&&state.result===source)show('<p role="alert" class="notice">'+esc(err.message)+'</p>');}
 }
+function filterSwaps(){
+  const track=dialog.querySelector('.swap-track');
+  if(!track)return;
+  const search=$('#swap-search',dialog).value.trim().toLowerCase();
+  const sort=$('#swap-sort',dialog).value==='time'?'minutes':'total';
+  const cards=[...track.children].sort((a,b)=>Number(a.dataset[sort])-Number(b.dataset[sort]));
+  for(const card of cards){card.hidden=!card.dataset.name.includes(search);track.append(card);}
+  track.scrollLeft=0;
+  $('.swap-empty',dialog).hidden=cards.some(card=>!card.hidden);
+}
+dialog.addEventListener('input',event=>{if(event.target.id==='swap-search')filterSwaps();});
+dialog.addEventListener('change',event=>{if(event.target.id==='swap-sort')filterSwaps();});
 function saveSwapResult(result){
  const impact=result.swapImpact;
  const removed=new Map((state.carryoverCandidates||[]).map(row=>[row.key,row]));
@@ -613,7 +665,8 @@ async function applySwap(id,buttonNode){
     const result=await request('/api/swap',{profile:state.profile,pantry:state.pantry,plan:state.result.plan,index,recipeId:id});
     if(state.result!==previous)throw Error('Your plan changed. Open the swap again.');
     const impact=result.swapImpact;
-    saveSwapResult(result);dialog.close();if(view==='recipe')leaveRecipe();if(impact)showSwapImpact(impact);else notify('Meal swapped. Grocery list updated.');
+    saveSwapResult(result);dialog.close();detail=null;day=previous.plan[index].day;setView('day');
+    if(impact)showSwapImpact(impact);else notify('Meal swapped. Grocery list updated.');
   }catch(err){buttonNode.disabled=false;notify(err.message);}
   finally{busy=false;render();}
 }
@@ -629,7 +682,7 @@ function setView(target,hash=true){
 function renderCookingTimer(){
   const timer=cookingTimer.snapshot();
   if(guidedStep===null&&!timer.started)return '';
-  return '<section class="recipe-panel cooking-timer" aria-label="Cooking timer"><h2 class="recipe-kicker">Cooking timer</h2>'+
+  return '<section class="'+(guidedStep===null?'recipe-panel ':'guided-timer ')+'cooking-timer" aria-label="Cooking timer"><h2 class="recipe-kicker">Cooking timer</h2>'+
     (timer.started?'<p>'+esc(timer.label)+'</p>':'')+
     '<div class="timer-strip">'+button('<span>'+(timer.active?'Timer running':'5-minute timer')+'</span>','timer','ghost small','time',timer.active?'disabled':'')+
     '<output id="timer" role="timer" aria-label="Time remaining">'+timerText(timer)+'</output>'+
@@ -656,6 +709,8 @@ document.addEventListener('click',async event=>{
   else if(action==='shopping-prices'){shoppingPricesOpen=!shoppingPricesOpen;screen.innerHTML=shopping();}
   else if(action==='compare-checkout'&&view==='shopping'&&state.result){openCheckoutComparison();}
   else if(action==='shopping-share'){await shareGroceries();}
+  else if(action==='shop-share')setView('shop-share');
+  else if(action==='retailer'&&view==='shop-share'&&retailers.has(id)){shoppingRetailer=id;render();screen.querySelector('[data-action=retailer][aria-pressed=true]')?.focus({preventScroll:true});}
   else if(action==='setup-account-mode'){setupAccountMode=id;error='';render();}
   else if(action==='setup-account-back'){if(setupAccountBusy)return;error='';setupAccountMode='choice';wizardStory='benefits';setView('setup',false);}
   else if(action==='setup-account-guest'||action==='setup-account-continue'){await finishOnboarding();}
@@ -734,6 +789,7 @@ document.addEventListener('click',async event=>{
   else if(action==='go-shopping')setView('shopping');
   else if(action==='check-store-prices')await refreshStorePrices(true);
   else if(action==='go-week')setView('week');
+  else if(action==='open-day'&&DAYS[Number(id)]){day=Number(id);setView('day');screen.querySelector('.day-heading h1')?.focus({preventScroll:true});}
   else if(action==='go-pantry')setView('pantry');
   else if(action==='recipe')await showRecipe(id);
   else if(action==='recipe-back')leaveRecipe();
@@ -916,12 +972,12 @@ document.addEventListener('keydown',event=>{
     if(canContinue())nextWizard();
   }
 });
-dialog.addEventListener('close',()=>{swapIndex=null;});
+dialog.addEventListener('close',()=>{if(!dialog.open)swapIndex=null;});
 
 const places=['Dubai','Abu Dhabi','Sharjah','Ajman','Ras Al Khaimah','Fujairah','Umm Al Quwain'];
 const supermarkets=['LuLu','Carrefour','Spinneys','Waitrose','Union Coop','Nesto','Choithrams','Any supermarket'];
 const priorities=[['Quick','⚡','Speedy meals'],['Fresh','⚖️','Fresh and light'],['Family','👨‍👩‍👧‍👦','Family favs'],['Comfort','🥦','Healthy comfort'],['Everyday','🥡','Everyday favourites'],['None','✨','Surprise me'],['Protein','💪','Protein packed']];
-const foodTypes=[['Any','🚫','None'],['Vegetarian','🥕'],['Vegan','🌱'],['Pescatarian','🐟'],['Eggless vegetarian','🥦'],['Non-vegetarian','🍗']];
+const foodTypes=[['Any','🍴','Any'],['Vegetarian','🥕','Vegetarian (with eggs)'],['Vegan','🌱'],['Pescatarian','🐟'],['Eggless vegetarian','🥦'],['Non-vegetarian','🍗']];
 const allergyOptions=[['None','🚫','None'],['Gluten','🌾','Gluten free'],['Milk','🥛','Dairy free'],['Egg','🥚','Egg free'],['Peanuts','🥜','Peanut free'],['Tree nuts','🌰','Tree nut free'],['Fish','🐟','Fish free'],['Shellfish','🦐','Shellfish free'],['Sesame','🌰','Sesame free'],['Soy','🫘','Soy free']];
 const appliances=[['Microwave','microwave'],['Hob','hob'],['Air fryer','fryer'],['Oven','oven']];
 const styles=[['UAE mix','','UAE favourites'],['Emirati'],['Arab','','Arab / Middle Eastern'],['South Asian','','South Asian / Desi'],['Turkish']];
@@ -984,14 +1040,14 @@ const steps=[
   {title:'How many are you cooking for?',hint:'We’ll scale your meals and budget.',type:'people'},
   {title:'Which days will you cook?',hint:'Pick the days you want meals planned for.',field:'days',choices:DAYS.map((day,index)=>[index,'',day]),multi:true,layout:'days'},
   {title:'Which meals should we plan?',hint:'Choose at least one meal.',field:'mealTypes',choices:[['breakfast','🌅','Breakfast'],['lunch','☀️','Lunch'],['dinner','🌙','Dinner']],multi:true},
-  {title:'Where are you cooking?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(city=>[city,'pin',city]),required:true},
+  {title:'Where’s your kitchen?',hint:'Choose your city in the UAE.',field:'city',choices:places.map(city=>[city,'pin',city]),required:true},
   {title:'Which cuisines do you enjoy?',hint:'Choose your favourites, or explore a UAE mix.',field:'cuisines',choices:styles,multi:true,layout:'tiles'},
-  {title:'What’s your weekly budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
+  {title:'What’s your shopping budget?',hint:'Slide to what you’re happy to spend on those days.',type:'budget'},
   {title:'A little planning can add up.',type:'budget-recap'},
-  {title:'What are you in the mood for?',hint:'Pick up to 3.',field:'priorities',choices:priorities,multi:true,layout:'tiles'},
-  {title:'Any dietary needs?',hint:'Choose the diet that fits your kitchen.',field:'diet',choices:foodTypes,required:true,layout:'tiles'},
+  {title:'What matters most?',hint:'Choose up to three priorities.',field:'priorities',choices:priorities,multi:true},
+  {title:'How do you like to eat?',hint:'Choose the diet that fits your kitchen.',field:'diet',choices:foodTypes,required:true},
   {title:'Any allergies?',hint:'Pick all that apply, or select None.',field:'allergies',choices:allergyOptions,multi:true,layout:'tiles'},
-  {title:'What appliances do you have?',hint:'Select at least one to plan with.',field:'appliances',choices:appliances,multi:true,layout:'appliance-scene'},
+  {title:'What’s in your kitchen?',hint:'Select at least one to plan with.',field:'appliances',choices:appliances,multi:true,layout:'appliance-scene'},
 ];
 let allergiesReviewed=false;
 function onboardingIcon(symbol){
@@ -1028,7 +1084,7 @@ function welcome(){
     return '<button type="button" class="preview-phone '+position+'" data-action="preview-slide" data-id="'+index+'" tabindex="-1" aria-label="'+esc(item.description)+'"><span class="preview-device">'+item.body+'</span></button>';
   }).join('');
   const dots=productPreviews.map((item,index)=>'<button type="button" class="preview-dot" data-action="preview-slide" data-id="'+index+'" aria-label="'+esc(item.title)+'" aria-pressed="'+(index===previewSlide)+'"></button>').join('');
-  return '<div class="phone-welcome">'+button('Back','welcome-back','welcome-back','back','aria-label="Back"')+'<div class="welcome-brand"><img src="/chef.png" alt="Mealday chef"><span>mealday<span>.</span></span></div><h1>Plan dinners around your budget, your tastes and what’s in your kitchen.</h1><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Get started','quick-start','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+button('Guided setup','start-setup')+button('Calorie tracker','open-calories')+'</div></div></div>';
+  return '<div class="phone-welcome reference-welcome"><div class="welcome-mascot"><span>mealday</span><img src="/chef.png" alt="Mealday chef"></div><h1>Your smart meal planner made delicious.</h1><div class="welcome-start">'+button('Get started','start-setup','green wide')+button('Sign in / Create account','account-login','ghost wide')+'</div><div class="preview-carousel" aria-label="Mealday feature previews">'+previews+'</div><div class="preview-controls"><div class="preview-dots">'+dots+'</div>'+button(previewAutoplayIcon(),'preview-toggle','preview-autoplay','','aria-label="'+(previewAutoplayPaused?'Play slideshow':'Pause slideshow')+'" aria-pressed="'+previewAutoplayPaused+'"')+'</div><div class="wizard-footer">'+button('Quick start','quick-start','green wide','right')+'<div class="welcome-account-links">'+button('Log in','account-login')+button('Sign up','account-signup')+button('Guided setup','start-setup')+button('Calorie tracker','open-calories')+'</div></div></div>';
 }
 let previewAutoplayPaused=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),previewHovered=false;
 const previewSlideshow=createPreviewSlideshow({count:productPreviews.length,initial:previewSlide,
@@ -1293,7 +1349,7 @@ function syncNoAllergies(){
 function planSettings(){
   const p=state.profile;
   const group=(title,name,values,selected)=>'<fieldset class="surface-card plan-section pref-choices"><legend>'+esc(title)+'</legend>'+chips(name,values,selected||[])+'</fieldset>';
-  return '<header class="utility-heading"><h1>Preferences</h1><p>Edit any choice here, then rebuild your week.</p></header>'+
+  return '<header class="utility-heading preferences-heading"><div><h1>Preferences</h1><p>Edit any choice here, then rebuild your week.</p></div>'+button('Scan a meal','open-calories','ghost preference-camera','camera')+'</header>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
     '<form id="plan-form" class="plan-form">'+group('Cooking days','days',DAYS.map((x,i)=>[i,x.slice(0,3)]),p.days)+
     '<div class="surface-card plan-section"><label class="field">Household servings<input class="control" name="people" type="number" min="1" max="12" required value="'+esc(p.people)+'"></label><label class="field">Weekly budget (AED)<input class="control" name="budget" type="number" min="20" max="5000" step=".01" required value="'+esc(p.budget)+'"></label><label class="field">Maximum cooking time'+dropdown('minutes',[15,20,30,45,60,90,120,240,1440],p.minutes)+'</label></div>'+
@@ -1305,7 +1361,7 @@ function planSettings(){
     '<div class="setting-list">'+settingRow('Kitchen pantry','go-pantry','Manage ingredients you already have')+'</div><button class="button green wide" '+(busy?'disabled':'')+'>'+icon('refresh')+(busy?'Building your plan…':'Apply & rebuild plan')+'</button></form>';
 }
 function settingRow(label,action,note=''){
-  const symbols={'edit-name':'people','edit-setup':'leaf','open-recipes':'recipes','go-history':'week','go-pantry':'pantry','go-home':'hob','review-setup':'check','language':'globe','weekly-reminder':'bell','cloud-account':'cloud','export-backup':'download','share-plan':'share','privacy':'shield','clear-saved':'heart','settings-reset':'refresh'};
+  const symbols={'open-calories':'camera','edit-name':'people','edit-setup':'leaf','open-recipes':'recipes','go-history':'week','go-pantry':'pantry','go-home':'hob','review-setup':'check','language':'globe','weekly-reminder':'bell','cloud-account':'cloud','export-backup':'download','share-plan':'share','privacy':'shield','clear-saved':'heart','settings-reset':'refresh'};
   const disabled=(action==='share-plan'&&!state.result)||(action==='delete-account'&&deletingAccount);
   return '<button type="button" class="setting-row '+(['clear-saved','settings-reset'].includes(action)?'setting-destructive':'')+'" data-action="'+action+'" '+(disabled?'disabled':'')+'><span class="setting-symbol" aria-hidden="true">'+icon(symbols[action]||'gear')+'</span><span class="setting-label"><strong>'+esc(label)+'</strong>'+(note?'<small>'+esc(note)+'</small>':'')+'</span><span class="setting-chevron" aria-hidden="true">›</span></button>';
 }
@@ -1322,7 +1378,7 @@ function settings(){
  const reminder=state.reminder,account=cloudBackup.info().account;
  return '<div class="phone-settings simple-settings"><header class="settings-heading"><p>Your account</p><h1>settings</h1></header>'+
  '<div class="settings-profile"><div><h2>'+esc(state.profile.name?'Hi, '+state.profile.name:'Your kitchen')+'</h2><p>Shopping at '+esc(state.profile.shop||'your preferred supermarket')+'</p></div>'+button('','edit-name','ghost icon-only','edit','aria-label="Edit your name"')+'<span class="settings-profile-badge">'+(account?'Signed in':'Guest')+'</span></div>'+
- section('App',settingRow('Plan preferences','go-plan','Diet, appliances, and grocery budget')+settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
+ section('App',settingRow('Plan preferences','go-plan','Diet, appliances, and grocery budget')+settingRow('Recipe library','open-recipes','Browse and save meals')+settingRow('Scan a meal','open-calories','Open the calorie tracker')+settingRow('Rate Mealday','rate-app')+settingRow('Request a feature','request-feature')+settingRow('Language','language','English')+settingRow('Reset saved meals','clear-saved','Clear your favourites list')+settingRow('Reset suggested meal history','reset-suggestions','Get fresher regenerate suggestions'))+
  section('Notifications','<button class="setting-row reminder-row" type="button" data-action="weekly-reminder"><span class="setting-label"><strong>Weekly plan reminder</strong><small>'+(reminder?DAYS[reminder.day]+' at '+reminder.time:'Sunday at 10:00')+' — download a calendar reminder</small></span><span class="reminder-toggle" aria-hidden="true"><span></span></span></button>')+
  section('Support',settingRow('Share Mealday','share-app')+settingRow('Contact us','contact','Send a private message'))+
  section('Legal',settingRow('Privacy policy','privacy')+settingRow('Terms of service','terms'))+
@@ -1421,7 +1477,7 @@ function resetKitchen(){
 }
 window.mealdayBack=()=>{
   if(dialog.open){if(!deletingAccount)dialog.close();return true;}
-  if(view==='add-grocery'){setView('shopping',false);return true;}
+  if(view==='add-grocery'||view==='shop-share'){setView('shopping',false);return true;}
   if(view==='calories'&&calorieTracker?.back())return true;
   if(view==='account'){if(setupAccountBusy)return true;wizardStory='benefits';setupAccountMode='choice';setView('setup',false);return true;}
   if(view==='setup'){backWizard();return true;}

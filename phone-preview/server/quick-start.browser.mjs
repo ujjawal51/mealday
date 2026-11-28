@@ -13,7 +13,7 @@ const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePa
 try {
  const page=await browser.newPage({viewport:{width:320,height:740},reducedMotion:'reduce'});
  await page.goto(origin);
- await page.getByRole('button',{name:'Get started',exact:true}).click();
+ await page.getByRole('button',{name:'Quick start',exact:true}).click();
  await page.getByRole('heading',{name:'Plan your first week'}).waitFor();
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.getByRole('spinbutton',{name:'People',exact:true}).fill('3');
