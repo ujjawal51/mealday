@@ -479,28 +479,78 @@ async function shareGroceries(){
  try{if(navigator.share){await navigator.share({title:'Mealday shopping list',text});return;}}catch(e){if(e.name==='AbortError')return;}
  try{if(window.MealdayAndroid)window.MealdayAndroid.copy(text);else await navigator.clipboard.writeText(text);notify('Grocery list copied.');}catch{openDialog('Share grocery list','Copy your list below.','<textarea class="control" rows="12" readonly aria-label="Grocery list to share">'+esc(text)+'</textarea>');}
 }
+let kitchenTab='home',kitchenQuery='',kitchenLoadError='';
+const kitchenOrder=['bakingpowder','beef','besan','bread','brownlentils','bulgur','bzar','cardamom','carrot','cheese'];
+const markedPantry=()=>Array.isArray(state.pantryMarked)?state.pantryMarked:[];
+const dislikedPantry=()=>Array.isArray(state.profile.dislikedIngredients)?state.profile.dislikedIngredients:[];
+const atHome=id=>state.pantry[id]>0||markedPantry().includes(id);
+function kitchenRows(){
+ const data=options?.pantry;
+ if(!data)return kitchenLoadError?'<p class="kitchen-empty" role="status">Could not load ingredients. '+button('Try again','kitchen-retry','ghost small')+'</p>':'<p class="kitchen-empty" role="status">Loading ingredients…</p>';
+ const query=kitchenQuery.trim().toLowerCase().split(/\s+/).filter(Boolean);
+ const matches=data.filter(i=>query.every(word=>(i.name+' '+i.id).toLowerCase().includes(word)));
+ if(!matches.length)return '<p class="kitchen-empty" role="status">No ingredients match your search.</p>';
+ const rank=id=>kitchenOrder.includes(id)?kitchenOrder.indexOf(id):kitchenOrder.length;
+ return matches.sort((a,b)=>rank(a.id)-rank(b.id)).map(i=>{
+  const home=kitchenTab==='home', checked=home?atHome(i.id):dislikedPantry().includes(i.id);
+  const amount=state.pantry[i.id],saved=home&&checked;
+  const hint=saved?(amount>0?quantity(amount)+' '+i.unit+' at home':'Amount not set'):(i.pack>0?quantity(i.pack)+' '+i.unit:i.unit);
+  const label=(home?'At home: ':"Don’t like: ")+i.name;
+  return '<div class="kitchen-item"><label class="kitchen-item-main"><input type="checkbox" aria-label="'+esc(label)+'" data-kitchen-item="'+esc(i.id)+'" '+(checked?'checked ':'')+(busy?'disabled':'')+'><img src="'+ingredientPicture(i.name)+'" alt="" width="30" height="30" loading="lazy" decoding="async"><span><strong>'+esc(i.name)+'</strong><small>'+esc(hint)+'</small></span></label>'+
+    (saved?button(amount>0?'Edit':'Set amount','kitchen-amount','ghost small','', 'data-id="'+esc(i.id)+'" aria-label="'+esc('Set amount for '+i.name)+'"'):'')+'</div>';
+ }).join('');
+}
 function pantry(){
-  const contents=Object.entries(state.pantry),data=options?.pantry||[];
+  const count=new Set([...Object.keys(state.pantry).filter(id=>state.pantry[id]>0),...markedPantry()]).size;
   const canCarryOver=Boolean(state.result?.plan?.length&&leftoverRows().length);
-  return heading('Kitchen','Keep track of what you already have.')+
-    '<div class="panel pantry-summary"><strong>'+contents.length+' ingredients at home</strong><p>Add amounts to deduct them from your grocery list.</p></div>'+
-    (canCarryOver?'<div class="setting-list">'+settingRow('Update pantry for next week','review-leftovers','Confirm the amounts you still have before making a new plan.')+'</div>':'')+
-    '<div class="pantry-layout"><section class="pantry-list">'+
-    (contents.length?contents.map(([id,value])=>{const item=data.find(i=>i.id===id);return '<article class="pantry-entry"><strong>'+esc(item?.name||id)+'</strong><small>'+quantity(value)+' '+esc(item?.unit||'')+'</small>'+button('Remove','pantry-remove','ghost small','','data-id="'+esc(id)+'" aria-label="Remove '+esc(item?.name||id)+'"')+'</article>';}).join(''):
-    '<div class="empty">Your pantry is empty. Add an ingredient you already have at home.</div>')+
-    '</section><section class="panel"><h3>Update an ingredient</h3><form id="pantry-form" class="pantry-form"><label>Ingredient<select class="control" name="ingredient" required><option value="">Choose ingredient</option>'+data.map(i=>'<option value="'+esc(i.id)+'">'+esc(i.name)+' ('+esc(i.unit)+')</option>').join('')+'</select></label><label>Amount in the selected unit<input class="control" type="number" name="amount" min=".01" max="100000" step=".01" placeholder="e.g. 250" required></label><button class="button primary">'+icon('plus')+'Save ingredient</button></form></section></div>';
+  const home=kitchenTab==='home';
+  return '<section class="kitchen-page"><header class="kitchen-head"><div>'+heading('Kitchen','Keep track of what you already have.')+'</div>'+
+    (canCarryOver?button('','review-leftovers','ghost icon-only kitchen-rollover','week','aria-label="Update pantry for next week" title="Update pantry for next week"'):'')+'</header>'+
+    '<div class="kitchen-summary">'+icon('pantry')+'<div><strong>'+count+' '+(count===1?'ingredient':'ingredients')+' at home</strong><p>Add amounts to deduct them from your grocery list.</p></div></div>'+
+    '<div class="kitchen-tabs" role="group" aria-label="Kitchen lists">'+button('At home','kitchen-tab','kitchen-tab','','data-id="home" aria-pressed="'+home+'"')+
+    button('Don’t like','kitchen-tab','kitchen-tab','','data-id="dislike" aria-pressed="'+!home+'"')+'</div>'+
+    '<p class="kitchen-hint">'+(home?'Select ingredients. Add amounts if you know them.':'Select ingredients to leave out of new plans and swap suggestions.')+'</p>'+
+    '<label class="kitchen-search-label" for="kitchen-search">Find an ingredient</label><input class="control kitchen-search" id="kitchen-search" type="search" autocomplete="off" maxlength="100" placeholder="Rice, eggs, tomatoes…" value="'+esc(kitchenQuery)+'">'+
+    '<div id="kitchen-results" aria-label="Ingredients">'+kitchenRows()+'</div></section>';
+}
+async function loadKitchenOptions(){
+ try{options??=await request('/api/options');kitchenLoadError='';}
+ catch(err){kitchenLoadError=err.message;}
+ if(view==='pantry')render();
+}
+function kitchenRenderFocus(id){
+ if(view!=='pantry')return;
+ render();
+ Array.from(screen.querySelectorAll('[data-kitchen-item]')).find(input=>input.dataset.kitchenItem===id)?.focus({preventScroll:true});
+}
+function kitchenAmount(id){
+ const ingredient=options?.pantry.find(i=>i.id===id);
+ if(!ingredient||busy)return;
+ const amount=state.pantry[id];
+ openDialog(ingredient.name,'Enter what you have at home. Only a confirmed amount is deducted from your grocery list.',
+  '<form id="kitchen-amount-form" data-id="'+esc(id)+'"><label class="field">Amount ('+esc(ingredient.unit)+')<input class="control" type="number" name="amount" min=".01" max="100000" step=".01" inputmode="decimal" placeholder="e.g. 250" value="'+esc(amount??'')+'" required></label><div class="kitchen-amount-actions"><button type="submit" class="button green wide">Save amount</button>'+
+  (amount>0?'':button('Add without amount','kitchen-no-amount','ghost wide','','data-id="'+esc(id)+'"'))+'</div></form>');
+ dialog.querySelector('input')?.focus();
+}
+function markKitchenItem(id){
+ if(busy)return;
+ if(!atHome(id)&&new Set([...Object.keys(state.pantry),...markedPantry()]).size>=100){notify('Choose up to 100 pantry ingredients.');return;}
+ state.pantryMarked=[...new Set([...markedPantry(),id])];
+ persist();dialog.close();kitchenRenderFocus(id);notify('Added to your kitchen. No amount deducted.');
 }
 async function changePantry(id,amount){
-  if(busy)return;
-  busy=true;
+  if(busy)return false;
   const next={...state.pantry};
   if(amount===0)delete next[id];else next[id]=amount;
+  const marks=markedPantry().filter(key=>key!==id);
+  if(new Set([...Object.keys(next),...marks]).size>100){notify('Choose up to 100 pantry ingredients.');return false;}
+  busy=true;
   try{
     const result=state.result?await request('/api/quote',{profile:state.profile,pantry:next,plan:state.result.plan}):null;
-    state={...state,checked:result?keepChecked(state.result,result,state.checked):[],pantry:next,result};
-    persist();notify(amount?'Pantry saved.':'Ingredient removed.');
-  }catch(err){notify(err.message);}
-  finally{busy=false;render();}
+    state={...state,checked:result?keepChecked(state.result,result,state.checked):[],pantry:next,pantryMarked:marks,result};
+    persist();notify(amount?'Pantry saved.':'Ingredient removed.');return true;
+  }catch(err){notify(err.message);return false;}
+  finally{busy=false;kitchenRenderFocus(id);}
 }
 async function showRecipe(id){
   const active=++recipeSequenceId, origin=view;
@@ -672,7 +722,7 @@ function setView(target,hash=true){
   render();
   window.scrollTo(0,0);
   if(view==='recipes'&&!library.saved&&!library.loading)loadRecipes();
-  if(view==='pantry'&&!options)request('/api/options').then(data=>{options=data;if(view==='pantry')render();}).catch(err=>notify(err.message));
+  if(view==='pantry'&&!options)void loadKitchenOptions();
 }
 function renderCookingTimer(){
   const timer=cookingTimer.snapshot();
@@ -823,7 +873,12 @@ document.addEventListener('click',async event=>{
   else if(action==='more')await loadRecipes(true);
   else if(action==='saved'){clearTimeout(libraryDelay);library.saved=!library.saved;renderRecipes();await loadRecipes();}
   else if(action==='clear-recipe-filters'){clearTimeout(libraryDelay);library.q='';library.cuisine='';library.diet='';renderRecipes();await loadRecipes();}
-  else if(action==='pantry-remove')await changePantry(id,0);
+  else if(action==='kitchen-tab'&&['home','dislike'].includes(id)){
+    kitchenTab=id;render();screen.querySelector('.kitchen-tab[aria-pressed="true"]')?.focus({preventScroll:true});
+  }
+  else if(action==='kitchen-retry'){kitchenLoadError='';render();void loadKitchenOptions();}
+  else if(action==='kitchen-amount')kitchenAmount(id);
+  else if(action==='kitchen-no-amount')markKitchenItem(id);
   else if(action==='timer')startTimer();
   else if(action==='timer-cancel'){cookingTimer.cancel();if(detail)renderRecipeDetail(detail);}
   else if(action==='favorite'&&detail){
@@ -857,6 +912,14 @@ document.addEventListener('submit',async event=>{
       error='Choose at least one cooking day, meal and appliance.';quickAdvanced=true;render();return;
     }
     await generate(next);return;
+  }
+  if(form.id==='kitchen-amount-form'){
+    event.preventDefault();if(busy)return;
+    const id=form.dataset.id,amount=Number(new FormData(form).get('amount'));
+    if(!Number.isFinite(amount)||amount<.01||amount>100000)return;
+    const submit=form.querySelector('[type=submit]');submit.disabled=true;
+    try{if(await changePantry(id,amount)){dialog.close();kitchenRenderFocus(id);}}finally{submit.disabled=false;}
+    return;
   }
   if(form.id==='calorie-form'){event.preventDefault();calorieTracker?.save(form);return;}
   if(form.id==='leftover-form'){
@@ -902,7 +965,7 @@ document.addEventListener('submit',async event=>{
     state.profile={...state.profile,name};
     persist();dialog.close();render();return;
   }
-  if(!['preferences','pantry-form','plan-form'].includes(form.id))return;
+  if(!['preferences','plan-form'].includes(form.id))return;
   event.preventDefault();
   if(busy)return;
   const data=new FormData(form),submit=form.querySelector('button:not([type])');
@@ -928,11 +991,25 @@ document.addEventListener('submit',async event=>{
       if(profile.cuisines.includes('UAE mix')&&profile.cuisines.length>1)profile.cuisines=profile.cuisines.filter(x=>x!=='UAE mix');
       profile.cuisine=profile.cuisines[0];
       await generate(profile);
-    } else await changePantry(String(data.get('ingredient')),Number(data.get('amount')));
+    }
   } finally {if(submit)submit.disabled=false;}
 });
-document.addEventListener('change',event=>{
+document.addEventListener('change',async event=>{
   const el=event.target;
+  if(el.dataset.kitchenItem){
+    const id=el.dataset.kitchenItem;
+    if(busy){el.checked=kitchenTab==='home'?atHome(id):dislikedPantry().includes(id);return;}
+    if(kitchenTab==='dislike'){
+      const list=dislikedPantry();
+      if(el.checked&&list.length>=100){el.checked=false;notify('Choose up to 100 ingredients to leave out.');return;}
+      state.profile={...state.profile,dislikedIngredients:el.checked?[...new Set([...list,id])]:list.filter(key=>key!==id)};
+      persist();return;
+    }
+    if(el.checked){el.checked=false;kitchenAmount(id);}
+    else if(state.pantry[id]>0){el.checked=true;await changePantry(id,0);}
+    else{state.pantryMarked=markedPantry().filter(key=>key!==id);persist();kitchenRenderFocus(id);}
+    return;
+  }
   if(el.dataset.calorie){calorieTracker?.change(el);return;}
   if(el.id==='store-price-location'){priceLocation=el.value;refreshStorePrices(true);return;}
   if(el.dataset.wizardField&&wizardDraft){const field=el.dataset.wizardField;wizardDraft[field]=field==='minutes'?Number(el.value):el.value;updateWizardContinue();return;}
@@ -942,6 +1019,7 @@ document.addEventListener('change',event=>{
   if(el.id==='cuisine'||el.id==='diet'){library[el.id]=el.value;loadRecipes();}
 });
 document.addEventListener('input',event=>{
+ if(event.target.id==='kitchen-search'){kitchenQuery=event.target.value;$('#kitchen-results').innerHTML=kitchenRows();return;}
  if(['recipe-search','servings'].includes(event.target.dataset?.calorie)){calorieTracker?.search(event.target);return;}
   if(event.target.form?.id==='checkout-comparison'){event.target.form.querySelector('output').textContent='';return;}
   if(event.target.form?.id==='extra-grocery-form'){event.target.form.querySelector('button[type=submit]').disabled=!event.target.form.elements.namedItem('item').value.trim();return;}
