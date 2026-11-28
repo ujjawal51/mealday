@@ -18,8 +18,16 @@ try{
  assert.match(await page.locator('.overview-cost').innerText(),/AED 72\.35\s*\/ 90/);
  assert.equal(await page.locator('.meal-row').count(),5);
  assert.equal(await page.locator('.meal-day').first().innerText(),'MONDAY');
+ const first=page.locator('.meal-row').first();
+ const [card,badge,photo]=await Promise.all([first.boundingBox(),first.locator('.meal-day').boundingBox(),first.locator('img').boundingBox()]);
+ assert(Math.abs((card.x+card.width/2)-(badge.x+badge.width/2))<2,'Day badge is centred on the card');
+ assert(badge.y<card.y&&badge.y+badge.height>card.y,'Day badge straddles the card border');
+ assert(Math.abs(photo.width-photo.height)<1,'Meal thumbnail is square');
+ assert.equal(await first.getByRole('button',{name:'Swap Monday dinner'}).isEnabled(),true);
+ assert.equal(await page.getByRole('button',{name:'Share plan',exact:true}).isEnabled(),true);
  assert.match(await page.locator('.grocery-link').innerText(),/2\/2 items bought/);
  await page.waitForFunction(()=>[...document.querySelectorAll('.meal-open img')].every(i=>i.complete&&i.naturalWidth>0));
+ if(process.env.MEALDAY_PLAN_PREVIEW)await page.screenshot({path:process.env.MEALDAY_PLAN_PREVIEW});
  if(process.env.PLAN_SCREENSHOT==='1')console.log('PLAN_SCREENSHOT '+(await page.screenshot()).toString('base64'));
  await page.getByRole('button',{name:/Tap to view Grocery list/}).click();await page.getByRole('heading',{name:'Grocery list',exact:true}).waitFor();assert.equal(await page.locator('.grocery-done').innerText(),'2/2 done');
  await page.getByRole('button',{name:'Shop or share',exact:true}).click();
