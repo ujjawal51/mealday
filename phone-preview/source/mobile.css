@@ -1003,3 +1003,51 @@ body[data-view=pantry] .kitchen-head p{font-size:14px;color:#656e5e;margin:0}
 .kitchen-item .button{min-height:42px;flex:none;padding:5px 7px}
 .kitchen-empty{padding:16px 0;font-size:14px;color:#616a5d}
 .kitchen-amount-actions{display:grid;gap:8px;margin-top:12px}
+
+/* My Week: centred day tabs and compact, photo-led meal cards. */
+body[data-view=week]{background:#f8f8f6;color:#252725}
+body[data-view=week] main{max-width:560px;padding:12px 18px calc(86px + env(safe-area-inset-bottom))}
+body[data-view=week] .plan-greeting{gap:7px;margin:1px 0 9px}
+body[data-view=week] .plan-salutation{font-size:10px;color:#666c65;letter-spacing:1.3px}
+body[data-view=week] .plan-greeting h1{font-size:clamp(22px,5.7vw,29px);font-weight:760;color:#292c28;overflow-wrap:anywhere;max-width:100%}
+body[data-view=week] .shop-pill{background:#e8f2d6;color:#42651e;min-height:34px;font-size:12px}
+body[data-view=week] .shop-pill svg{background:#437431;color:white;width:25px;height:25px}
+body[data-view=week] .plan-overview{gap:9px;margin:0 0 18px}
+body[data-view=week] .overview-card{min-height:73px;padding:8px 12px;gap:3px;line-height:1.13;border:1px solid #e5e7e2;border-radius:15px;box-shadow:none}
+body[data-view=week] .overview-card>span{font-size:9px;color:#566052}
+body[data-view=week] .overview-cost strong{font-size:clamp(16px,4.4vw,22px)}
+body[data-view=week] .overview-cost small{color:#697268}
+body[data-view=week] .overview-card .estimate-disclaimer{font-size:8px;line-height:1.2;color:#666e63;max-width:none}
+body[data-view=week] .grocery-link{background:#dbf3ff;border-color:#dbf3ff}
+body[data-view=week] .grocery-link strong{font-size:16px}
+body[data-view=week] .meal-list{gap:14px}
+body[data-view=week] .meal-row{position:relative;min-height:80px;grid-template-columns:minmax(0,1fr) 32px;gap:0 1px;padding:11px 7px 8px 10px;border:1.5px solid #e2e4e0;border-radius:16px;box-shadow:0 2px 3px #22282019}
+body[data-view=week] .meal-row-continuation{margin-top:-6px;padding-top:9px}
+body[data-view=week] .meal-row>.meal-day{position:absolute;inset:0 auto auto 50%;transform:translate(-50%,-50%);z-index:1;margin:0;min-height:17px;min-width:0;padding:0 8px;border:1px solid #dfe3db;border-radius:5px;color:#4f574f;background:white;font-size:9px;line-height:1.35;font-weight:680}
+body[data-view=week] .meal-day::before{content:'';position:absolute;inset:-5px -4px}
+body[data-view=week] .meal-row .meal-open{grid-column:1;align-items:center;gap:9px;min-height:58px}
+body[data-view=week] .meal-row .meal-open img{margin:0;width:58px;height:58px;border-radius:10px}
+body[data-view=week] .meal-row .meal-name{font-size:14px;line-height:1.22;font-weight:690;margin:0 0 4px;overflow-wrap:anywhere;color:#272a26}
+body[data-view=week] .planned-meal-type{font-size:10px;line-height:1.2;margin:0 0 3px}
+body[data-view=week] .meal-open .meal-components{font-size:10px;margin:0 0 3px}
+body[data-view=week] .meal-tag{padding:2px 7px;border-radius:999px;font-size:9px;line-height:1.35;color:#213226}
+body[data-view=week] .meal-tag.quick{background:#ffc098}
+body[data-view=week] .meal-tag.plant{background:#b6dfaa}
+body[data-view=week] .meal-tag.home{background:#a4eee1}
+body[data-view=week] .meal-row .meal-open .meta{margin-top:5px;font-size:11px;color:#586157}
+body[data-view=week] .meal-open .meta>span{padding-inline:6px;white-space:nowrap;border-color:#d9ded7}
+body[data-view=week] .meal-open .meta>span:first-child{padding-left:0}
+body[data-view=week] .meal-open .meta>span:last-child{padding-right:0}
+body[data-view=week] .meal-row>.plan-meal-swap{grid-column:2;grid-row:1;min-width:32px;min-height:44px;margin:0;padding:0;border:0;color:#526c43;background:none;box-shadow:none}
+body[data-view=week] .meal-row>.plan-meal-swap svg{width:15px;height:15px}
+body[data-view=week] .week-bottom{margin-top:15px}
+body[data-view=week] .week-bottom .button.green{background:linear-gradient(103deg,#558026,#7ba72a);color:white;min-height:49px}
+.week-extras{margin:8px 0 0}
+.week-extras .plan-personalisation{margin:8px 0}
+.week-extras .week-share-link{background:transparent;color:#455b38;display:flex;margin:2px auto 0;min-height:42px;font-size:12px}
+@media(max-width:350px){
+ body[data-view=week] main{padding-inline:12px}
+ body[data-view=week] .meal-row .meal-open img{width:51px;height:51px}
+ body[data-view=week] .meal-open .meta>span{padding-inline:4px}
+ body[data-view=week] .overview-card{padding-inline:9px}
+}

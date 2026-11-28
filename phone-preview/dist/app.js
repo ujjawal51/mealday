@@ -177,12 +177,16 @@ function render(){
 function heading(title,description){return '<div class="page-head"><h1>'+title+'</h1><p>'+description+'</p></div>';}
 function week(){
   const result=state.result,p=state.profile;
+  const perDay=new Map(), seenDays=new Set();
+  for(const m of result?.meals||[])perDay.set(m.day,(perDay.get(m.day)||0)+1);
   const rows=result?.meals.map((m,index)=>{
+    const first=!seenDays.has(m.day);seenDays.add(m.day);
     const selected=priorities.find(([id])=>m.matchedStyles?.includes(id));
     const tag=selected?.[2]||(m.minutes<=30?'Speedy meals':m.diet==='vegan'||m.diet==='vegetarian'?'Plant-based':m.cuisine);
-    const tone=m.minutes<=30?'quick':m.diet==='vegan'||m.diet==='vegetarian'?'plant':'home';
+    const tone=hasCooked(cookingHistory,m.id)?'plant':m.diet==='vegan'||m.diet==='vegetarian'?'home':m.minutes<=30?'quick':'plant';
     const cost=Number.isFinite(m.ingredientCost)?'<span title="Estimated cost of ingredients used">AED '+money(m.ingredientCost*p.people)+'</span>':'';
-    return '<article class="meal-row">'+button(DAYS[m.day],'open-day','meal-day','','data-id="'+m.day+'" aria-label="View '+DAYS[m.day]+' meal plan"')+'<button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3><p class="planned-meal-type">'+esc(cap(m.meal))+'</p>'+mealComponents(m)+'<span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button>'+button('Swap','swaps','ghost plan-meal-swap','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[m.day]+' '+m.meal)+'" '+(busy?'disabled':''))+'</article>';
+    const dayLabel=first?button(DAYS[m.day],'open-day','meal-day','','data-id="'+m.day+'" aria-label="View '+DAYS[m.day]+' meal plan"'):'';
+    return '<article class="meal-row'+(first?'':' meal-row-continuation')+'">'+dayLabel+'<button class="meal-open" type="button" data-action="recipe" data-id="'+esc(m.id)+'"><img loading="lazy" src="'+photo(m)+'" alt=""><div class="meal-body"><h3 class="meal-name">'+esc(recipeLabel(m.id,m.componentNames?.[0]||m.name))+'</h3>'+(perDay.get(m.day)>1?'<p class="planned-meal-type">'+esc(cap(m.meal))+'</p>':'')+mealComponents(m)+'<span class="meal-tag '+tone+'">'+(hasCooked(cookingHistory,m.id)?'Cooked':esc(tag))+'</span><div class="meta"><span>'+icon('time')+m.minutes+' min</span><span>'+icon('people')+p.people+'</span>'+cost+'</div>'+(m.recommendationReason?'<p class="meal-recommendation">'+esc(m.recommendationReason)+'</p>':'')+'</div></button>'+button('','swaps','ghost plan-meal-swap','swap','data-index="'+index+'" aria-label="Swap '+esc(DAYS[m.day]+' '+m.meal)+'" title="Swap meal" '+(busy?'disabled':''))+'</article>';
   }).join('');
   const items=result?.items.filter(item=>item.packs>0)||[];
   const extras=state.extraGroceries||[],total=items.length+extras.length;
@@ -191,8 +195,9 @@ function week(){
     '<section class="plan-overview" aria-label="Weekly budget and groceries"><div class="overview-card"><span>Grocery estimate</span><div class="overview-cost"><strong>AED '+money(result?.total||0)+'</strong><small> / '+money(p.budget)+'</small></div><progress max="'+p.budget+'" value="'+Math.min(result?.total||0,p.budget)+'" aria-label="Estimated grocery cost against budget"></progress><small class="estimate-disclaimer">Catalogue estimate · delivery not included</small></div>'+
     '<button class="overview-card grocery-link" type="button" data-action="go-shopping"><span>Tap to view</span><strong>Grocery list</strong><small>'+bought+'/'+total+' items bought</small><progress max="'+Math.max(total,1)+'" value="'+bought+'" aria-label="Grocery shopping progress"></progress></button></section>'+
     (error?'<p class="notice" role="alert">'+esc(error)+'</p>':'')+
-    pantryUsedSummary(result)+recommendationSummary(result)+'<div class="week-section-heading"><h2>Your meals</h2>'+button('Share plan','share-plan','week-share','share',!rows?'disabled':'')+'</div><div class="meal-list">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</div>'+
-    '<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>';
+    '<section class="meal-list" aria-label="Planned meals">'+(rows||'<div class="empty">Generate your first plan.</div>')+'</section>'+
+    '<div class="week-bottom">'+button(busy?'Planning…':'Rebuild plan','generate','green wide','refresh',busy?'disabled':'')+button('','go-plan','ghost icon-only','settings','aria-label="Plan preferences"')+'</div>'+
+    '<div class="week-extras">'+pantryUsedSummary(result)+recommendationSummary(result)+(rows?button('Share plan','share-plan','week-share-link','share'):'')+'</div>';
 }
 function dayPlan(){
  const meals=(state.result?.meals||[]).map((meal,index)=>({meal,index})).filter(({meal})=>meal.day===day);
